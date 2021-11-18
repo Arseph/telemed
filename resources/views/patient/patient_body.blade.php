@@ -2,7 +2,7 @@
     $user = Session::get('auth');
     $status = session::get('status');
 ?>
-<form method="POST" action="{{ asset('doctor/patient/update') }}">
+<form id="patient_form" method="POST">
  
     @if(isset($data->patient_id))
     <fieldset>
@@ -18,7 +18,7 @@
 <div class="row">
      <div class="col-sm-6">
         <div class="form-group">
-            <input type="hidden" name="patient_id" value="">
+            <input type="hidden" name="patient_id" value="@if(isset($data->patient_id)){{ $data->patient_id }}@endif">
             <label>PhilHealth Status:</label>
             <select class="form-control" name="phic_status" required>
                 <option
@@ -196,12 +196,11 @@
     </div>
     <div class="has-group others_holder hide">
          <label>Complete Address :</label>
-        <input type="text" name="others" class="form-control others" placeholder="Enter complete address..." />
-    </div>         
-    <hr />
+        <input type="text" name="address" class="form-control others" placeholder="Enter complete address..." />
+    </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
-        <button type="submit" value="true" name="patient_update_button" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Save</button>
+        <button type="button" value="true" id="saveBtn" name="patient_update_button" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Save</button>
     </div>
 </form>
 
@@ -263,8 +262,18 @@
             }
         });
         return tmp;
-
     }
+    $( "#saveBtn" ).click(function() {
+        $('#patient_form').ajaxSubmit({
+            url:  "{{ url('/patient-store') }}",
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
+    });
 </script>
 
 

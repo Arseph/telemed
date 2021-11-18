@@ -73,7 +73,9 @@ Route::get('doctor','Doctor\HomeController@index');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
-Route::get('patient/list','Patient\PatientController@patientList');
-Route::post('doctor/patient/update','Patient\PatientController@patientUpdate');
+Route::match(['GET','POST'],'patient/list','Patient\PatientController@patientList');
+Route::match(['GET','POST'],'doctor/patient/update','Patient\PatientController@patientUpdate');
 Route::get('location/barangay/{muncity_id}','Patient\PatientController@getBaranggays');
+Route::match(['GET','POST'],'/patient-store', 'Patient\PatientController@storePatient');
+Route::post('/patient-delete/{id}', 'Patient\PatientController@deletePatient');
 
