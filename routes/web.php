@@ -53,6 +53,17 @@ Route::post('/municipality-delete/{id}', 'Superadmin\ManageController@deleteMuni
 Route::match(['GET','POST'],'/barangay/{prov_id}/{prov_name}/{mun_id}/{mun_name}','Superadmin\ManageController@viewBarangay');
 Route::post('/barangay-store', 'Superadmin\ManageController@storeBarangay');
 Route::post('/barangay-delete/{id}', 'Superadmin\ManageController@deleteBarangay');
+Route::match(['GET','POST'],'/diagnosis', 'Superadmin\DiagnosisController@indexDiagnosis');
+Route::get('/diagnosis/{id}/maincat', 'Superadmin\DiagnosisController@getSubCategory');
+Route::post('/diagnosis-store', 'Superadmin\DiagnosisController@storeDiagnosis');
+Route::post('/diagnosis-delete/{id}', 'Superadmin\DiagnosisController@deleteDiagnosis');
+Route::match(['GET','POST'],'/diagnosis-main-category', 'Superadmin\DiagnosisController@indexDiagMainCat');
+Route::post('/main-cat-store', 'Superadmin\DiagnosisController@storeMainCat');
+Route::post('/main-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteMainCat');
+Route::match(['GET','POST'],'/diagnosis-sub-category', 'Superadmin\DiagnosisController@indexDiagSubCat');
+Route::post('/sub-cat-store', 'Superadmin\DiagnosisController@storeSubCat');
+Route::post('/sub-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteSubCat');
+
 
 //Admin Module
 Route::get('admin','Admin\HomeController@index');
