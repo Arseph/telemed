@@ -97,12 +97,12 @@
                     if($user->level=='doctor')
                     {
                         $t='Dr.';
-                    }else if($user->level=='support'){
-                        $dept_desc = ' / IT Support';
+                    }else if($user->level=='patient'){
+                        $dept_desc = ' / Patient';
                     }
 
                     ?>
-                    <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }}</span>
+                    <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
                 </div>
             </div>
 
@@ -131,7 +131,13 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-book"></i>&nbsp; Library <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fas fa-chart-line"></i>&nbsp; Diagnosis</a></li>
+                        <li class="dropdown-submenu">
+                            <a href="{{ asset('/diagnosis') }}" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false"> <span class="nav-label"><i class="fas fa-chart-line"></i>&nbsp; Diagnosis</span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ asset('/diagnosis-main-category') }}"><i class="fas fa-th-large"></i>&nbsp; Main Category</a></li>
+                                <li><a href="{{ asset('/diagnosis-sub-category') }}"><i class="fas fa-th"></i>&nbsp; Sub Category</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#"><i class="fas fa-medkit"></i>&nbsp; Drugs/Meds</a></li>
                         <li><a href="#"><i class="fas fa-chart-area"></i>&nbsp; Demographic</a></li>
                     </ul>
