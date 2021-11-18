@@ -11,6 +11,13 @@ use App\Patient;
 
 class PatientController extends Controller
 {
+     public function __construct()
+    {
+        if(!$login = Session::get('auth')){
+            $this->middleware('auth');
+        }
+    }
+    
     public function patientList(Request $request)
     {
         $user = Session::get('auth');
