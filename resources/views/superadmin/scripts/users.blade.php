@@ -36,6 +36,7 @@
 	    if(invalid > 0) {
 	    	$(".username-has-error").removeClass("hide");
 		    $('.btnSave').prop('disabled', true);
+		    processOne = '';
 	    } else {
 	    	$(".username-has-error").addClass("hide");
 	    	$('.btnSave').prop('disabled', false);
@@ -52,6 +53,7 @@
 			$(".password-has-error").removeClass("hide");
 			$(".password-has-match").addClass("hide");
 			$('.btnSave').prop('disabled', true);
+			processTwo = '';
 		} else {
 			$(".password-has-error").addClass("hide");
 			$(".password-has-match").removeClass("hide");
