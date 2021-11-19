@@ -70,13 +70,14 @@ Route::get('admin','Admin\HomeController@index');
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');
+Route::match(['GET','POST'],'doctor/patient/list','Doctor\PatientController@patientList');
+Route::match(['GET','POST'],'doctor/patient/update','Doctor\PatientController@patientUpdate');
+Route::get('location/barangay/{muncity_id}','Doctor\PatientController@getBaranggays');
+Route::match(['GET','POST'],'/patient-store', 'Doctor\PatientController@storePatient');
+Route::post('/patient-delete/{id}', 'Doctor\PatientController@deletePatient');
+Route::match(['GET','POST'],'doctor/teleconsult','Doctor\TeleConsultController@index');
+Route::match(['GET','POST'],'/add-meeting', 'Doctor\TeleConsultController@storeMeeting');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
-Route::match(['GET','POST'],'patient/list','Patient\PatientController@patientList');
-Route::match(['GET','POST'],'doctor/patient/update','Patient\PatientController@patientUpdate');
-Route::get('location/barangay/{muncity_id}','Patient\PatientController@getBaranggays');
-Route::match(['GET','POST'],'/patient-store', 'Patient\PatientController@storePatient');
-Route::post('/patient-delete/{id}', 'Patient\PatientController@deletePatient');
-Route::post('/create-patient-account', 'Patient\PatientController@createPatientAcc');
 
