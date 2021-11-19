@@ -29,7 +29,7 @@
     <link href="{{ asset('public/assets/css/style.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('public/assets/css/AdminLTE.min.css') }}">
     <!-- bootstrap datepicker -->
-
+    <link rel="stylesheet" href="{{ asset('public/assets/css/bootstrap-clockpicker.min.css') }}">
     <link href="{{ asset('public/plugin/datepicker/datepicker3.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('public/plugin/Lobibox/lobibox.css') }}">
     <!-- bootstrap wysihtml5 - text editor -->
@@ -183,11 +183,11 @@
                 <!-- for doctors -->
                 @if($user->level=='doctor')
                 <li><a href="{{ asset('doctor') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-phone-alt"></i> Teleconsultation</a></li>
+                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-phone-alt"></i> Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ asset('patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
+                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -242,7 +242,7 @@
 <script src="{{ asset('public/assets/js/jquery.min.js?v='.date('mdHis')) }}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ asset('public/plugin/bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
-
+<script src="{{ asset('public/assets/js/bootstrap-clockpicker.min.js') }}"></script>
 <script src="{{ asset('public/assets/js/jquery.form.min.js') }}"></script>
 <script src="{{ asset('public/assets/js/jquery-validate.js') }}"></script>
 <script src="{{ asset('public/assets/js/bootstrap.min.js') }}"></script>

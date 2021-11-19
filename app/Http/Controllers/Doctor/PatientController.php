@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Patient;
+namespace App\Http\Controllers\Doctor;
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;

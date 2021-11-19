@@ -13,7 +13,7 @@
     <div class="box box-success">
         <div class="box-header with-border">
             <div class="pull-right">
-                <form action="{{ asset('patient/list') }}" method="POST" class="form-inline">
+                <form action="{{ asset('doctor/patient/list') }}" method="POST" class="form-inline">
                     {{ csrf_field() }}
                     <div class="form-group-lg" style="margin-bottom: 10px;">
                         <input type="text" class="form-control" name="keyword" placeholder="Search patient..." value="{{ Session::get("keyword") }}">
@@ -98,9 +98,9 @@
         </div>
     </div>
 </div>
-    @include('modal.patient.patientmodal')
+    @include('modal.doctors.patientmodal')
 @endsection
 @section('js')
-    @include('patient.scripts.patient')
+    @include('doctors.scripts.patient')
 @endsection
 
