@@ -41,6 +41,7 @@
                             <th>Age / DOB</th>
                             <th>Barangay</th>
                             <th>Contact</th>
+                            <th></th>
                         </tr>
                         
                         @foreach($data as $row)
@@ -68,8 +69,18 @@
                                     ?>
                                 </small>
                             </td>
-                            <td>{{ $row->brgy }}</td>
+                            <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
+                            <td class="text-center">@if(!$row->account_id)
+                                <a data-toggle="modal" class="btn btn-danger btn-sm btn-flat" data-target="#create_modal" onclick="getData('<?php echo $row->id?>','<?php echo $row->lname?>','<?php echo $row->fname?>','<?php echo $row->mname?>','<?php echo $row->contact?>')">
+                                    <i class="far fa-user-circle"></i> Create Account
+                                </a>
+                                @elseif($row->account_id)
+                                <a data-toggle="modal" class="btn btn-info btn-sm btn-flat" data-target="#create_modal" onclick="getUserData('<?php echo $row->id?>','<?php echo $row->lname?>','<?php echo $row->fname?>','<?php echo $row->mname?>','<?php echo $row->contact?>','<?php echo $row->email?>','<?php echo $row->username?>')">
+                                    <i class="far fa-user-circle"></i>Account
+                                </a>
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                     </table>

@@ -78,4 +78,5 @@ Route::match(['GET','POST'],'doctor/patient/update','Patient\PatientController@p
 Route::get('location/barangay/{muncity_id}','Patient\PatientController@getBaranggays');
 Route::match(['GET','POST'],'/patient-store', 'Patient\PatientController@storePatient');
 Route::post('/patient-delete/{id}', 'Patient\PatientController@deletePatient');
+Route::post('/create-patient-account', 'Patient\PatientController@createPatientAcc');
 

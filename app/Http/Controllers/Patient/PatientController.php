@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Facility;
 use App\Barangay;
 use App\Patient;
-
+use App\User;
 class PatientController extends Controller
 {
      public function __construct()
@@ -49,18 +49,27 @@ class PatientController extends Controller
         }
         Session::put('keyword',$keyword);
         $patients = Patient::all()->where('doctor_id', $user->id);
-        $data = Patient::where(function($q) use ($keyword){
-            $q->where('fname',"like","%$keyword%")
-                ->orwhere('lname',"like","%$keyword%")
-                ->orwhere('mname',"like","%$keyword%");
+        $data = Patient::select(
+            "patients.*",
+            "bar.brg_name as barangay",
+            "user.email as email",
+            "user.username as username",
+        ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
+        ->leftJoin("users as user","user.id","=","patients.account_id")
+        ->where(function($q) use ($keyword){
+            $q->where('patients.fname',"like","%$keyword%")
+                ->orwhere('patients.lname',"like","%$keyword%")
+                ->orwhere('patients.mname',"like","%$keyword%");
                
             })
-            ->orderby('lname','asc')
+            ->orderby('patients.lname','asc')
             ->paginate(30);
+        $users = User::all();
         return view('patient.patient',[
             'data' => $data,
             'municity' => $municity,
-            'patients' => $patients
+            'patients' => $patients,
+            'users' => $users
         ]);
     }
 
@@ -139,5 +148,27 @@ class PatientController extends Controller
         $patient = Patient::find($id);
         $patient->delete();
         Session::put("delete_action","Successfully delete Patient");
+    }
+
+    public function createPatientAcc(Request $req) {
+        $user = Session::get('auth');
+        $data = array(
+            'fname' => $req->fname,
+            'mname' => $req->mname,
+            'lname' => $req->lname,
+            'level' => 'patient',
+            'facility_id' => $user->facility_id,
+            'status' => 'active',
+            'contact' => $req->contact,
+            'email' => $req->email,
+            'username' => $req->username,
+            'password' => bcrypt($req->password)
+        );
+        Session::put("action_made","Successfully created account");
+        $user = User::create($data);
+        $accountID = $user->id;
+        Patient::find($req->account_id)->update([
+            'account_id' => $accountID
+        ]);
     }
 }
