@@ -90,6 +90,7 @@
 			$('#password2').css("border","red solid 3px");
 		}
 		else if(processOne && processTwo && invalid == 0) {
+			$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 			$('#user_form').ajaxSubmit({
 	            url:  "{{ url('/user-store') }}",
 	            type: "POST",

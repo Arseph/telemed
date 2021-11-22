@@ -28,6 +28,7 @@
 	});
 	$('#brgy_form').on('submit',function(e){
 		e.preventDefault();
+		$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 		var id = $("#brgy_id").val();
 		if(toDelete) {
 			$('#brgy_form').ajaxSubmit({

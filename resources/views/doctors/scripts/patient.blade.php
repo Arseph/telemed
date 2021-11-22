@@ -91,6 +91,7 @@
 	});
     $('#patient_form').on('submit',function(e){
 		e.preventDefault();
+        $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 		if(toDelete) {
 			var id = $("#patient_id").val();
 			$('#patient_form').ajaxSubmit({
@@ -176,6 +177,7 @@
     $('#create_form').on('submit',function(e){
         e.preventDefault();
         if(processOne && processTwo) {
+            $('.btnSaveAccount').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
             $('#create_form').ajaxSubmit({
                 url:  "{{ url('/create-patient-account') }}",
                 type: "POST",
