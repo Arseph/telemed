@@ -28,6 +28,7 @@
 	});
 	$('#muni_form').on('submit',function(e){
 		e.preventDefault();
+		$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 		var id = $("#muni_id").val();
 		if(toDelete) {
 			$('#muni_form').ajaxSubmit({
