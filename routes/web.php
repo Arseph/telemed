@@ -78,6 +78,8 @@ Route::post('/patient-delete/{id}', 'Doctor\PatientController@deletePatient');
 Route::match(['GET','POST'],'doctor/teleconsult','Doctor\TeleConsultController@index');
 Route::match(['GET','POST'],'/add-meeting', 'Doctor\TeleConsultController@storeMeeting');
 Route::get('/validate-datetime','Doctor\TeleConsultController@validateDateTime');
+Route::get('/meeting-info','Doctor\TeleConsultController@meetingInfo');
+Route::get('/start-meeting/{id}','Doctor\TeleConsultController@indexCall');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

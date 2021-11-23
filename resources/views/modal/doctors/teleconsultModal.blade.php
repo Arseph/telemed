@@ -15,7 +15,7 @@
 	     <div class="row">
 		     <div class="col-sm-6">
 		     	<label>Date:</label>
-		     	<input type="text" id="daterange" value="" name="datefrom" class="form-control" placeholder="Select Date"  required/>
+		     	<input type="text" id="daterange" value="" name="datefrom" class="form-control" placeholder="Select Date" onkeyup="validateTIme()" required/>
 		     </div>
 		     <div class="col-sm-3">
 		     	<label>Time:</label>
@@ -63,6 +63,45 @@
         <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
         <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Save</button>
   	</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="info_meeting_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="myInfoLabel"></h3>
+      </div>
+      <div class="modal-body">
+      	<div class="form-group">
+	     	<label>Patient:</label>
+	        <input type="text" id="patientName"class="form-control" readonly>
+	     </div>
+  		<div class="form-group">
+  			<label class="text-success">Meeting Link:</label><br>
+  			<label id="meetlink"></label>
+  			<a href="#"onclick="copyToClipboard('#meetlink')"><i class="far fa-copy"></i></a>
+
+  		</div>
+  		<div class="form-group">
+  			<label class="text-success">Meeting Number:</label><br>
+  			<label id="meetnumber"></label>
+
+  		</div>
+  		<div class="form-group">
+  			<label class="text-success">Password:</label><br>
+  			<label id="meetPass"></label>
+  		</div>
+  		<div class="form-group">
+  			<label class="text-success">Host Key:</label><br>
+  			<label id="meetKey"></label>
+  		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btnMeeting btn btn-primary"><i class="fas fa-play-circle"></i> Start Meeting</button>
       </div>
     </div>
   </div>
