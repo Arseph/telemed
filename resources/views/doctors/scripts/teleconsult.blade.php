@@ -2,7 +2,12 @@
 	$(document).ready(function() {
 		var date = new Date();
 		var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        $('#consolidate_date_range').daterangepicker();
+        $('#consolidate_date_range').daterangepicker({
+            minDate: today
+        });
+        $('#consolidate_date_range_past').daterangepicker({
+            maxDate: today
+        });
         $('#daterange').daterangepicker({
             minDate: today,
             "singleDatePicker": true
@@ -90,4 +95,61 @@
             },
         });
 	});
+
+    function getMeeting(id) {
+        var url = "{{ url('/meeting-info') }}";
+        var tmp;
+        $.ajax({
+            async: true,
+            url: url,
+            type: 'GET',
+            data: {
+                meet_id: id
+            },
+            success : function(data){
+                var val = JSON.parse(data);
+                $('#info_meeting_modal').modal('show'); 
+                $('#myInfoLabel').html(val['title']);
+                $('#meetlink').html(val['web_link']);
+                $('#meetnumber').html(val['meeting_number']);
+                $('#patientName').val(val['lname']+", "+val['fname']+" "+val['mname']);
+                $('#meetPass').html(val['password']);
+                $('#meetKey').html(val['host_key']);
+                $('.btnMeeting').val(val['meetID']);
+            }
+        });
+    }
+
+    function copyToClipboard(element) {
+      var $temp = $("<input>");
+      $("body").append($temp);
+      $temp.val($(element).text()).select();
+      document.execCommand("copy");
+      $temp.remove();
+      Lobibox.notify('success', {
+            title: "",
+            msg: "copy to clipboard success",
+            size: 'mini',
+            rounded: true
+        });
+    }
+
+    function startMeeting(id) {
+        var url = "{{ url('/start-meeting') }}";
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            async: false,
+            url: url+"/"+id,
+            type: 'GET',
+            success : function(data){
+                window.open(url+"/"+id,'_blank')
+            }
+        });
+    }
+
+    $( ".btnMeeting" ).click(function() {
+        startMeeting($(this).attr("value"));
+    });
 </script>

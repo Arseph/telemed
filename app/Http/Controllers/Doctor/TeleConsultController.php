@@ -11,11 +11,19 @@ use App\Meeting;
 use Carbon\Carbon;
 class TeleConsultController extends Controller
 {
+	public function __construct()
+    {
+        if(!$login = Session::get('auth')){
+            $this->middleware('auth');
+        }
+    }
+
     public function index(Request $request) {
     	$user = Session::get('auth');
-    	$keyword = $request->date_range;
+    	$keyword = $request->view_all ? '' : $request->date_range;
         $data = Meeting::select(
         	"meetings.*",
+        	"meetings.id as meetID",
         	"pat.*"
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword){
@@ -26,7 +34,10 @@ class TeleConsultController extends Controller
                 $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
             });
         }
-        $data = $data->where("meetings.doctor_id","=", $user->id)->paginate(20);
+        $data = $data->where("meetings.doctor_id","=", $user->id)
+        		->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
+        		->orderBy('meetings.date_meeting', 'asc')
+        		->paginate(20);
     	$patients =  Patient::select(
             "patients.*",
             "user.email as email"
@@ -35,6 +46,7 @@ class TeleConsultController extends Controller
         ->get();
         return view('doctors.teleconsult',[
             'patients' => $patients,
+            'search' => $keyword,
             'data' => $data
         ]);
     }
@@ -50,7 +62,7 @@ class TeleConsultController extends Controller
 				            ->format('H:i:s');
 		$start = $date.'T'.$time.'+08:00';
 		$end = $date.'T'.$endtime.'+08:00';
-		$patients = explode('|', $req->email);
+		$toInvite = explode('|', $req->email);
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => 'https://webexapis.com/v1/meetings',
 		  CURLOPT_RETURNTRANSFER => true,
@@ -77,14 +89,14 @@ class TeleConsultController extends Controller
 		  "timezone": "Asia/Manila",
 		  "invitees": [
 		    {
-		      "email": "'.$patients[1].'",
+		      "email": "'.$toInvite[1].'",
 		      "displayName": "Patient",
 		      "coHost": false
 		    }
 		  ]
 		}',
 		  CURLOPT_HTTPHEADER => array(
-		    'Authorization: Bearer OGNjZDE2YjEtMmUzMS00ODQ4LTgwMTMtMzFjOWNkM2QwZDg1NTQwMmUwYTMtNDVh_P0A1_caaa8419-6ffd-4ddb-8fb5-d89f059408c4',
+		    'Authorization: Bearer '.env('WEBEX_API').'',
 		    'Content-Type: application/json'
 		  ),
 		));
@@ -94,7 +106,7 @@ class TeleConsultController extends Controller
 		curl_close($curl);
 		$data = array(
             'doctor_id' => $user->id,
-            'patient_id' => $patients[0],
+            'patient_id' => $toInvite[0],
             'date_meeting' => $date,
             'from_time' => $time,
             'to_time' => $endtime,
@@ -154,5 +166,31 @@ class TeleConsultController extends Controller
 				return $meet->count();
 			}
 		}
+    }
+
+    public function meetingInfo(Request $req) {
+    	$meeting = Meeting::select(
+    		"meetings.*",
+    		"pat.*",
+    		"meetings.id as meetID"
+    	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
+         ->where('meetings.id',$req->meet_id)
+        ->first();
+
+    	return json_encode($meeting);
+    }
+
+    public function indexCall($id) {
+    	$meetings = Meeting::select(
+    		"meetings.*",
+    		"pat.*",
+    		"meetings.id as meetID"
+    	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
+         ->where('meetings.id',$id)
+        ->first();
+
+        return view('doctors.teleCall',[
+        	'meeting' => $meetings
+        ]);
     }
 }
