@@ -67,6 +67,8 @@ Route::post('/sub-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteSubCat
 
 //Admin Module
 Route::get('admin','Admin\HomeController@index');
+Route::get('/admin-facility','Admin\ManageController@AdminFacility');
+Route::post('/update-facility','Admin\ManageController@updateFacility');
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');
@@ -80,6 +82,7 @@ Route::match(['GET','POST'],'/add-meeting', 'Doctor\TeleConsultController@storeM
 Route::get('/validate-datetime','Doctor\TeleConsultController@validateDateTime');
 Route::get('/meeting-info','Doctor\TeleConsultController@meetingInfo');
 Route::get('/start-meeting/{id}','Doctor\TeleConsultController@indexCall');
+Route::post('/webex-token', 'Doctor\TeleConsultController@storeToken');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

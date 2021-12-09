@@ -1,4 +1,4 @@
-const myAccessToken = document.getElementById("webex_token").value;
+const myAccessToken = document.getElementById("webex-token").getAttribute("content");
 
 if (myAccessToken === 'YOUR_ACCESS_TOKEN') {
   alert('Make sure to update your access token in the index.js file!');
@@ -34,6 +34,11 @@ function bindMeetingEvents(meeting) {
     if (media.type === 'remoteAudio') {
       document.getElementById('remote-view-audio').srcObject = media.stream;
     }
+    setTimeout(function(){
+      $('#meeting_modal').modal('hide');
+      var element = document.getElementById("contentTele");
+      element.classList.remove("hide");
+    }, 1000);
   });
 
   // Handle media streams stopping

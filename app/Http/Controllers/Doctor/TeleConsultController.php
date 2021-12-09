@@ -44,10 +44,32 @@ class TeleConsultController extends Controller
         ) ->leftJoin("users as user","patients.account_id","=","user.id")
          ->where('patients.doctor_id',$user->id)
         ->get();
+
+        $keyword_past = $request->view_all_past ? '' : $request->date_range_past;
+        $data_past = Meeting::select(
+        	"meetings.*",
+        	"meetings.id as meetID",
+        	"pat.*"
+        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+        if($keyword_past){
+        	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range_past)[0]));
+            $date_end = date('Y-m-d',strtotime(explode(' - ',$request->date_range_past)[1]));
+            $data_past = $data_past
+                ->where(function($q) use($date_start, $date_end) {
+                $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
+            });
+        }
+        $data_past = $data_past->where("meetings.doctor_id","=", $user->id)
+        		->whereDate("meetings.date_meeting", "<", Carbon::now()->toDateString())
+        		->orderBy('meetings.date_meeting', 'desc')
+        		->paginate(20);
+
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
-            'data' => $data
+            'data' => $data,
+            'pastmeetings' => $data_past,
+            'search_past' => $keyword_past
         ]);
     }
 
@@ -159,7 +181,10 @@ class TeleConsultController extends Controller
     	// 					->whereTime('to_time', '<=', $endtime)
     	// 					->count();
 		$meetings = Meeting::whereDate('date_meeting','=', $date)->get();
-		$count = 0;
+		$count = 1;
+        if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->format('H:i:s')) {
+            return $count;
+        }
 		foreach ($meetings as $meet) {
 			if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
 				
@@ -192,5 +217,20 @@ class TeleConsultController extends Controller
         return view('doctors.teleCall',[
         	'meeting' => $meetings
         ]);
+    }
+
+    public function storeToken(Request $req) {
+        $envKey = 'WEBEX_API';
+        $envValue = $req->webextoken;
+        $envFile = app()->environmentFilePath();
+        $str = file_get_contents($envFile);
+
+        $oldValue = env($envKey);
+
+        $str = str_replace("{$envKey}={$oldValue}", "{$envKey}={$envValue}\n", $str);
+
+        $fp = fopen($envFile, 'w');
+        fwrite($fp, $str);
+        fclose($fp);
     }
 }

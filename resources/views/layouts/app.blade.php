@@ -176,7 +176,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
-                        <li><a href="#"><i class="fa fa-hospital-o"></i>&nbsp; Facility</a></li>
+                        <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
                     </ul>
                 </li>
                 @endif
@@ -199,6 +199,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
+                        <li><a href="#" data-toggle="modal" data-target="#webex_modal"><i class="fas fa-coins"></i> Webex Token</a></li>
                         <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
                     </ul>
                 </li>
@@ -234,6 +235,28 @@
         <p class="pull-right">All Rights Reserved {{ date("Y") }} | Version 1.0</p>
     </div>
 </footer>
+<div class="modal fade" id="webex_modal" role="dialog" aria-labelledby="webex_modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="webex_form" method="POST">
+        {{ csrf_field() }}
+        <small>Get your personal access webex token </small><a href="https://developer.webex.com/docs/getting-started" target="_blank">here</a><br>
+        <div class="form-group">
+            <label>Your Personal Access Token:</label>
+            <input type="password" class="form-control" value="" name="webextoken" placeholder="Paste here..." required>
+        </div>
+        <small style="color: red;">Note: Please change your webex token every 12 hours.</small>
+      <div class="modal-footer">
+        <button type="submit" class="btnSaveWebex btn btn-success"><i class="fas fa-check"></i> Save</button>
+    </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Bootstrap core JavaScript
@@ -300,6 +323,20 @@
             scrollTop : 0 // Scroll to top of body
         }, 500);
     }
+
+    $('#webex_form').on('submit',function(e){
+        e.preventDefault();
+        $('.btnSaveWebex').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $('#webex_form').ajaxSubmit({
+            url:  "{{ url('/webex-token') }}",
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
+    });
 
 </script>
 

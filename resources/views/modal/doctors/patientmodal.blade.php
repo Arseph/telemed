@@ -106,6 +106,39 @@
 	         <label>Complete Address :</label>
 	        <input type="text" name="address" class="form-control others" placeholder="Enter complete address..." />
 	    </div>
+	    <button class="btn btn-primary createAccount" type="button" data-toggle="collapse" data-target="#collapseAccount" aria-expanded="false" aria-controls="collapseAccount">
+		    <i class="far fa-user-circle"></i>&nbsp;Create Account
+		</button>
+		  <div class="collapse" id="collapseAccount">
+			<div class="card card-body">
+			 <div class="form-group">
+		            <label>Email Address:</label>
+			        <input type="email" class="form-control email" id="email" name="email" value="" required>
+			        <div class="email-has-error text-bold text-danger hide">
+			            <small>Email already taken!</small>
+			        </div>
+		        </div>
+		        <div class="form-group">
+		            <label>Username:</label>
+			        <input type="text" class="form-control username" id="username" value="" name="username" readonly>
+			        <div class="username-has-error text-bold text-danger hide">
+			            <small>Username already taken!</small>
+			        </div>
+		        </div>
+		 		<div class="row rowPass">
+				    <div class="col-sm-12">
+				        <div class="form-group">
+				            <label>Password:</label>
+				        <input type="text" class="form-control" value="" name="password">
+				        </div>
+			            <button type="button" class="btn btn-warning btn-sm btn-flat generatePassword">
+		                    <i class="fas fa-key"></i> Generate Password
+		                </button>
+				    </div>
+				    <br>
+				</div>
+			</div>
+		  </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
@@ -154,22 +187,22 @@
 		<hr>
 		<div class="form-group">
             <label>Email Address:</label>
-	        <input type="text" class="form-control" id="email" name="email" value="" required>
+	        <input type="text" class="form-control email" id="emailTwo" name="email" value="" required>
 	        <div class="email-has-error text-bold text-danger hide">
 	            <small>Email already taken!</small>
 	        </div>
         </div>
         <div class="form-group">
             <label>Username:</label>
-	        <input type="text" class="form-control" id="username" value="" name="username">
+	        <input type="text" class="form-control username" id="username" value="" name="username" readonly>
 	        <div class="username-has-error text-bold text-danger hide">
 	            <small>Username already taken!</small>
 	        </div>
         </div>
-        <button type="button" class="btn btn-warning btn-sm btn-flat generateUsername">
+        <!-- <button type="button" class="btn btn-warning btn-sm btn-flat generateUsername">
             <i class="fas fa-random"></i> Generate Username
         </button>
-		<div class="row rowPass">
+ -->	<div class="row rowPass">
 		    <div class="col-sm-12">
 		        <div class="form-group">
 		            <label>Password:</label>

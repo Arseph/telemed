@@ -91,7 +91,13 @@
                 },500);
             },
             error: function (data) {
-                alert('Something went wrong! Please try again.');
+                $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'normal',
+                    rounded: true
+                });
             },
         });
 	});
