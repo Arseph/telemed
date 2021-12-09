@@ -91,7 +91,6 @@
 	});
     $('#patient_form').on('submit',function(e){
 		e.preventDefault();
-        $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 		if(toDelete) {
 			var id = $("#patient_id").val();
 			$('#patient_form').ajaxSubmit({
@@ -104,6 +103,7 @@
 	            },
 	        });
 		} else {
+            $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 			$('#patient_form').ajaxSubmit({
 	            url:  "{{ url('/patient-store') }}",
 	            type: "POST",
@@ -138,6 +138,11 @@
 	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
 	    $("[name=brgy]").select2().select2('val', edit[0].brgy);
 	    $("input[name=address]").val(edit[0].address);
+        if(edit[0].account_id) {
+            $('.createAccount').addClass('hide');
+        } else {
+            $('.createAccount').removeClass('hide');
+        }
 
 	}
 	$('#patient_modal').on('hidden.bs.modal', function () {
@@ -155,13 +160,15 @@
 	    $("[name=muncity]").select2().select2('val', '');
 	    $("[name=brgy]").select2().select2('val', '');
 	    $("input[name=address]").val('');
+        $('.createAccount').removeClass('hide');
 	});
 
     $( ".generateUsername" ).click(function() {
-        var text = "";
+        var name = $("input[name=email]").val().split('@');
+        var text = name[0] + "_";
         var username = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for( var i=0; i < 8; i++ )
+        for( var i=0; i < 2; i++ )
             text += username.charAt(Math.floor(Math.random() * username.length));
         $("input[name=username]").val(text);
     });
@@ -230,10 +237,10 @@
         $('.generateUsername').css('display', 'block');
     });
 
-    $( "#username" ).keyup(function() {
+    $( ".username" ).keyup(function() {
         invalidUsername = 0;
         $.each(users, function(key, value) {
-            if(value.username == $("#username").val()) {
+            if(value.username == $(".username").val()) {
                 invalidUsername++;
             }
         });
@@ -246,10 +253,10 @@
         }
     });
 
-    $( "#email" ).keyup(function() {
+    $( ".email" ).keyup(function() {
         invalidEmail = 0;
         $.each(users, function(key, value) {
-            if(value.email == $("#email").val()) {
+            if(value.email == $("#email").val() || value.email == $("#emailTwo").val()) {
                 invalidEmail++;
             }
         });
@@ -260,5 +267,14 @@
             $(".email-has-error").addClass("hide");
             processTwo = 'success';
         }
+    });
+    $( ".email" ).focusout(function() {
+        var name = $(this).val().split('@');
+        var text = name[0] + "_";
+        var username = "0123456789";
+
+        for( var i=0; i < 2; i++ )
+            text += username.charAt(Math.floor(Math.random() * username.length));
+        $(".username").val(text);
     });
 </script>

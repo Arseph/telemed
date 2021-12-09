@@ -31,8 +31,7 @@
     .btn-circle {
       position: relative;
       display: inline-block;
-      margin: 1em;
-      padding: 5%;
+      padding: 2%;
       border-radius: 30px;
       text-align: center;
     }
@@ -82,16 +81,11 @@
                     @if(count($data)>0)
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
-                                <tr class="hide">
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
                                 @foreach($data as $row)
-                                    <tr>
-                                      <td><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
+                                    <tr onclick="getMeeting(<?php echo $row->meetID ?>)">
+                                      <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
-                                            <a href="#" class="title-info update_info" onclick="getMeeting(<?php echo $row->meetID ?>)">
+                                            <a href="#" class="title-info update_info">
                                                {{ \Carbon\Carbon::parse($row->from_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->to_time)->format('h:i A') }}
                                                 <br><b>
                                                     <small class="text-warning">
@@ -103,7 +97,7 @@
                                         <td>
                                           <b class="text-primary">{{ $row->title }}</b>
                                           <br>
-                                          <b>Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->lname }}</b>
+                                          <b>Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}</b>
                                         </td>
                                         <td>
                                           <a href="#" class="btn-circle btn-primary" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
@@ -135,34 +129,28 @@
                         <form action="{{ asset('doctor/teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
                             <div class="form-group-lg" style="margin-bottom: 10px;">
-                                <input type="text" class="form-control" name="date_range" value="{{$search}}"placeholder="Filter your date here..." id="consolidate_date_range_past" readonly>
+                                <input type="text" class="form-control" name="date_range_past" value="{{$search_past}}"placeholder="Filter your date here..." id="consolidate_date_range_past" readonly>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search
                                 </button>
-                                <button type="submit" value="view_all" name="view_all" class="btn btn-warning btn-sm btn-flat">
+                                <button type="submit" value="view_all" name="view_all_past" class="btn btn-warning btn-sm btn-flat">
                                     <i class="fa fa-eye"></i> View All
                                 </button>
                             </div>
                         </form>
                     </div>
                     <div class="col-md-12 box-body">
-                    @if(count($data)>0)
+                    @if(count($pastmeetings)>0)
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
-                                <tr class="hide">
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                                @foreach($data as $row)
+                                @foreach($pastmeetings as $row)
                                     <tr>
-                                      <td></td>
+                                      <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
                                             <a href="#"
                                                data-toggle="modal"
                                                data-id= "{{ $row->id }}"
                                                class="title-info update_info"
-                                               data-target="#users_modal" 
-                                               onclick="getMeeting(<?php echo $row->id ?>)" 
                                                >
                                                {{ \Carbon\Carbon::parse($row->from_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->to_time)->format('h:i A') }}
                                                 <br><b>
@@ -175,7 +163,7 @@
                                         <td>
                                           <b class="text-primary">{{ $row->title }}</b>
                                           <br>
-                                          <b>Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->lname }}</b>
+                                          <b>Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}</b>
                                         </td>
                                     </tr>
                                 @endforeach

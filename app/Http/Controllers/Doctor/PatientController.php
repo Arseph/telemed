@@ -136,7 +136,26 @@ class PatientController extends Controller
         );
         if(!$req->patient_id){
             Session::put("action_made","Successfully added new Patient");
-            Patient::create($data);
+            $account = Patient::create($data);
+            if($req->email && $req->username && $req->password) {
+                $data = array(
+                    'fname' => $req->fname,
+                    'mname' => $req->mname,
+                    'lname' => $req->lname,
+                    'level' => 'patient',
+                    'facility_id' => $user->facility_id,
+                    'status' => 'active',
+                    'contact' => $req->contact,
+                    'email' => $req->email,
+                    'username' => $req->username,
+                    'password' => bcrypt($req->password)
+                );
+                $user = User::create($data);
+                $accountID = $user->id;
+                Patient::find($account->id)->update([
+                    'account_id' => $accountID
+                ]);
+            }
         }
         else{
             Session::put("action_made","Successfully updated Patient");

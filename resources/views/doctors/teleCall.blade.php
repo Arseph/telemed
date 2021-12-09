@@ -78,68 +78,212 @@
         .select2 {
             width:100%!important;
         }
-        .float{
+
+        .modal {
+          text-align: center;
+          padding: 0!important;
+        }
+
+        .modal:before {
+          content: '';
+          display: inline-block;
+          height: 100%;
+          vertical-align: middle;
+          margin-right: -4px;
+        }
+
+        .modal-dialog {
+          width: 30%;
+          display: inline-block;
+          text-align: left;
+          vertical-align: middle;
+        }
+        .hangup {
+            background-color: red;
+            color: #FFF;
+            border-radius: 100%;
+            text-align: center;
+            font-size: 30px;
+            border-style: hidden;
+        }
+        .mic {
+            background-color: gray;
+            color: #FFF;
+            border-radius: 100%;
+            text-align: center;
+            font-size: 100%;
+            border-style: hidden;
+        }
+        #self-view {
             position: fixed;
-            height: 25%;
-            bottom: 7%;
-            right: 0px;
+            width: 15%;
+            right: 10px;
+        }
+        #remote-view-video {
+            width: 100%;
+            height: 505px;
+        }
+        @media only screen and (max-width: 800px) {
+            #self-view {
+                position: inherit;
+                width: 100%;
+            }
+            #remote-view-video {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        label {
+            padding: 0px;
+        }
+        .form-group {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
-<div class="header" style="background-color:#2F4054;padding:10px;">
-    <input type="hidden" id="webex_token" value="{{ env('WEBEX_API') }}">
-    <div>
-        <div class="col-md-12">
-            <div class="pull-left">
-                <span class="title-info">{{ $meeting->title }}</span><br>
-                <b style="color: white;">Meeting with:</b> <span style="color: white;">{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }} </span>
-            </div>
-        </div>
 
-        <div class="clearfix"></div>
+<!-- Fixed navbar -->
+
+<nav class="navbar navbar-default fixed-top" >
+    <div class="header" style="background-color:#2F4054;padding:10px;">
+        <meta id="webex-token" content="{{ env('WEBEX_API') }}">
+        <div>
+            <div class="col-md-4">
+                <div class="pull-left">
+                    <span class="title-info">{{ $meeting->title }}</span><br>
+                    <b style="color: white;">Meeting with:</b> <span style="color: white;">{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }} </span>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
     </div>
-</div>
+</nav>
 <div id="app">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="box box-success">
-                <h3>Patient Form</h3>
+    <main class="py-4">
+        <form method="POST">
+        <div id="contentTele" class="row hide">
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab1" data-toggle="tab">Demographic Profile</a></li>
+                            <li><a href="#tab2" data-toggle="tab">Clinical History and Physical Examination</a></li>
+                            <li><a href="#tab3" data-toggle="tab">Covid-19 Screening</a></li>
+                            <li><a href="#tab4" data-toggle="tab">Diagnosis/Assessment</a></li>
+                            <li><a href="#tab5" data-toggle="tab">Plan of Management</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab1">
+                                <h4>Demographic Profile</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Name of physician:</label>
+                                            <input type="text" class="form-control" value="" name="physician" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="pull-right">
+                                        <a class="btn btn-primary btnNext" >Next</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab2">
+                                <h4>Clinical History and Physical Examination</h4>
+                                <div class="pull-right">
+                                    <a class="btn btn-primary btnPrevious" >Previous</a>
+                                    <a class="btn btn-primary btnNext" >Next</a>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab3">
+                                <h4>Covid-19 Screening</h4>
+                                <div class="pull-right">
+                                    <a class="btn btn-primary btnPrevious" >Previous</a>
+                                    <a class="btn btn-primary btnNext" >Next</a>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab4">
+                                <h4>Diagnosis/Assessment</h4>
+                                <div class="pull-right">
+                                    <a class="btn btn-primary btnPrevious" >Previous</a>
+                                    <a class="btn btn-primary btnNext" >Next</a>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab5">
+                                <h4>Plan of Management</h4>
+                                <div class="pull-right">
+                                    <a class="btn btn-primary btnPrevious" >Previous</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box box-success">
+                  <div class="pull-right">
+                      <video id="self-view" autoplay></video>
+                  </div>
+                  <div style="width:100%; height: 100%;">
+                    <audio id="remote-view-audio" autoplay></audio>
+                    <video id="remote-view-video" autoplay></video>
+                  </div>
+                  <div class="text-center">
+                      <!-- <button id="turnoffcamera" title="turn off camera" type="button" class="mic"><small><i class="fas fa-video"></i></small></button>
+                      <button id="turnoffmic" title="turn off mic" type="button" class="mic"><i class="fas fa-microphone"></i></button> -->
+                      <button id="hangup" title="hangup" type="button" class="hangup"><small><i class="fas fa-phone-alt"></i></small></button>&nbsp;
+                  </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-8">
-    <form id="destination">
-      <input
-        id="invitee"
-        name="invitee"
-        placeholder="Person ID or Email Address or SIP URI or Room ID"
-        type="hidden"
-        value="{{ $meeting->web_link }}"
-       />
-        <input class="" id="join" title="join" type="submit" value="join" />
-    </form>
-
-    <div>
-      <div style="width:100%; height: 100%;">
-        <audio id="remote-view-audio" autoplay></audio>
-        <video style="height:100%; width: 100%" id="remote-view-video" autoplay></video>
-      </div>
-      <div class="pull-right">
-          <video class="float" id="self-view" muted autoplay></video>
-      </div>
-    </div>
-
-    <button id="hangup" title="hangup" type="button">cancel/hangup</button>
-        </div>
-    </div>
+        </form>
+    </main>
 </div>
+
+<div class="modal fade" id="meeting_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title title-info" id="myModalLabel">{{ $meeting->title }}</h4>
+      </div>
+      <div class="modal-body">
+        <form id="destination">
+          <input
+            id="invitee"
+            name="invitee"
+            placeholder="Person ID or Email Address or SIP URI or Room ID"
+            type="hidden"
+            value="{{ $meeting->web_link }}"
+           />
+           <div class="text-center">
+            <h3>Meeting with:</h3> <h3><b>{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }}</b> </h3><br><br>
+            <label class="tired hide">Tired of waiting? Try reload the page</label><br>
+            <button type="submit" id="join" title="join" class="btnJoin btn btn-success" onclick="joining()" disabled><i class="fa fa-spinner fa-spin"></i> Loading SDK...</button>
+           </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-arrow-up"></i></button>
 <footer class="footer">
     <div class="container">
         <p class="pull-right">All Rights Reserved {{ date("Y") }} | Version 1.0</p>
     </div>
 </footer>
 
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
 <script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script>
 <script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script>
 <script src="{{ asset('public/assets/js/jquery.min.js?v='.date('mdHis')) }}"></script>
@@ -167,9 +311,14 @@
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 
-<script type="text/javascript">
+<script>
     $(document).ready(function() {
         $(".select2").select2();
+        $('#meeting_modal').modal('show');
+        setTimeout(function(){
+            $('.btnJoin').prop("disabled", false);
+            $('.btnJoin').html('<i class="far fa-play-circle"></i> Start');
+        }, 7000);
     });
     var mybutton = document.getElementById("myBtn");
     window.onscroll = function() {scrollFunction()};
@@ -185,6 +334,18 @@
             scrollTop : 0
         }, 500);
     }
+    function joining() {
+        setTimeout(function(){ $('.tired').removeClass('hide'); }, 15000);
+        $('.btnJoin').html('<i class="fa fa-spinner fa-spin"></i> Please wait...');
+    }
+
+     $('.btnNext').click(function(){
+      $('.nav-tabs > .active').next('li').find('a').trigger('click');
+    });
+
+      $('.btnPrevious').click(function(){
+      $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+    });
 
 </script>
 
