@@ -12,6 +12,7 @@ use App\Facility;
 use App\MunicipalCity;
 use App\Province;
 use App\User;
+use App\Patient;
 class ManageController extends Controller
 {
     public function __construct()
@@ -74,7 +75,10 @@ class ManageController extends Controller
     }
     public function storeUser(Request $req) {
     	$facility = Facility::find($req->facility_id);
+        $unique_id = $req->fname.' '.$req->mname.' '.$req->lname.mt_rand(1000000, 9999999);
+        $user = '';
         $data = array(
+            'doctor_id' => $req->doctor_id,
             'fname' => $req->fname,
             'mname' => $req->mname,
             'lname' => $req->lname,
@@ -89,12 +93,32 @@ class ManageController extends Controller
         );
         if($req->user_id){
             Session::put("action_made","Successfully updated account");
-            User::find($req->user_id)->update($data);
+            $user = User::find($req->user_id)->update($data);
         }
         else{
             Session::put("action_made","Successfully added new account");
-            User::create($data);
+            $user = User::create($data);
         }
+        if($req->level == 'patient') {
+            $data = array(
+                'unique_id' => $unique_id,
+                'account_id' => $user->id,
+                'doctor_id' => $req->doctor_id,
+                'facility_id' => $req->facility_id,
+                'fname' => $req->fname,
+                'mname' => $req->mname,
+                'lname' => $req->lname,
+                'contact' => $req->contact,
+                'tsekap_patient' => 0
+            );
+            $patient = Patient::where('account_id', $user->id)->first();
+            if($patient) {
+                $patient->update($data);
+            } else {
+                Patient::create($data);
+            }
+        }
+
     }
     // End User module
 
@@ -187,6 +211,9 @@ class ManageController extends Controller
 
     public function deleteFacility($id) {
         $facility = Facility::find($id);
+        $data = array(
+            'void' => 1
+        );
         $facility->delete();
         Session::put("delete_action","Successfully delete facility");
     }
@@ -358,6 +385,13 @@ class ManageController extends Controller
         $brgy = Barangay::find($id);
         $brgy->delete();
         Session::put("delete_action","Successfully delete Barangay");
+    }
+
+    public function getDoctors($id) {
+        $doctors = User::where('facility_id', '=', $id)
+                        ->where('level', '=', 'doctor')
+                        ->orderBy('lname', 'asc')->get();
+        return response()->json(['doctors'=>$doctors]);
     }
 
 }

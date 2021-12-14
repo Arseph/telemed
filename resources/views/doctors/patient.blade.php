@@ -9,6 +9,7 @@
         margin-bottom: 10px;
     }
 </style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container-fluid">
     <div class="box box-success">
         <div class="box-header with-border">
@@ -54,7 +55,7 @@
                                        data-id= "{{ $row->id }}"
                                        class="title-info update_info"
                                        data-target="#patient_modal" 
-                                       onclick="getDataFromData(this)" 
+                                       onclick="getDataFromData(this, '<?php echo $row->account_id?>')" 
                                     >
                                         {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
                                     </a>
@@ -62,12 +63,16 @@
                             </td>
                             <td>{{ $row->sex }}</td>
                             <td>
-                                <b>{{ $row->dob }}</b><br>
+                                @if($row->dob)
+                                <b><?php echo
+                                    \Carbon\Carbon::parse($row->dob)->format('F d, Y');
+                                    ?></b><br>
                                 <small class="text-success">
                                     <?php echo
                                     \Carbon\Carbon::parse($row->dob)->diff(\Carbon\Carbon::now())->format('%y years and %m months old');
                                     ?>
                                 </small>
+                                @endif
                             </td>
                             <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
@@ -75,7 +80,7 @@
                                 <a data-toggle="modal" class="btn btn-danger btn-sm btn-flat" data-target="#create_modal" onclick="getData('<?php echo $row->id?>','<?php echo $row->lname?>','<?php echo $row->fname?>','<?php echo $row->mname?>','<?php echo $row->contact?>')">
                                     <i class="far fa-user-circle"></i> Create Account
                                 </a>
-                                @elseif($row->account_id)
+                                @else
                                 <a data-toggle="modal" class="btn btn-info btn-sm btn-flat" data-target="#create_modal" onclick="getUserData('<?php echo $row->id?>','<?php echo $row->lname?>','<?php echo $row->fname?>','<?php echo $row->mname?>','<?php echo $row->contact?>','<?php echo $row->email?>','<?php echo $row->username?>')">
                                     <i class="far fa-user-circle"></i>Account
                                 </a>
@@ -84,14 +89,12 @@
                         </tr>
                         @endforeach
                     </table>
-                    <div class="text-center">
-                    {{ $data->links() }}
-                    </div>
+                    
                 </div>
             @else
                 <div class="alert alert-warning">
                     <span class="text-warning">
-                        <i class="fa fa-warning"></i> No Category found!
+                        <i class="fa fa-warning"></i> No Patients found!
                     </span>
                 </div>
             @endif

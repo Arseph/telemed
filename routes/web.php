@@ -63,6 +63,7 @@ Route::post('/main-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteMainC
 Route::match(['GET','POST'],'/diagnosis-sub-category', 'Superadmin\DiagnosisController@indexDiagSubCat');
 Route::post('/sub-cat-store', 'Superadmin\DiagnosisController@storeSubCat');
 Route::post('/sub-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteSubCat');
+Route::get('/doctor-option/{id}', 'Superadmin\ManageController@getDoctors');
 
 
 //Admin Module

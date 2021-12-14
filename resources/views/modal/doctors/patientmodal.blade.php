@@ -9,7 +9,7 @@
       	<form id="patient_form" method="POST">
       		{{ csrf_field() }}
           <div class="text-right">
-            <button id="deleteBtn" type="submit" class="btnSave btn btn-danger hide"><i class="fas fa-trash"></i> Delete</button>
+            <button id="deleteBtn" type="button" class="btnSave btn btn-danger hide"><i class="fas fa-trash"></i> Delete</button>
           </div>
           <input type="hidden" class="form-control" value="" autofocus="" name="patient_id" id="patient_id">
           <div class="row">
@@ -106,10 +106,11 @@
 	         <label>Complete Address :</label>
 	        <input type="text" name="address" class="form-control others" placeholder="Enter complete address..." />
 	    </div>
-	    <button class="btn btn-primary createAccount" type="button" data-toggle="collapse" data-target="#collapseAccount" aria-expanded="false" aria-controls="collapseAccount">
-		    <i class="far fa-user-circle"></i>&nbsp;Create Account
-		</button>
-		  <div class="collapse" id="collapseAccount">
+	    <hr>
+	    <div class="text-left">
+        	<h4>Create account</h4>
+        </div>
+		  <div id="collapseAccount">
 			<div class="card card-body">
 			 <div class="form-group">
 		            <label>Email Address:</label>
@@ -120,7 +121,7 @@
 		        </div>
 		        <div class="form-group">
 		            <label>Username:</label>
-			        <input type="text" class="form-control username" id="username" value="" name="username" readonly>
+			        <input type="text" class="form-control username" id="username" value="" name="username" required>
 			        <div class="username-has-error text-bold text-danger hide">
 			            <small>Username already taken!</small>
 			        </div>
@@ -129,7 +130,12 @@
 				    <div class="col-sm-12">
 				        <div class="form-group">
 				            <label>Password:</label>
-				        <input type="text" class="form-control" value="" name="password">
+				            <div class="input-group">
+						        <input type="password" class="form-control pwd" value="" name="password" required>
+						        <span class="input-group-btn">
+						            <button class="btn btn-default reveal" type="button"><i class="far fa-eye"></i></button>
+						        </span> 
+						    </div>
 				        </div>
 			            <button type="button" class="btn btn-warning btn-sm btn-flat generatePassword">
 		                    <i class="fas fa-key"></i> Generate Password
@@ -194,7 +200,7 @@
         </div>
         <div class="form-group">
             <label>Username:</label>
-	        <input type="text" class="form-control username" id="username" value="" name="username" readonly>
+	        <input type="text" class="form-control username" id="username1" value="" name="username" readonly>
 	        <div class="username-has-error text-bold text-danger hide">
 	            <small>Username already taken!</small>
 	        </div>

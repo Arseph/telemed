@@ -9,12 +9,16 @@ if($searchKeyword){
 @extends('layouts.app')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         label {
             padding: 0px;
         }
         .form-group {
             margin-bottom: 10px;
+        }
+        .disAble {
+            pointer-events:none;
         }
     </style>
     <div class="col-md-12">
@@ -72,11 +76,13 @@ if($searchKeyword){
                                            onclick="getDataFromUser(this)" 
                                            >
                                            {{ $row->fname }} {{ $row->mname }} {{ $row->lname }}
-                                            <br><i>
+                                            <br><label>
+                                                @if($row->email)
                                                 <small class="text-warning">
-                                                    ( {{ $row->email }} )
+                                                    Email: {{ $row->email }}
                                                 </small>
-                                            </i>
+                                                @endif
+                                            </label>
                                         </a>
                                     </td>
                                     <td>
