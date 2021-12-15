@@ -9,6 +9,13 @@ use App\Facility;
 use App\Province;
 class ManageController extends Controller
 {
+	public function __construct()
+    {
+        if(!$login = Session::get('auth')){
+            $this->middleware('auth');
+        }
+    }
+    
     public function AdminFacility() {
     	$user = Session::get('auth');
     	$facility = Facility::find($user->facility_id);

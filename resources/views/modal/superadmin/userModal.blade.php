@@ -10,8 +10,8 @@
       		{{ csrf_field() }}
       		<input type="hidden" id="user_id" class="form-control" value="" name="user_id">
       		<div class="text-right">
-            <button id="deactBtn" type="submit" class="btn btn-danger hide"><i class="fas fa-user-slash"></i> Deactivate User</button>
-            <button id="actBtn" type="submit" class="btn btn-success hide"><i class="fas fa-user-check"></i> Activate User</button>
+            <button id="deactBtn" type="button" class="btn btn-danger hide"><i class="fas fa-user-slash"></i> Deactivate User</button>
+            <button id="actBtn" type="button" class="btn btn-success hide"><i class="fas fa-user-check"></i> Activate User</button>
           </div>
       		<div class="form-group">
 		        <label>First Name:</label>
@@ -36,7 +36,7 @@
 		    <hr>
 		    <div class="form-group">
 		    	<label>Facility</label>
-		    	<select class="select2" name="facility_id">
+		    	<select id="facility" class="select2" name="facility_id">
                     <option value="">Select Facility</option>
                     @foreach($facility as $row)
                         <option value="{{ $row->id }}">{{ $row->facilityname }}</option>
@@ -45,13 +45,17 @@
 		    </div>
 		    <div class="form-group">
 		        <label>Designation:</label>
-		        <input type="text" class="form-control" value="" name="designation" required="">
+		        <input type="text" class="form-control" value="" name="designation">
 		    </div>
 		    <div class="form-group">
 		        <label>Level:</label>
-		        <select class="form-control" name="level" required="">
-		            <option value="">Select options</option>
-		            <option value="admin">Admin</option>
+		        <select id="level" class="form-control" name="level" required="">
+		            <option value="">Select level</option>
+		        </select>
+		    </div>
+		    <div id="doctorID" class="form-group hide">
+		        <label>Doctor:</label>
+		        <select id="doctor" class="form-control" name="doctor_id">
 		        </select>
 		    </div>
 		    <hr>

@@ -34,7 +34,10 @@ class LoginController extends Controller
     {
         $login = User::where('username',$req->username)
             ->first();
-        if($login)
+        if($login && $login->status=='deactivate') {
+            return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
+        }
+        else if($login)
         {
             if(Hash::check($req->password,$login->password))
             {
@@ -71,19 +74,15 @@ class LoginController extends Controller
                     return redirect('patient');
                 else{
                     Session::forget('auth');
-                    if($login->status=='deactivate') {
-                        return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
-                    } else {
-                        return Redirect::back()->withErrors(['msg' => 'You don\'t have access in this system.']);
-                    }
+                      return Redirect::back()->withErrors(['msg' => 'You don\'t have access in this system.']);
                 }
             }
             else{
-                return Redirect::back()->withErrors(['msg' => 'These credentials do not match our records']);
+                return Redirect::back()->withErrors(['msg' => 'These credentials do not match our records.']);
             }
         }
         else{
-            return Redirect::back()->withErrors(['msg' => 'These credentials do not match our records']);
+            return Redirect::back()->withErrors(['msg' => 'These credentials do not match our records.']);
         }
     }
 

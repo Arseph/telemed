@@ -4,6 +4,7 @@
     var processTwo;
     var invalid;
     var Deactivate;
+    var isToupdate;
     @if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
@@ -46,7 +47,21 @@
 	});
 	$( '#deactBtn, #actBtn' ).click(function() {
 		Deactivate = 'yes';
-		$( "#user_form" ).submit();
+		var id = $("#user_id").val();
+		if(Deactivate) {
+			$.ajax({
+				headers: {
+	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	            },
+	            url:  "{{ url('/user-deactivate') }}/"+id,
+	            type: "POST",
+	            success: function(data){
+	                setTimeout(function(){
+	                    window.location.reload(false);
+	                },500);
+	            },
+	        });
+		}
 	});
 	$('#password2').keyup(function() {
 		if($(this).val() != $('#password1').val()) {
@@ -66,18 +81,6 @@
     $("#container").addClass("container-fluid");
     $('#user_form').on('submit',function(e){
 		e.preventDefault();
-		var id = $("#user_id").val();
-		if(Deactivate) {
-			$('#user_form').ajaxSubmit({
-	            url:  "{{ url('/user-deactivate') }}/"+id,
-	            type: "POST",
-	            success: function(data){
-	                setTimeout(function(){
-	                    window.location.reload(false);
-	                },500);
-	            },
-	        });
-		}
 		if(!$('.username-has-error').hasClass("hide")) {
 			$("#username").focus();
 			$('#username').css("border","red solid 3px");
@@ -95,9 +98,9 @@
 	            url:  "{{ url('/user-store') }}",
 	            type: "POST",
 	            success: function(data){
-	                setTimeout(function(){
-	                    window.location.reload(false);
-	                },500);
+	                // setTimeout(function(){
+	                //     window.location.reload(false);
+	                // },500);
 	            },
 	        });
 		}
@@ -125,6 +128,11 @@
 	    $("input[name=designation]").val(edit[0].designation);
 	    $("[name=level]").select2().select2('val', edit[0].level);
 	    $("input[name=username]").val(edit[0].username);
+	    $("input[name=username]").prop('readonly', true);
+	    isToupdate = edit[0].doctor_id;
+	    processOne = 'success';
+	    invalid = 0;
+	    $("input[name=username]").addClass('disAble');
 
 	}
 
@@ -141,6 +149,76 @@
 	    $("[name=level]").select2().select2('val', '');
 	    $("input[name=username]").val('');
 	    $("#deactBtn").addClass("hide");
+	    $("#doctorID").addClass("hide");
+	    isToupdate = '';
+	    $('#level').empty();
+	    $("input[name=username]").prop('readonly', false);
+	    $("input[name=username]").removeClass('disAble');
+	    processOne = '';
+	    invalid = '';
 	})
+
+	$('#level').change(function() {
+		var level = this.value
+		var id = $("[name=facility_id]").val();
+		if(level == 'patient') {
+			$.ajax({
+	            url: "doctor-option/"+id+"",
+	            method: 'GET',
+	            success: function(result) {
+	            	$('#doctor').empty();
+	            	if(!isToupdate) {
+			            $("#doctor").append('<option selected>Select Doctor</option>').change();
+	            	}
+	                if(result.doctors.length <= 0) {
+	                	Lobibox.notify('error', {
+				            title: "",
+				            msg: "No doctors found in this facility.",
+				            size: 'mini',
+				            rounded: true
+				        });
+	                	$('#doctorID').addClass('hide');
+	                }else {
+	                    $.each(result.doctors,function(key,value){
+	                        $('#doctor').append($("<option/>", {
+	                           value: value.id,
+	                           text: 'Dr.' + value.fname + ' ' + value.mname + ' ' +value.lname
+	                        }));
+	                    	if(value.id == isToupdate) {
+	                    		var name = 'Dr.' + value.fname + ' ' + value.mname + ' ' +value.lname;
+	                    		var option = $("<option selected='selected'></option>").val(isToupdate).text(name);
+						  		$("#doctor").append(option).change();
+	                    	}
+	                    });
+					  	$('#doctorID').removeClass('hide');
+	                }
+	            }
+	        });
+		} else {
+			$('#doctorID').addClass('hide');
+			$('#doctor').empty();
+		}
+	});
+
+	$('#facility').change(function() {
+		var val = this.value
+		var op = $("<option selected='selected'></option>").val('').text('Select Level');
+		var option = $("<option></option>").val('admin').text('Admin');
+		var option1 = $("<option></option>").val('doctor').text('Doctor');
+		var option2 = $("<option></option>").val('patient').text('Patient');
+		if(val) {
+			$('#level').empty();
+			$("#level").append(op);
+			$("#level").append(option);
+			$("#level").append(option1);
+			$("#level").append(option2);
+		} else {
+			$('#level').empty();
+			$("#level").append(op);
+			$("#level").append(option);
+			$("#level").append(option1);
+		}
+	});
+
 
 </script>

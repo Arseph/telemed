@@ -6,6 +6,7 @@
     var invalidUsername;
     var processOne;
     var processTwo;
+    var existUsername;
 	@if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
@@ -88,34 +89,35 @@
     }
     $( "#deleteBtn" ).click(function() {
 		toDelete = 'yes';
+        var id = $("#patient_id").val();
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url:  "{{ url('/patient-delete') }}/"+id,
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
 	});
     $('#patient_form').on('submit',function(e){
 		e.preventDefault();
-		if(toDelete) {
-			var id = $("#patient_id").val();
-			$('#patient_form').ajaxSubmit({
-	            url:  "{{ url('/patient-delete') }}/"+id,
-	            type: "POST",
-	            success: function(data){
-	                setTimeout(function(){
-	                    window.location.reload(false);
-	                },500);
-	            },
-	        });
-		} else {
-            $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
-			$('#patient_form').ajaxSubmit({
-	            url:  "{{ url('/patient-store') }}",
-	            type: "POST",
-	            success: function(data){
-	                setTimeout(function(){
-	                    window.location.reload(false);
-	                },500);
-	            },
-	        });
-		}
+        $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+		$('#patient_form').ajaxSubmit({
+            url:  "{{ url('/patient-store') }}",
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
+		
 	});
-	function getDataFromData(ele) {
+	function getDataFromData(ele, id) {
 		$("#myModalLabel").html('Update Patient');
     	$("#patient_id").val($(ele).data('id'));
     	$("#deleteBtn").removeClass("hide");
@@ -125,26 +127,34 @@
 	        	edit.push(value);
 	        }
 	    });
-	    $('.select_phic').val(edit[0].phic_status).change();
-	    $("input[name=phic_id]").val(edit[0].phic_id);
-	    $("input[name=fname]").val(edit[0].fname);
-	    $("input[name=mname]").val(edit[0].mname);
-	    $("input[name=lname]").val(edit[0].lname);
-	    $("input[name=contact]").val(edit[0].contact);
-	    $("input[name=dob]").val(edit[0].dob);
-	    $("input[name=contact]").val(edit[0].contact);
-	    $('.sex').val(edit[0].sex);
-	    $('.civil_status').val(edit[0].civil_status);
-	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
-	    $("[name=brgy]").select2().select2('val', edit[0].brgy);
-	    $("input[name=address]").val(edit[0].address);
-        if(edit[0].account_id) {
-            $('.createAccount').addClass('hide');
-        } else {
-            $('.createAccount').removeClass('hide');
+        if(edit.length > 0 ) {
+    	    $('.select_phic').val(edit[0].phic_status).change();
+    	    $("input[name=phic_id]").val(edit[0].phic_id);
+    	    $("input[name=fname]").val(edit[0].fname);
+    	    $("input[name=mname]").val(edit[0].mname);
+    	    $("input[name=lname]").val(edit[0].lname);
+    	    $("input[name=contact]").val(edit[0].contact);
+    	    $("input[name=dob]").val(edit[0].dob);
+    	    $("input[name=contact]").val(edit[0].contact);
+    	    $('.sex').val(edit[0].sex);
+    	    $('.civil_status').val(edit[0].civil_status);
+    	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
+    	    $("[name=brgy]").select2().select2('val', edit[0].brgy);
+    	    $("input[name=address]").val(edit[0].address);
+            $("#email").val(edit[0].email);
+            $("#username").val(edit[0].username);
+            existUsername = edit[0].username;
         }
+        isCreate(id);
 
 	}
+    function isCreate(id) {
+         if(id > 0) {
+            $('#createAccount').addClass('hide');
+        } else {
+            $('#createAccount').removeClass('hide');
+        }
+    }
 	$('#patient_modal').on('hidden.bs.modal', function () {
 		$("#deleteBtn").addClass("hide");
 		$('.select_phic').val('');
@@ -160,7 +170,10 @@
 	    $("[name=muncity]").select2().select2('val', '');
 	    $("[name=brgy]").select2().select2('val', '');
 	    $("input[name=address]").val('');
-        $('.createAccount').removeClass('hide');
+        $('#createAccount').removeClass('hide');
+         $("#email").val('');
+        $("#username").val('');
+        existUsername = '';
 	});
 
     $( ".generateUsername" ).click(function() {
@@ -240,11 +253,14 @@
     $( ".username" ).keyup(function() {
         invalidUsername = 0;
         $.each(users, function(key, value) {
-            if(value.username == $(".username").val()) {
+            if(value.username == $("#username").val() || value.username == $("#username1").val()) {
                 invalidUsername++;
             }
         });
-        if(invalidUsername > 0) {
+        if(existUsername) {
+            $(".username-has-error").addClass("hide");
+            processOne = 'success';
+        } else if(invalidUsername > 0) {
             $(".username-has-error").removeClass("hide");
             processOne = '';
         } else {
@@ -260,12 +276,15 @@
                 invalidEmail++;
             }
         });
-        if(invalidEmail > 0) {
-            $(".email-has-error").removeClass("hide");
-            processTwo = '';
+        if(existUsername) {
+            $(".username-has-error").addClass("hide");
+            processOne = 'success';
+        } else if(invalidUsername > 0) {
+            $(".username-has-error").removeClass("hide");
+            processOne = '';
         } else {
-            $(".email-has-error").addClass("hide");
-            processTwo = 'success';
+            $(".username-has-error").addClass("hide");
+            processOne = 'success';
         }
     });
     $( ".email" ).focusout(function() {
@@ -276,5 +295,16 @@
         for( var i=0; i < 2; i++ )
             text += username.charAt(Math.floor(Math.random() * username.length));
         $(".username").val(text);
+    });
+
+    $(".reveal").on('click',function() {
+        var $pwd = $(".pwd");
+        if ($pwd.attr('type') === 'password') {
+            $pwd.attr('type', 'text');
+            $(".reveal").html('<i class="far fa-eye-slash"></i>');
+        } else {
+            $pwd.attr('type', 'password');
+            $(".reveal").html('<i class="far fa-eye"></i>');
+        }
     });
 </script>

@@ -33,7 +33,7 @@ $dateNow = date('Y-m-d');
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     <span class="help-block">
                         @if($errors->any())
-                            <strong>{{$errors->first()}}</strong>
+                            <strong style="color: #A52A2A;">{{$errors->first()}}</strong>
                         @endif
                     </span>
                   </div>

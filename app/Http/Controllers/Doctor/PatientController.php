@@ -48,7 +48,6 @@ class PatientController extends Controller
             }
         }
         Session::put('keyword',$keyword);
-        $patients = Patient::all()->where('doctor_id', $user->id);
         $data = Patient::select(
             "patients.*",
             "bar.brg_name as barangay",
@@ -56,6 +55,8 @@ class PatientController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
+        ->where('patients.doctor_id', $user->id)
+        ->where('user.doctor_id', $user->id)
         ->where(function($q) use ($keyword){
             $q->where('patients.fname',"like","%$keyword%")
                 ->orwhere('patients.lname',"like","%$keyword%")
@@ -64,7 +65,16 @@ class PatientController extends Controller
             })
             ->orderby('patients.lname','asc')
             ->paginate(30);
-        $users = User::all();
+        $patients = Patient::select(
+            "patients.*",
+            "bar.brg_name as barangay",
+            "user.email as email",
+            "user.username as username",
+        ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
+        ->leftJoin("users as user","user.id","=","patients.account_id")
+        ->where('patients.doctor_id', $user->id)
+        ->where('user.doctor_id', $user->id)->get();
+        $users = User::where('doctor_id', $user->id)->get();
         return view('doctors.patient',[
             'data' => $data,
             'municity' => $municity,
@@ -134,11 +144,13 @@ class PatientController extends Controller
             'address' => $req->address,
             'tsekap_patient' => 0
         );
-        if(!$req->patient_id){
-            Session::put("action_made","Successfully added new Patient");
-            $account = Patient::create($data);
+        if($req->patient_id){
+            Session::put("action_made","Successfully updated Patient");
+            $patient = Patient::find($req->patient_id);
+            $patient->update($data);
             if($req->email && $req->username && $req->password) {
                 $data = array(
+                    'doctor_id' => $user->id,
                     'fname' => $req->fname,
                     'mname' => $req->mname,
                     'lname' => $req->lname,
@@ -150,21 +162,51 @@ class PatientController extends Controller
                     'username' => $req->username,
                     'password' => bcrypt($req->password)
                 );
-                $user = User::create($data);
-                $accountID = $user->id;
-                Patient::find($account->id)->update([
-                    'account_id' => $accountID
-                ]);
+                $account = User::find($patient->account_id);
+                if($account) {
+                    $account->update($data);
+                } else {
+                    $account = User::create($data);
+                    Patient::find($account->id)->update([
+                        'account_id' => $account->id
+                    ]);
+                }
             }
         }
         else{
-            Session::put("action_made","Successfully updated Patient");
-            Patient::find($req->patient_id)->update($data);
+            Session::put("action_made","Successfully added new Patient");
+            $patient = Patient::create($data);
+            if($req->email && $req->username && $req->password) {
+                $data = array(
+                    'doctor_id' => $user->id,
+                    'fname' => $req->fname,
+                    'mname' => $req->mname,
+                    'lname' => $req->lname,
+                    'level' => 'patient',
+                    'facility_id' => $user->facility_id,
+                    'status' => 'active',
+                    'contact' => $req->contact,
+                    'email' => $req->email,
+                    'username' => $req->username,
+                    'password' => bcrypt($req->password)
+                );
+                $account = User::find($patient->account_id);
+                if($account) {
+                    $account->update($data);
+                } else {
+                    $account = User::create($data);
+                    Patient::find($patient->id)->update([
+                        'account_id' => $account->id
+                    ]);
+                }
+            }
         }
     }
 
     public function deletePatient($id) {
         $patient = Patient::find($id);
+        $account = User::find($patient->account_id);
+        $account->delete();
         $patient->delete();
         Session::put("delete_action","Successfully delete Patient");
     }

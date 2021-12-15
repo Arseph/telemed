@@ -1,4 +1,4 @@
-<script>;
+<script>
 	@if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
@@ -16,6 +16,40 @@
 		$( '.btnSave' ).removeClass('hide');
 		$( '#btnEdit' ).addClass('hide');
 	}
+
+	$('#province').on('change', function() {
+		var id = this.value;
+		if(id) {
+			$.ajax({
+	            url: "facilities/"+id+"/municipality",
+	            method: 'GET',
+	            success: function(result) {
+	            	$('#muni_psgc').empty();
+				  	$.each(result.municipal,function(key,value){
+                        $('#muni_psgc').append($("<option/>", {
+                           value: value.muni_psgc,
+                           text: value.muni_name
+                        }));
+                    });
+	            }
+	        });
+		}
+	});
+	$('#muni_psgc').on('change', function() {
+		var id = this.value;
+		$.ajax({
+            url: "facilities/"+id+"/barangay",
+            method: 'GET',
+            success: function(result) {
+            	 $.each(result.barangay,function(key,value){
+                    $('#barangay').append($("<option/>", {
+                       value: value.brg_psgc,
+                       text: value.brg_name
+                    }));
+                });
+            }
+        });
+	});
 
 	$('#facility_form').on('submit',function(e){
 		e.preventDefault();
