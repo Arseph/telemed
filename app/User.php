@@ -46,4 +46,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function facility() {
+        return $this->hasOne(Facility::class, 'id', 'facility_id');
+    }
 }

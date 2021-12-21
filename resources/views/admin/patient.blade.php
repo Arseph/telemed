@@ -17,7 +17,7 @@
     <div class="box box-success">
         <div class="box-header with-border">
             <div class="pull-right">
-                <form action="{{ asset('doctor/patient/list') }}" method="POST" class="form-inline">
+                <form action="{{ asset('/admin-patient') }}" method="POST" class="form-inline">
                     {{ csrf_field() }}
                     <div class="form-group-lg" style="margin-bottom: 10px;">
                         <input type="text" class="form-control" name="keyword" placeholder="Search patient..." value="{{ Session::get("keyword") }}">
@@ -36,16 +36,6 @@
             <h3>List of Patients</h3>
         </div>
         <div class="box-body">
-            <div class="pull-right">
-                <button data-toggle="modal" data-target="#request_modal" type="button" class="btn btn-primary position-relative">
-                  Request
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-red">
-                        {{ count($requested) }}
-                   </span>
-                </button>
-            </div>
-            <br>
-            <br>
             @if(count($data)>0)
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
@@ -55,6 +45,8 @@
                             <th>Age / DOB</th>
                             <th>Barangay</th>
                             <th>Contact</th>
+                            <th>Status</th>
+                            <th>Schedule</th>
                             <th></th>
                         </tr>
                         
@@ -89,8 +81,25 @@
                             </td>
                             <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
-                            <td>
-                                <a class="btn btn-info btn-sm btn-flat" onclick="meetingInfo('<?php echo $row->id?>', '1')"><i class="far fa-clock"></i>&nbsp;Schedule</a>
+                            <td>@if($row->is_accepted == 0)
+                                    <span class="badge bg-red"><span>Not Accepted</span></span>
+                                @else
+                                    <span class="badge bg-green"><span>Accepted</span></span>
+                                @endif</td>
+                            <td>@if($row->meeting)
+                                <b>{{$row->meeting->datefrom}} {{$row->meeting->time}}</b>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($row->meeting)
+                                <a data-toggle="modal" class="btn btn-success btn-sm btn-flat" data-target="#meeting_modal" onclick="getSchedule('<?php echo $row->meeting->id; ?>', '<?php echo $row->fname?>', '<?php echo $row->mname?>', '<?php echo $row->lname?>')">
+                                    <i class="far fa-clock"></i> Schedule
+                                </a>
+                                @else
+                                <a data-toggle="modal" class="btn btn-danger btn-sm btn-flat" data-target="#meeting_modal" onclick="getEmail('<?php echo $row->email?>', '<?php echo $row->fname?>', '<?php echo $row->mname?>', '<?php echo $row->lname?>', '<?php echo $row->id?>')">
+                                    <i class="far fa-clock"></i> Schedule
+                                </a>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -107,9 +116,11 @@
         </div>
     </div>
 </div>
+    @include('modal.admin.scheduleconsult')
     @include('modal.doctors.patientmodal')
 @endsection
 @section('js')
     @include('doctors.scripts.patient')
+    @include('doctors.scripts.teleconsult')
 @endsection
 

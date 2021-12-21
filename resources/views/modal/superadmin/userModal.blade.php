@@ -30,8 +30,8 @@
 		        <input type="text" class="form-control" value="" name="contact" required="">
 		    </div>
 		    <div class="form-group">
-		        <label>Email Address <small class="text-muted"><em>(Optional):</em></small></label>
-		        <input type="text" class="form-control" name="email" value="">
+		        <label>Email Address <small class="text-muted"><em>(Email address in webex account):</em></small></label>
+		        <input type="text" class="form-control" name="email" value="" required>
 		    </div>
 		    <hr>
 		    <div class="form-group">

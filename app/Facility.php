@@ -9,6 +9,9 @@ class Facility extends Model
     protected $table = 'facilities';
     protected $guarded = array();
 
+    public function region() {
+        return $this->hasOne(Region::class, 'reg_psgc', 'reg_psgc');
+    }
     public function province() {
     	return $this->hasOne(Province::class, 'prov_psgc', 'prov_psgc');
     }
