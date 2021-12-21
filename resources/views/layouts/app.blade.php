@@ -177,6 +177,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
+                        <li><a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
                     </ul>
                 </li>
                 @endif

@@ -1,12 +1,28 @@
 <script>
 	var patients = {!! json_encode($patients->toArray()) !!};
     var users = {!! json_encode($users->toArray()) !!};
+    var user = {!! json_encode($user) !!};
 	var toDelete;
     var invalidEmail;
     var invalidUsername;
     var processOne;
     var processTwo;
     var existUsername;
+    $(document).ready(function() {
+        var date = new Date();
+        var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        $('#daterange').daterangepicker({
+            minDate: today,
+            "singleDatePicker": true
+        });
+       $('.clockpicker').clockpicker({
+            donetext: 'Done',
+            twelvehour: true,
+            afterDone: function() {
+                validateTIme();
+            }
+       });
+    });
 	@if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
@@ -129,6 +145,13 @@
 	    });
         if(edit.length > 0 ) {
     	    $('.select_phic').val(edit[0].phic_status).change();
+            if(user.level == 'admin') {
+                $("#doctor_id").select2().select2('val', edit[0].doctor_id);
+            }
+            $("[name=region]").select2().select2('val', edit[0].region);
+            $("[name=province]").select2().select2('val', edit[0].province);
+    	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
+    	    $("[name=brgy]").select2().select2('val', edit[0].brgy);
     	    $("input[name=phic_id]").val(edit[0].phic_id);
     	    $("input[name=fname]").val(edit[0].fname);
     	    $("input[name=mname]").val(edit[0].mname);
@@ -138,12 +161,16 @@
     	    $("input[name=contact]").val(edit[0].contact);
     	    $('.sex').val(edit[0].sex);
     	    $('.civil_status').val(edit[0].civil_status);
-    	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
-    	    $("[name=brgy]").select2().select2('val', edit[0].brgy);
+            $("[name=nationality_id]").select2().select2('val', edit[0].nationality_id);
+            $("input[name=occupation]").val(edit[0].occupation);
     	    $("input[name=address]").val(edit[0].address);
+            $("input[name=passport_no]").val(edit[0].passport_no);
+            $("input[name=house_no]").val(edit[0].house_no);
+            $("input[name=street]").val(edit[0].street);
             $("#email").val(edit[0].email);
             $("#username").val(edit[0].username);
             existUsername = edit[0].username;
+            $('input[name=password]').attr('required',false);
         }
         isCreate(id);
 
@@ -156,6 +183,10 @@
         }
     }
 	$('#patient_modal').on('hidden.bs.modal', function () {
+        $("#myModalLabel").html('Add Patient');
+        if(user.level == 'admin') {
+            $("#doctor_id").select2().select2('val', '');
+        }
 		$("#deleteBtn").addClass("hide");
 		$('.select_phic').val('');
 	    $("input[name=phic_id]").val('');
@@ -169,11 +200,16 @@
 	    $('.civil_status').val('');
 	    $("[name=muncity]").select2().select2('val', '');
 	    $("[name=brgy]").select2().select2('val', '');
+        $("input[name=occupation]").val('');
 	    $("input[name=address]").val('');
         $('#createAccount').removeClass('hide');
          $("#email").val('');
         $("#username").val('');
+        $("input[name=passport_no]").val('');
+        $("input[name=house_no]").val('');
+        $("input[name=street]").val('');
         existUsername = '';
+        $('input[name=password]').attr('required',true);
 	});
 
     $( ".generateUsername" ).click(function() {
@@ -307,4 +343,145 @@
             $(".reveal").html('<i class="far fa-eye"></i>');
         }
     });
+    function accept(id) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url:  "{{ url('/patient-accept') }}/"+id,
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
+    }
+
+    function meetingInfo(id, isAccept) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url:  "{{ url('/patient-consult-info') }}/"+id,
+            type: "POST",
+            success: function(data){
+                console.log(data)
+                if(data) {
+                    var val = JSON.parse(data);
+                    $('[name=patient_meeting_id]').val(id);
+                    $('[name=meeting_info_id]').val(val.id);
+                    $('[name=title]').val(val.title);
+                    $('[name=datefrom]').val(val.datefrom);
+                    $('[name=time]').val(val.time);
+                    $('[name=duration]').val(val.duration);
+                    $('[name=email]').val(val.email);
+                    $("input[name=sendemail][value='"+val.sendemail+"']").prop("checked",true);
+                    $('[name=meeting_id]').val(val.id);
+                    if(isAccept > 0) {
+                        $('#MeetingBody').addClass('disAble');
+                        $('.btnSave').addClass('hide');
+                        $('.btnCancel').addClass('hide');
+                    } else {
+                        validateTIme();
+                        $('#MeetingBody').removeClass('disAble');
+                        $('.btnSave').removeClass('hide');
+                        $('.btnCancel').removeClass('hide');
+                    }
+                    $('#request_modal').modal('hide');
+                    $('#meeting_info_modal').modal('show');
+                }
+            },
+        });
+
+    }
+    function validateTIme() {
+        var url = "{{ url('/validate-datetime') }}";
+        var date = $("input[name=datefrom]").val();
+        var time = $("input[name=time]").val();
+        var doctor_id = $("select[name=doctor_id] option:checked").val();
+        var duration = $("select[name=duration] option:checked").val();
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: false,
+            data: {
+                date: date,
+                time: time,
+                duration: duration
+            },
+            success : function(data){
+                if(data > 0) {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: date + " " +time + " Schedule is not available! Please update Date and Time",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    $("input[name=datefrom]").val('');
+                    $("input[name=time]").val('');
+                }
+            }
+        });
+    }
+    $('#consultation_form').on('submit',function(e){
+        e.preventDefault();
+        var id = $("input[name=meeting_info_id]").val();
+        console.log(id)
+        $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Accepting...');
+        $('#consultation_form').ajaxSubmit({
+            url:  "{{ url('/patient-accept') }}/"+id,
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
+        
+    });
+    // $('#province').on('change', function() {
+    //     var id = this.value;
+    //     if(id) {
+    //         $.ajax({
+    //             url: "{{ url('facilities') }}/"+id+"/municipality",
+    //             method: 'GET',
+    //             success: function(result) {
+    //                 $('#municipality').empty()
+    //                 .append($('<option>', {
+    //                     value: '',
+    //                     text : 'Select Municipality...'
+    //                 }));
+    //                 $.each(result.municipal,function(key,value){
+    //                     $('#municipality').append($("<option/>", {
+    //                        value: value.muni_psgc,
+    //                        text: value.muni_name
+    //                     }));
+    //                 });
+    //             }
+    //         });
+    //     }
+    // });
+    //  $('#region').on('change', function() {
+    //     var id = this.value;
+    //     if(id) {
+    //         $.ajax({
+    //             url: "{{ url('facilities') }}/"+id+"/province",
+    //             method: 'GET',
+    //             success: function(result) {
+    //                 $('#province').empty()
+    //                 .append($('<option>', {
+    //                     value: '',
+    //                     text : 'Select Province...'
+    //                 }));
+    //                 $.each(result.province,function(key,value){
+    //                     $('#province').append($("<option/>", {
+    //                        value: value.prov_psgc,
+    //                        text: value.prov_name
+    //                     }));
+    //                 });
+    //             }
+    //         });
+    //     }
+    // }); This will use in the future
 </script>

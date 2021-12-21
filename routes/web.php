@@ -70,6 +70,9 @@ Route::get('/doctor-option/{id}', 'Superadmin\ManageController@getDoctors');
 Route::get('admin','Admin\HomeController@index');
 Route::get('/admin-facility','Admin\ManageController@AdminFacility');
 Route::post('/update-facility','Admin\ManageController@updateFacility');
+Route::match(['GET','POST'],'/admin-patient','Admin\ManageController@patientList');
+Route::match(['GET','POST'],'/admin-sched-pending','Admin\ManageController@schedTeleStore');
+Route::get('/admin-meeting-info','Admin\ManageController@meetingInfo');
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');
@@ -84,6 +87,8 @@ Route::get('/validate-datetime','Doctor\TeleConsultController@validateDateTime')
 Route::get('/meeting-info','Doctor\TeleConsultController@meetingInfo');
 Route::get('/start-meeting/{id}','Doctor\TeleConsultController@indexCall');
 Route::post('/webex-token', 'Doctor\TeleConsultController@storeToken');
+Route::post('/patient-accept/{id}', 'Doctor\PatientController@acceptPatient');
+Route::post('/patient-consult-info/{id}', 'Doctor\PatientController@patientConsultInfo');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

@@ -169,6 +169,9 @@ class ManageController extends Controller
         } else if($type === 'barangay'){
             $barangay = Barangay::where('muni_psgc', '=', $id)->orderBy('brg_name', 'asc')->get();
             return response()->json(['barangay'=>$barangay]);
+        } else if($type === 'province'){
+            $province = Province::where('reg_code', '=', $id)->orderBy('prov_name', 'asc')->get();
+            return response()->json(['province'=>$province]);
         }
     }
 

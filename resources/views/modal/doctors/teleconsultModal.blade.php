@@ -44,7 +44,7 @@
 		            <select class="form-control muncity filter_muncity select2" name="email" required>
 		        		<option value="">Select Patient ...</option>
 			              @foreach($patients as $p)
-			                <option value="{{ $p->id }}|{{$p->email}}">{{ $p->lname }}, {{ $p->fname }} {{ $p->mname }}</option>
+			                <option value="{{ $p->id }}|{{$p->email}}">{{ $p->lname }}, {{ $p->fname }} {{ $p->mname }} @if($p->email)(<small>{{$p->email}}</small>)@endif</option>
 		                 @endforeach 
 	                </select>
 		        </div>

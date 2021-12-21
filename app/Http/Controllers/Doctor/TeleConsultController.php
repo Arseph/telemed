@@ -165,8 +165,10 @@ class TeleConsultController extends Controller
     }
 
     public function validateDateTime(Request $req) {
+        $user = Session::get('auth');
     	$date = Carbon::parse($req->date)->format('Y-m-d');
     	$time = Carbon::parse($req->time)->format('H:i:s');
+        $doctor_id = $req->doctor_id ? $req->doctor_id : $user->id;
     	$endtime = Carbon::parse($time)
 		            ->addMinutes($req->duration)
 		            ->format('H:i:s');
@@ -180,7 +182,7 @@ class TeleConsultController extends Controller
     	// 					->orWhereTime('from_time', '>=', $endtime)
     	// 					->whereTime('to_time', '<=', $endtime)
     	// 					->count();
-		$meetings = Meeting::whereDate('date_meeting','=', $date)->get();
+		$meetings = Meeting::whereDate('date_meeting','=', $date)->where('doctor_id', $doctor_id)->get();
 		$count = 1;
         if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->format('H:i:s')) {
             return $count;
@@ -213,9 +215,11 @@ class TeleConsultController extends Controller
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
          ->where('meetings.id',$id)
         ->first();
+        $case_no = mt_rand(100000000, 999999999);
 
         return view('doctors.teleCall',[
-        	'meeting' => $meetings
+        	'meeting' => $meetings,
+            'case_no' => $case_no
         ]);
     }
 

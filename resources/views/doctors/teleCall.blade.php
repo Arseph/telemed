@@ -139,6 +139,11 @@
         .form-group {
             margin-bottom: 10px;
         }
+        .vertical-scrollable{
+          height:399px;
+          overflow-y: scroll; 
+          overflow-x: hidden;
+        }
     </style>
 </head>
 
@@ -164,7 +169,7 @@
 <div id="app">
     <main class="py-4">
         <form method="POST">
-        <div id="contentTele" class="row hide">
+        <div id="contentTele" class="row">
             <div class="col-md-6">
                 <div class="box box-success">
                     <div class="box-body">
@@ -175,52 +180,257 @@
                             <li><a href="#tab4" data-toggle="tab">Diagnosis/Assessment</a></li>
                             <li><a href="#tab5" data-toggle="tab">Plan of Management</a></li>
                         </ul>
-                        <div class="tab-content">
+                        <div class="tab-content vertical-scrollable">
                             <div class="tab-pane active" id="tab1">
-                                <h4>Demographic Profile</h4>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Name of physician:</label>
-                                            <input type="text" class="form-control" value="" name="physician" required>
+                                <div class="box box-success">
+                                    <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+                                        <h4 style="">Demographic Profile</h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Name of physician:</label>
+                                                    <input type="text" class="form-control" value="" name="physician" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Date and Time of Teleconsultation:</label>
+                                                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->date_meeting)->format('M d, Y') }} {{ \Carbon\Carbon::parse($meeting->from_time)->format('h:i A') }}" name="dateandtime" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Name and Address of Health Facility<em>(if applicable):</em></label>
+                                                    <input type="text" class="form-control" value="" name="address_health">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Name of Telemedicine Partner<em>(if applicable):</em><small><br>If none, Indicate telemedicine platform being used:</small   ></label>
+                                                    <input type="text" class="form-control" value="" name="tele_partner_platform" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Prior to teleconsultation proper, obtain patient consent:</label>
+                                                <label class="radio-inline">
+                                                  <input type="radio" name="prior_tele_proper" required>Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                  <input type="radio" name="prior_tele_proper">No
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Is patient accompanied/assisted by another person during the consultation:</label>
+                                                <label class="radio-inline">
+                                                  <input type="radio" name="is_patient_accompanied" value="Yes" required>Yes
+                                                </label>
+                                                <label class="radio-inline">
+                                                  <input type="radio" name="is_patient_accompanied" value="No">No
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div id="companion" class="row hide">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Name of Companion:</label>
+                                                    <input type="text" class="form-control" value="" name="companion_name" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Relationship:</label>
+                                                    <input type="text" class="form-control" value="" name="companion_relation" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Contact No:</label>
+                                                    <input type="text" class="form-control" value="" name="companion_contact" required>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        
-                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="pull-right">
-                                        <a class="btn btn-primary btnNext" >Next</a>
+                                <div class="box box-success">
+                                    <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h4 style="">Patient Profile</h4>
+                                            </div>
+                                            <div class="col-md-6 form-inline">
+                                                <div class="form-group">
+                                                    <label>Case #:</label>
+                                                    <input type="text" class="form-control" value="{{ $case_no }}" name="case_no" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Last Name:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->lname }}@endif" name="lname" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>First Name:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->fname }}@endif" name="fname" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>First Name:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->mname }}@endif" name="mname" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Birthday:</label>
+                                                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->patient->dob)->format('m/d/Y') }}" name="bday" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Age:</label>
+                                                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->patient->dob)->diff(\Carbon\Carbon::now())->format('%y years old') }}" name="age" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Sex:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->sex }}@endif" name="mname" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Occupation:</label>
+                                                    <input type="text" class="form-control" value="{{ $meeting->occupation }}" name="occupation" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Civil Status:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->civil_status }}@endif" name="civil_status" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Nationality:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient->nationality){{ $meeting->patient->nationality->nationality }}@endif" name="nationality" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Philheath No:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->phic_id }}@endif" name="phic_id" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Passport No:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->passport_no }}@endif" name="passport_no" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Region:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient->reg){{ $meeting->patient->reg->reg_desc }}@endif" name="region" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>House No./Lot/Bldg:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->house_no }}@endif" name="house_no" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Street:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->street }}@endif" name="street" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Province:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient->prov){{ $meeting->patient->prov->prov_name }}@endif" name="province" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Municipality:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient->muni){{ $meeting->patient->muni->muni_name }}@endif" name="muni_name" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Barangay:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient->barangay){{ $meeting->patient->barangay->brg_name }}@endif" name="barangay" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Contact No:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->contact }}@endif" name="province" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Email Address:</label>
+                                                    <input type="text" class="form-control" value="@if($meeting->patient->account){{ $meeting->patient->account->email }}@endif" name="muni_name" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="tab2">
                                 <h4>Clinical History and Physical Examination</h4>
-                                <div class="pull-right">
-                                    <a class="btn btn-primary btnPrevious" >Previous</a>
-                                    <a class="btn btn-primary btnNext" >Next</a>
-                                </div>
                             </div>
                             <div class="tab-pane" id="tab3">
                                 <h4>Covid-19 Screening</h4>
-                                <div class="pull-right">
-                                    <a class="btn btn-primary btnPrevious" >Previous</a>
-                                    <a class="btn btn-primary btnNext" >Next</a>
-                                </div>
                             </div>
                             <div class="tab-pane" id="tab4">
                                 <h4>Diagnosis/Assessment</h4>
-                                <div class="pull-right">
-                                    <a class="btn btn-primary btnPrevious" >Previous</a>
-                                    <a class="btn btn-primary btnNext" >Next</a>
-                                </div>
                             </div>
                             <div class="tab-pane" id="tab5">
                                 <h4>Plan of Management</h4>
                                 <div class="pull-right">
-                                    <a class="btn btn-primary btnPrevious" >Previous</a>
+                                    
                                 </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="pull-right">
+                                <a title="Previous" class="btn btnPrevious hide" >Previous &nbsp;<i class="fas fa-less-than"></i></a>
+                                <a title="Next" class="btn btnNext" >Next &nbsp;<i class="fas fa-greater-than"></i></a>
                             </div>
                         </div>
                     </div>
@@ -284,8 +494,8 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script>
-<script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script>
+<!-- <script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script>
+<script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script> -->
 <script src="{{ asset('public/assets/js/jquery.min.js?v='.date('mdHis')) }}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ asset('public/plugin/bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
@@ -314,7 +524,7 @@
 <script>
     $(document).ready(function() {
         $(".select2").select2();
-        $('#meeting_modal').modal('show');
+        // $('#meeting_modal').modal('show');
         setTimeout(function(){
             $('.btnJoin').prop("disabled", false);
             $('.btnJoin').html('<i class="far fa-play-circle"></i> Start');
@@ -338,14 +548,36 @@
         setTimeout(function(){ $('.tired').removeClass('hide'); }, 15000);
         $('.btnJoin').html('<i class="fa fa-spinner fa-spin"></i> Please wait...');
     }
-
+    var val = 0;
      $('.btnNext').click(function(){
-      $('.nav-tabs > .active').next('li').find('a').trigger('click');
+       val++;
+       $('.nav-tabs > .active').next('li').find('a').trigger('click');
+       if(val > 0) {
+         $('.btnPrevious').removeClass('hide');
+       }
+       if(val >= 4) {
+        $(this).addClass('hide');
+       }
     });
-
-      $('.btnPrevious').click(function(){
+    $('.btnPrevious').click(function(){
+      val--;
+      if(val <= 0) {
+        $(this).addClass('hide');
+      }
+      if(val > 0) {
+         $('.btnNext').removeClass('hide');
+       }
       $('.nav-tabs > .active').prev('li').find('a').trigger('click');
     });
+
+    $('input[type=radio][name=is_patient_accompanied]').change(function() {
+    if (this.value == 'Yes') {
+        $('#companion').removeClass('hide');
+    }
+    else if (this.value == 'No') {
+        $('#companion').addClass('hide');
+    }
+});
 
 </script>
 
