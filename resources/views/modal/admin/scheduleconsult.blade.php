@@ -28,7 +28,7 @@
 		     <div class="row">
 			     <div class="col-sm-6">
 			     	<label>Date:</label>
-			     	<input type="text" id="daterange" value="" name="datefrom" class="form-control" placeholder="Select Date" required/>
+			     	<input type="text" value="" name="datefrom" class="form-control daterange" placeholder="Select Date" required/>
 			     </div>
 			     <div class="col-sm-3">
 			     	<label>Time:</label>

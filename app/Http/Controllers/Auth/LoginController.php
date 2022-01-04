@@ -74,14 +74,17 @@ class LoginController extends Controller
                     return redirect('patient');
                 else{
                     Session::forget('auth');
+                    Session::put('username', $req->username);
                       return Redirect::back()->withErrors(['msg' => 'You don\'t have access in this system.']);
                 }
             }
             else{
+                Session::put('username', $req->username);
                 return Redirect::back()->withErrors(['msg' => 'These credentials do not match our records.']);
             }
         }
         else{
+            Session::put('username', $req->username);
             return Redirect::back()->withErrors(['msg' => 'These credentials do not match our records.']);
         }
     }

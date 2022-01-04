@@ -100,7 +100,17 @@
                     }else if($user->level=='patient'){
                         $dept_desc = ' / Patient';
                     }
-
+                    $requestedPatient = \App\Patient::select(
+                        "patients.*",
+                        "bar.brg_name as barangay",
+                        "user.email as email",
+                        "user.username as username",
+                    ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
+                    ->leftJoin("users as user","user.id","=","patients.account_id")
+                    ->where('patients.doctor_id', $user->id)
+                    ->where('user.doctor_id', $user->id)
+                    ->where('patients.is_accepted', 0)
+                    ->get();
                     ?>
                     <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
                 </div>
@@ -178,17 +188,18 @@
                         <li><a href="#"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
                         <li><a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
+                        <li><a href="#"><i class="fas fa-video"></i>&nbsp; Teleconsultation</a></li>
                     </ul>
                 </li>
                 @endif
                 <!-- for doctors -->
                 @if($user->level=='doctor')
                 <li><a href="{{ asset('doctor') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-phone-alt"></i> Teleconsultation</a></li>
+                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
+                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient <span class="badge bg-red">{{ count($requestedPatient) }}</span></a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -291,6 +302,14 @@
 <script>
     $(document).ready(function() {
         $(".select2").select2();
+        var user = {!! json_encode($user) !!};
+        if(user.level == 'doctor') {
+            Lobibox.notify('info', {
+                size: 'large',
+                title: 'Webex Token',
+                msg: 'Remember to change your webex token every 12 hours.'
+            }); 
+        }
     });
     function refreshPage(){
         <?php

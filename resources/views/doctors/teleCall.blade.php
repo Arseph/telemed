@@ -210,7 +210,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Name of Telemedicine Partner<em>(if applicable):</em><small><br>If none, Indicate telemedicine platform being used:</small   ></label>
+                                                    <label>Name of Telemedicine Partner<em>(if applicable):</em><small><br>If none, Indicate telemedicine platform being used:</small></label>
                                                     <input type="text" class="form-control" value="" name="tele_partner_platform" required>
                                                 </div>
                                             </div>
@@ -411,7 +411,39 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="tab2">
-                                <h4>Clinical History and Physical Examination</h4>
+                                <div class="box box-success">
+                                    <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+                                        <h4 style="">Clinical History</h4>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Reason for Consultation:</label>
+                                                    <input type="text" class="form-control" value="" name="reason_consult" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Date of Onset of Illness:</label>
+                                                    <input type="text" class="form-control" value="" name="reason_consult" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Referral Health Facility:</label>
+                                                    <input type="text" class="form-control" value="" name="reason_consult" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Date of Referral:</label>
+                                                        <input type="text" id="daterange" value="" name="date_referral" class="form-control" placeholder="Select Date" required/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane" id="tab3">
                                 <h4>Covid-19 Screening</h4>
@@ -494,8 +526,8 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<!-- <script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script>
-<script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script> -->
+<!-- <script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script> -->
+<script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script>
 <script src="{{ asset('public/assets/js/jquery.min.js?v='.date('mdHis')) }}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ asset('public/plugin/bower_components/jquery-ui/jquery-ui.min.js') }}"></script>

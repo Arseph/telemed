@@ -11,7 +11,7 @@
     $(document).ready(function() {
         var date = new Date();
         var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        $('#daterange').daterangepicker({
+        $('.daterange').daterangepicker({
             minDate: today,
             "singleDatePicker": true
         });
@@ -323,14 +323,14 @@
             processOne = 'success';
         }
     });
-    $( ".email" ).focusout(function() {
-        var name = $(this).val().split('@');
-        var text = name[0] + "_";
-        var username = "0123456789";
+    $( "[name=dob]" ).change(function() {
 
-        for( var i=0; i < 2; i++ )
-            text += username.charAt(Math.floor(Math.random() * username.length));
-        $(".username").val(text);
+        var text = $('[name=fname]').val();
+        var username = $("[name=dob]").val().split('-');
+        if(text.length > 0) {
+            text += username[0] + username[1] + username[2];
+            $("#usernamesug").html("suggestion:"+text);
+        }
     });
 
     $(".reveal").on('click',function() {
@@ -366,7 +366,6 @@
             url:  "{{ url('/patient-consult-info') }}/"+id,
             type: "POST",
             success: function(data){
-                console.log(data)
                 if(data) {
                     var val = JSON.parse(data);
                     $('[name=patient_meeting_id]').val(id);
@@ -440,6 +439,11 @@
         });
         
     });
+
+    function getUsername() {
+        username = $("#usernamesug").html().split(':');
+        $("#username").val(username[1]);
+    }
     // $('#province').on('change', function() {
     //     var id = this.value;
     //     if(id) {
