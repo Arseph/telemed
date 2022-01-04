@@ -73,14 +73,7 @@ class PatientController extends Controller
         ->where('patients.doctor_id', $user->id)
         ->where('user.doctor_id', $user->id)
         ->where('patients.is_accepted', 0)
-        ->where(function($q) use ($keyword){
-            $q->where('patients.fname',"like","%$keyword%")
-                ->orwhere('patients.lname',"like","%$keyword%")
-                ->orwhere('patients.mname',"like","%$keyword%");
-               
-            })
-            ->orderby('patients.lname','asc')
-            ->paginate(30);
+        ->get();
 
         $patients = Patient::select(
             "patients.*",

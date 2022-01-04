@@ -1,4 +1,4 @@
-<div class="modal fade" id="main_cat_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true">
+<div class="modal fade" id="main_cat_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

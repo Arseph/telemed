@@ -1,4 +1,4 @@
-<div class="modal fade" id="patient_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true">
+<div class="modal fade" id="patient_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -12,7 +12,7 @@
             <button id="deleteBtn" type="button" class="btnSave btn btn-danger hide"><i class="fas fa-trash"></i> Delete</button>
           </div>
           <input type="hidden" class="form-control" value="" autofocus="" name="patient_id" id="patient_id">
-          @if($user->level == 'admin')
+         <!--  @if($user->level == 'admin')
           <div class="form-group">
             <label>Doctor:</label>
             <select class="form-control select2" name="doctor_id" id="doctor_id" required>
@@ -22,7 +22,7 @@
                  @endforeach 
             </select>
 	      </div>
-          @endif
+          @endif -->
           <div class="row">
 		     <div class="col-sm-6">
 		     	<label>PhilHealth Status:</label>
@@ -184,14 +184,14 @@
 		  <div id="collapseAccount">
 			<div class="card card-body">
 			 <div class="form-group">
-		            <label>Email Address:<small class="text-muted"><em>(Enter Active email):</em></small></label>
+		            <label>Email Address:</label>
 			        <input type="email" class="form-control email" id="email" name="email" value="" required>
 			        <div class="email-has-error text-bold text-danger hide">
 			            <small>Email already taken!</small>
 			        </div>
 		        </div>
 		        <div class="form-group">
-		            <label>Username:</label>
+		            <label>Username: <code id="usernamesug" onclick="getUsername()"></code></label>
 			        <input type="text" class="form-control username" id="username" value="" name="username" required>
 			        <div class="username-has-error text-bold text-danger hide">
 			            <small>Username already taken!</small>
@@ -240,12 +240,12 @@
           <input type="hidden" class="form-control" value="" autofocus="" name="patient_meeting_id">
           <div class="form-group">
 		     	<label>Title:</label>
-		        <input type="text" class="form-control" value="" name="title" required>
+		        <input type="text" class="form-control" value="" name="title" required readonly>
 		     </div>
 		     <div class="row">
 			     <div class="col-sm-6">
 			     	<label>Date:</label>
-			     	<input type="text" id="daterange" value="" name="datefrom" class="form-control" placeholder="Select Date" required/>
+			     	<input type="text" value="" name="datefrom" class="form-control daterange" placeholder="Select Date" required/>
 			     </div>
 			     <div class="col-sm-3">
 			     	<label>Time:</label>
@@ -284,7 +284,7 @@
 			     </div>
 			 </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btnCancel btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+		        <button type="button" class="btnCancel btn btn-danger" data-dismiss="modal" onclick=""><i class="fas fa-times"></i>&nbsp;Decline</button>
 		        <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Accept</button>
 		     </div>
 	      </div>

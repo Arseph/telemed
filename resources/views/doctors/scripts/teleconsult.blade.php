@@ -8,7 +8,7 @@
         $('#consolidate_date_range_past').daterangepicker({
             maxDate: today
         });
-        $('#daterange').daterangepicker({
+        $('.daterange').daterangepicker({
             minDate: today,
             "singleDatePicker": true
         });
@@ -20,7 +20,7 @@
             }
        });
     });
-    $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+    $('.daterange').on('apply.daterangepicker', function(ev, picker) {
       validateTIme();
     });
     @if(Session::get('action_made'))
