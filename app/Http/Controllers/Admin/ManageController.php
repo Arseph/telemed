@@ -103,10 +103,15 @@ class ManageController extends Controller
     }
 
     public function schedTeleStore(Request $req) {
+        $date = date('Y-m-d', strtotime($req->date_from));
+        $req->request->add([
+            'status' => 'Pending',
+            'datefrom' => $date
+        ]);
         if($req->meeting_id) {
-            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id'));
+            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id', 'date_from'));
         } else {
-            PendingMeeting::create($req->except('meeting_id'));
+            PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
         }
         Session::put("action_made","Please wait for the confirmation of doctor.");
     }

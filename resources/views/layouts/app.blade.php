@@ -78,6 +78,10 @@
         .select2 {
             width:100%!important;
         }
+        #munMenu {
+            max-height: 280px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -88,7 +92,7 @@
 <nav class="navbar navbar-default fixed-top" >
     <div class="header" style="background-color:#2F4054;padding:10px;">
         <div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="pull-left">
                     <?php
                     $user = Session::get('auth');
@@ -100,19 +104,23 @@
                     }else if($user->level=='patient'){
                         $dept_desc = ' / Patient';
                     }
-                    $requestedPatient = \App\Patient::select(
-                        "patients.*",
-                        "bar.brg_name as barangay",
-                        "user.email as email",
-                        "user.username as username",
-                    ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
-                    ->leftJoin("users as user","user.id","=","patients.account_id")
-                    ->where('patients.doctor_id', $user->id)
-                    ->where('user.doctor_id', $user->id)
-                    ->where('patients.is_accepted', 0)
-                    ->get();
-                    ?>
+                   $requestedPatient = \App\PendingMeeting::select(
+            "pending_meetings.*",
+            "pending_meetings.id as meetID",
+            "pending_meetings.created_at as reqDate",
+            "pat.*",
+        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
+        ->where("pending_meetings.doctor_id","=", $user->id)
+        ->where('pending_meetings.status', 'Pending')->get();
+        ?>
                     <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    @if($user->level != 'superadmin')
+                    <span class="title-info">Facility:</span> <span class="title-desc">{{ $user->facility->facilityname }}</span>
+                    @endif
                 </div>
             </div>
 
@@ -149,7 +157,19 @@
                             </ul>
                         </li>
                         <li><a href="#"><i class="fas fa-medkit"></i>&nbsp; Drugs/Meds</a></li>
-                        <li><a href="#"><i class="fas fa-chart-area"></i>&nbsp; Demographic</a></li>
+                        <li class="dropdown-submenu"><a href="#"><i class="fas fa-chart-area"></i>&nbsp; Demographic</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ asset('provinces') }}"><i class="fa fa-hospital-o"></i>&nbsp; Province</a></li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="nav-label"><i class="fa fa-hospital-o"></i>&nbsp;&nbsp;&nbsp; Municipality</span></a>
+                                    <ul class="dropdown-menu" id="munMenu">
+                                        @foreach(\App\Province::where('reg_psgc', '120000000')->get() as $prov)
+                                            <li><a href="{{ url('municipality').'/'.$prov->prov_psgc.'/'.$prov->prov_name }}">{{ $prov->prov_name }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -157,49 +177,48 @@
                     <ul class="dropdown-menu">
                         <li><a href="{{ asset('/users') }}"><i class="fas fa-users"></i>&nbsp; Users</a></li>
                         <li><a href="#"><i class="fas fa-user-check"></i>&nbsp; User Approval</a></li>
-                        <li><a href="#"><i class="fa fa-list-alt"></i>Role/Permission</a></li>
-                        <li><a href="{{ asset('facilities') }}"><i class="fa fa-hospital-o"></i>&nbsp; Facilities</a></li>
-                        <li><a href="{{ asset('provinces') }}"><i class="fa fa-hospital-o"></i>&nbsp; Province</a></li>
-                        <li class="dropdown-submenu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="nav-label"><i class="fa fa-hospital-o"></i>&nbsp;&nbsp;&nbsp; Municipality</span></a>
-                            <ul class="dropdown-menu">
-                                @foreach(\App\Province::get() as $prov)
-                                    <li><a href="{{ url('municipality').'/'.$prov->prov_psgc.'/'.$prov->prov_name }}">{{ $prov->prov_name }}</a></li>
-                                @endforeach
-                            </ul>
-                        </li>
+                        <li><a href="#"><i class="fas fa-list-ul"></i>&nbsp; Role/Permission</a></li>
+                        <li><a href="{{ asset('facilities') }}"><i class="fas fa-hospital-alt"></i>&nbsp;&nbsp;Facilities</a></li>
+                        <li><a href="{{ asset('tele-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Teleconsultation Category</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="far fa-newspaper"></i> Reports <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-file-o"></i> Monitoring Report</a></li>
-                        <li><a href="#"><i class="fa fa-user-md"></i> Audit Trail</a></li>
-                        <li><a href="#"><i class="fa fa-comments"></i>Feedback</a></li>
+                        <li><a href="#"><i class="far fa-file"></i>&nbsp; Monitoring Report</a></li>
+                        <li><a href="{{ asset('audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; Audit Trail</a></li>
+                        <li><a href="#"><i class="fas fa-comments"></i>&nbsp; Feedback</a></li>
                     </ul>
                 </li>
                 @endif
                 <!-- for admin -->
                 @if($user->level=='admin')
                 <li><a href="{{ asset('admin') }}"><i class="fa fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ asset('/admin-teleconsult') }}"><i class="fas fa-video"></i>&nbsp; Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
                         <li><a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
-                        <li><a href="#"><i class="fas fa-video"></i>&nbsp; Teleconsultation</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-toggle="modal" data-target="#webex_modal"><i class="fas fa-coins"></i> Webex Token</a></li>
+                        <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
                     </ul>
                 </li>
                 @endif
                 <!-- for doctors -->
                 @if($user->level=='doctor')
                 <li><a href="{{ asset('doctor') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
+                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-video"></i> Teleconsultation <span class="badge bg-red">@if(count($requestedPatient) > 0){{ count($requestedPatient) }}@endif</span></a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient <span class="badge bg-red">{{ count($requestedPatient) }}</span></a></li>
+                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -302,14 +321,6 @@
 <script>
     $(document).ready(function() {
         $(".select2").select2();
-        var user = {!! json_encode($user) !!};
-        if(user.level == 'doctor') {
-            Lobibox.notify('info', {
-                size: 'large',
-                title: 'Webex Token',
-                msg: 'Remember to change your webex token every 12 hours.'
-            }); 
-        }
     });
     function refreshPage(){
         <?php

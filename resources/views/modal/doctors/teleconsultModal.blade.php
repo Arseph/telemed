@@ -1,67 +1,145 @@
-<div class="modal fade" id="meeting_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="tele_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Schedule Meeting</h4>
+        <h4 class="modal-title" id="myModalMeetingLabel">Schedule Teleconsultation</h4>
       </div>
-      <div class="modal-body">
-      	<form id="meeting_form" method="GET">
+      <div class="modal-body" id="meetingInfo">
+      	<form id="tele_form" method="POST">
       		{{ csrf_field() }}
-	     <div class="form-group">
-	     	<label>Title:</label>
-	        <input type="text" class="form-control" value="" name="title" required>
-	     </div>
-	     <div class="row">
-		     <div class="col-sm-6">
-		     	<label>Date:</label>
-		     	<input type="text" id="daterange" value="" name="datefrom" class="form-control" placeholder="Select Date" onkeyup="validateTIme()" required/>
+    		<input type="hidden" name="meeting_id">
+    		<input type="hidden" name="user_id" value="{{ Session::get('auth')->id }}">
+      	<div class="form-group" id="facilityField">
+            <label>Facility:</label>
+            <select class="form-control select2 selectFacility" name="facility_id" required>
+            	<option value="">Select Facility ...</option>
+	              @foreach($facilities as $fac)
+	                <option value="{{ $fac->id }}">{{ $fac->facilityname }}</option>
+                 @endforeach 
+            </select>
+        </div>
+	     <div id="scheduleMeeting" class="hide">
+    		<div class="form-group">
+          <label>Doctor:</label>
+          <select class="form-control select2 selectDoctor" name="doctor_id" required>
+          </select>
+        </div>
+        <div class="form-group">
+        	 <label>Patient:</label>
+          <select class="form-control select2" name="patient_id" id="patient_id" required>
+          	<option value="">Select Patient ...</option>
+              @foreach($patients as $pat)
+                <option value="{{ $pat->id }}">{{ $pat->lname }}, {{ $pat->fname }} {{ $pat->mname }}</option>
+               @endforeach 
+          </select>
+        </div>
+	     	<div class="form-group">
+		     	<label>Title:</label>
+		        <input type="text" class="form-control" value="" name="title" required>
 		     </div>
-		     <div class="col-sm-3">
-		     	<label>Time:</label>
-		     	<div class="input-group clockpicker">
-				    <input type="text" class="form-control" name="time" placeholder="Time" required>
-				    <span class="input-group-addon">
-				        <span class="glyphicon glyphicon-time"></span>
-				    </span>
-				</div>
+		     <div class="row">
+			     <div class="col-sm-6">
+			     	<label>Date of teleconsultation:</label>
+			     	<input type="text" value="" name="date_from" class="form-control daterange" placeholder="Select Date" required/>
+			     </div>
+			     <div class="col-sm-3">
+			     	<label>Time:</label>
+			     	<div class="input-group clockpicker" data-placement="right" data-align="top" data-autoclose="true">
+					    <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
+					    <span class="input-group-addon">
+					        <span class="glyphicon glyphicon-time"></span>
+					    </span>
+					</div>
+			     </div>
+			     <div class="col-sm-3">
+			     	<label>Duration:</label>
+			     	<select class="form-control duration" name="duration" onchange="validateTIme()" required>
+		                <option value="10">10 Minutes</option>
+		                <option value="20">20 Minutes</option>
+		                <option value="30">30 Minutes</option>
+		                <option value="40">40 Minutes</option>
+		                <option value="50">50 Minutes</option>
+		            </select>
+			     </div>
+			 </div>
+			 <div class="row">
+			     <div class="col-sm-6">
+			     	<div class="form-group">
+			            <label>Patient Email:</label>
+				        <input type="text" class="form-control" value="" name="email" required>
+			        </div>
+			     </div>
+			     <div class="col-sm-6">
+			     	<div class="form-group">
+		     		  <br>
+		              <label>Send Email to patient:</label><br>
+		                <label><input type="radio" name="sendemail" value="true"  checked required>Yes</label>
+		                <label><input type="radio" name="sendemail" value="false" required/>No</label>
+			        </div>
+			     </div>
+			 </div>
+		      <div class="modal-footer">
+		        <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+		        <button id="saveBtn" type="submit" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
 		     </div>
-		     <div class="col-sm-3">
-		     	<label>Duration:</label>
-		     	<select class="form-control duration" name="duration" onchange="validateTIme()" required>
-	                <option value="10">10 Minutes</option>
-	                <option value="20">20 Minutes</option>
-	                <option value="30">30 Minutes</option>
-	                <option value="40">40 Minutes</option>
-	                <option value="50">50 Minutes</option>
-	            </select>
-		     </div>
-		 </div>
-		 <div class="row">
-		     <div class="col-sm-6">
-		     	<div class="form-group">
-		            <label>Patient:</label>
-		            <select class="form-control muncity filter_muncity select2" name="email" required>
-		        		<option value="">Select Patient ...</option>
-			              @foreach($patients as $p)
-			                <option value="{{ $p->id }}|{{$p->email}}">{{ $p->lname }}, {{ $p->fname }} {{ $p->mname }} @if($p->email)(<small>{{$p->email}}</small>)@endif</option>
-		                 @endforeach 
-	                </select>
-		        </div>
-		     </div>
-		     <div class="col-sm-6">
-		     	<div class="form-group">
-	     		  <br>
-	              <label>Send Email to patient:</label><br>
-	                <label><input type="radio" name="sendemail" value="true"  checked required>Yes</label>
-	                <label><input type="radio" name="sendemail" value="false" required/>No</label>
-		        </div>
-		     </div>
-		 </div>
+	      </div>
+  	</form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
-        <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="tele_request_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalMeetingLabel">Request Teleconsultation</h4>
+      </div>
+      <div class="modal-body" id="meetingInfo">
+      	<form id="schedule_form" method="POST">
+      		{{ csrf_field() }}
+    		<input type="hidden" name="req_meeting_id">
+    		<input type="hidden" name="req_user_id" value>
+      	<div class="row">
+      		<div class="col-lg-8">
+      			<label>Encoded by: <label class="text-muted" id="txtEncoded"></label></label><br>
+      			<label id="req_fac"></label>
+      		</div>
+      		<div class="col-lg-4">
+      			<label>Date Requested: <label class="text-muted" id="txtreqDate"></label></label>
+      		</div>
+      	</div>
+      	<br>
+	     <div id="scheduleMeeting">
+        <div class="form-group">
+        	 <label>Patient:</label>
+	         <input type="text" class="form-control" value="" name="req_patient" readonly>
+        </div>
+	     	<div class="form-group">
+		     	<label>Title:</label>
+		        <input type="text" class="form-control" value="" name="req_title" readonly>
+		     </div>
+		     <div class="row">
+			     <div class="col-sm-6">
+			     	<label>Date of teleconsultation:</label>
+			     	<input type="text" name="req_date" class="form-control"  readonly/>
+			     </div>
+			     <div class="col-sm-3">
+			     	<label>Time:</label>
+				    <input type="text" class="form-control" name="req_time" readonly>
+			     </div>
+			     <div class="col-sm-3">
+			     	<label>Duration:</label>
+				     <input type="text" class="form-control" name="req_duration" readonly>
+			     </div>
+			 </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
+		        <button type="button" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
+		     </div>
+	      </div>
   	</form>
       </div>
     </div>

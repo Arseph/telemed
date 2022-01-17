@@ -423,21 +423,25 @@
             }
         });
     }
-    $('#consultation_form').on('submit',function(e){
-        e.preventDefault();
+    function acceptPatient(is) {
         var id = $("input[name=meeting_info_id]").val();
-        console.log(id)
         $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Accepting...');
         $('#consultation_form').ajaxSubmit({
             url:  "{{ url('/patient-accept') }}/"+id,
             type: "POST",
+            data: {
+                respo: is
+            },
             success: function(data){
                 setTimeout(function(){
                     window.location.reload(false);
                 },500);
             },
         });
-        
+    }
+    $('#consultation_form').on('submit',function(e){
+        e.preventDefault();
+        acceptPatient('1');
     });
 
     function getUsername() {

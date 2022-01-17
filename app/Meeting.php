@@ -12,4 +12,8 @@ class Meeting extends Model
     public function patient() {
     	return $this->hasOne(Patient::class, 'id', 'patient_id');
     }
+
+    public function doctor() {
+        return $this->hasOne(User::class, 'id', 'doctor_id');
+    }
 }

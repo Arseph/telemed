@@ -9,6 +9,8 @@ use App\User;
 use App\Patient;
 use App\Meeting;
 use Carbon\Carbon;
+use App\PendingMeeting;
+use App\Facility;
 class TeleConsultController extends Controller
 {
 	public function __construct()
@@ -42,7 +44,7 @@ class TeleConsultController extends Controller
             "patients.*",
             "user.email as email"
         ) ->leftJoin("users as user","patients.account_id","=","user.id")
-         ->where('patients.doctor_id',$user->id)
+         ->where('patients.facility_id',$user->facility_id)
         ->get();
 
         $keyword_past = $request->view_all_past ? '' : $request->date_range_past;
@@ -64,12 +66,36 @@ class TeleConsultController extends Controller
         		->orderBy('meetings.date_meeting', 'desc')
         		->paginate(20);
 
+        $keyword_req = $request->view_all_req ? '' : $request->date_range_req;
+        $data_req = PendingMeeting::select(
+            "pending_meetings.*",
+            "pending_meetings.id as meetID",
+            "pending_meetings.created_at as reqDate",
+            "pat.*",
+        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id");
+        if($keyword_req){
+            $date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range_req)[0]));
+            $date_end = date('Y-m-d',strtotime(explode(' - ',$request->date_range_req)[1]));
+            $data_req = $data_req
+                ->where(function($q) use($date_start, $date_end) {
+                $q->whereDate('pending_meetings.datefrom', '>=', $date_start);
+                $q->whereDate('pending_meetings.datefrom', '<=', $date_end);
+            });
+        }
+        $data_req = $data_req->where("pending_meetings.doctor_id","=", $user->id)
+                ->where('pending_meetings.status', 'Pending')
+                ->orderBy('pending_meetings.id', 'desc')
+                ->paginate(20);
+        $facilities = Facility::orderBy('facilityname', 'asc')->get();
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
             'data' => $data,
             'pastmeetings' => $data_past,
-            'search_past' => $keyword_past
+            'search_past' => $keyword_past,
+            'facilities' => $facilities,
+            'search_req' => $keyword_req,
+            'data_req' => $data_req
         ]);
     }
 
@@ -199,7 +225,7 @@ class TeleConsultController extends Controller
     	$meeting = Meeting::select(
     		"meetings.*",
     		"pat.*",
-    		"meetings.id as meetID"
+    		"meetings.id as meetID",
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
          ->where('meetings.id',$req->meet_id)
         ->first();
@@ -236,5 +262,131 @@ class TeleConsultController extends Controller
         $fp = fopen($envFile, 'w');
         fwrite($fp, $str);
         fclose($fp);
+    }
+
+    public function getPendingMeeting($id) {
+        $pend_meet = PendingMeeting::find($id);
+        $encoded = $pend_meet->encoded->facility;
+        $patient = $pend_meet->patient;
+        return response()->json($pend_meet);
+    }
+
+    public function acceptDeclineMeeting($id, Request $req) {
+        $user = Session::get('auth');
+        $meet = PendingMeeting::find($id);
+        $action = $req->action;
+        $date = date('Y-m-d', strtotime($meet->datefrom));
+        $time = date('H:i:s', strtotime($meet->time));
+        $endtime = Carbon::parse($time)
+                            ->addMinutes($meet->duration)
+                            ->format('H:i:s');
+        $start = $date.'T'.$time.'+08:00';
+        $end = $date.'T'.$endtime.'+08:00';
+        $email = $meet->email;
+        if($action == 'Accept') {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => 'https://webexapis.com/v1/meetings',
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_POSTFIELDS =>'{
+              "enabledAutoRecordMeeting": true,
+              "allowAnyUserToBeCoHost": false,
+              "enabledJoinBeforeHost": false,
+              "enableConnectAudioBeforeHost": false,
+              "excludePassword": false,
+              "publicMeeting": false,
+              "enableAutomaticLock": false,
+              "allowFirstUserToBeCoHost": false,
+              "allowAuthenticatedDevices": false,
+              "sendEmail": '.$meet->sendemail.',
+              "title": "'.$meet->title.'",
+              "start": "'.$start.'",
+              "end": "'.$end.'",
+              "timezone": "Asia/Manila",
+              "invitees": [
+                {
+                  "email": "'.$email.'",
+                  "displayName": "Patient",
+                  "coHost": false
+                }
+              ]
+            }',
+              CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer '.env('WEBEX_API').'',
+                'Content-Type: application/json'
+              ),
+            ));
+
+            $response = curl_exec($curl);
+            $meetres = json_decode($response,true);
+            curl_close($curl);
+            $data = array(
+                'user_id' => $meet->user_id,
+                'doctor_id' => $user->id,
+                'patient_id' => $meet->patient_id,
+                'date_meeting' => $date,
+                'from_time' => $time,
+                'to_time' => $endtime,
+                'meeting_id' => $meetres['id'],
+                'meeting_number' => $meetres['meetingNumber'],
+                'title' => $meetres['title'],
+                'password' => $meetres['password'],
+                'phone_video_password' => $meetres['phoneAndVideoSystemPassword'],
+                'meeting_type' => $meetres['meetingType'],
+                'state' => $meetres['state'],
+                'timezone' => $meetres['timezone'],
+                'start' => $meetres['start'],
+                'end' => $meetres['end'],
+                'host_user_id' => $meetres['hostUserId'],
+                'host_display_name' => $meetres['hostDisplayName'],
+                'host_email' => $meetres['hostEmail'],
+                'host_key' => $meetres['hostKey'],
+                'site_url' => $meetres['siteUrl'],
+                'web_link' => $meetres['webLink'],
+                'sip_address' => $meetres['sipAddress'],
+                'dial_in_ip_address' => $meetres['dialInIpAddress'],
+                'enable_auto_record_meeting' => $meetres['enabledAutoRecordMeeting'],
+                'allow_authenticate_device' => $meetres['allowAuthenticatedDevices'],
+                'enable_join_before_host' => $meetres['enabledJoinBeforeHost'],
+                'join_before_host_meeting' => $meetres['joinBeforeHostMinutes'],
+                'enable_connect_audio_before_host' => $meetres['enableConnectAudioBeforeHost'],
+                'exclude_password' => $meetres['excludePassword'],
+                'public_meeting' => $meetres['publicMeeting'],
+                'enable_automatic_lock' => $meetres['enableAutomaticLock']
+            );
+            $create_meeting = Meeting::create($data);
+
+        }
+        $meet_id = $create_meeting ? $create_meeting->id : '';
+        $data = array(
+            'status' => $action,
+            'meet_id' => $meet_id
+        );
+        $meet->update($data); 
+        if($action == 'Accept') {
+            Session::put("action_made","Successfully Accept Teleconsultation.");
+        } else {
+            Session::put("delete_action","Successfully Declined Teleconsultation.");
+        }
+    }
+
+    public function schedTeleStore(Request $req) {
+        $date = date('Y-m-d', strtotime($req->date_from));
+        $req->request->add([
+            'status' => 'Pending',
+            'datefrom' => $date
+        ]);
+        if($req->meeting_id) {
+            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id', 'date_from'));
+        } else {
+            PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
+        }
+        Session::put("action_made","Please wait for the confirmation of doctor.");
     }
 }

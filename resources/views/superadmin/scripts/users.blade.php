@@ -205,13 +205,13 @@
 		var op = $("<option selected='selected'></option>").val('').text('Select Level');
 		var option = $("<option></option>").val('admin').text('Admin');
 		var option1 = $("<option></option>").val('doctor').text('Doctor');
-		var option2 = $("<option></option>").val('patient').text('Patient');
+		// var option2 = $("<option></option>").val('patient').text('Patient');
 		if(val) {
 			$('#level').empty();
 			$("#level").append(op);
 			$("#level").append(option);
 			$("#level").append(option1);
-			$("#level").append(option2);
+			// $("#level").append(option2);
 		} else {
 			$('#level').empty();
 			$("#level").append(op);

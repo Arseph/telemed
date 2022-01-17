@@ -64,6 +64,10 @@ Route::match(['GET','POST'],'/diagnosis-sub-category', 'Superadmin\DiagnosisCont
 Route::post('/sub-cat-store', 'Superadmin\DiagnosisController@storeSubCat');
 Route::post('/sub-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteSubCat');
 Route::get('/doctor-option/{id}', 'Superadmin\ManageController@getDoctors');
+Route::get('/audit-trail', 'Superadmin\ManageController@indexAudit');
+Route::get('/tele-category', 'Superadmin\ManageController@indexTeleCat');
+Route::post('/telecat-store', 'Superadmin\ManageController@storeTelecat');
+Route::post('/telecat-delete/{id}', 'Superadmin\ManageController@deleteTelecat');
 
 
 //Admin Module
@@ -72,7 +76,12 @@ Route::get('/admin-facility','Admin\ManageController@AdminFacility');
 Route::post('/update-facility','Admin\ManageController@updateFacility');
 Route::match(['GET','POST'],'/admin-patient','Admin\ManageController@patientList');
 Route::match(['GET','POST'],'/admin-sched-pending','Admin\ManageController@schedTeleStore');
-Route::get('/admin-meeting-info','Admin\ManageController@meetingInfo');
+Route::get('/admin-patient-meeting-info','Admin\ManageController@meetingInfo');
+Route::match(['GET','POST'],'/admin-teleconsult','Admin\TeleController@index');
+Route::get('/admin-join-meeting','Admin\TeleController@joinMeeting');
+Route::get('/admin-meeting-info','Admin\TeleController@meetingInfo');
+Route::get('/join-meeting/{id}','Admin\TeleController@indexCall');
+Route::get('/get-doctors-facility','Admin\TeleController@getDoctorsFacility');
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');
@@ -89,6 +98,9 @@ Route::get('/start-meeting/{id}','Doctor\TeleConsultController@indexCall');
 Route::post('/webex-token', 'Doctor\TeleConsultController@storeToken');
 Route::post('/patient-accept/{id}', 'Doctor\PatientController@acceptPatient');
 Route::post('/patient-consult-info/{id}', 'Doctor\PatientController@patientConsultInfo');
+Route::get('/get-pending-meeting/{id}', 'Doctor\TeleConsultController@getPendingMeeting');
+Route::post('/accept-decline-meeting/{id}', 'Doctor\TeleConsultController@acceptDeclineMeeting');
+Route::match(['GET','POST'],'/doctor-sched-pending','Doctor\TeleConsultController@schedTeleStore');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
