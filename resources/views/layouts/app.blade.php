@@ -16,7 +16,6 @@
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('public/assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('public/assets/css/bootstrap-theme.min.css') }}" rel="stylesheet">
-
     <!-- Ionicons -->
     <link rel="stylesheet" href="{{ asset('public/plugin/Ionicons/css/ionicons.min.css') }}">
 
@@ -37,6 +36,7 @@
     <link href="{{ asset('public/plugin/daterangepicker_old/daterangepicker-bs3.css') }}" rel="stylesheet">
 
     <link href="{{ asset('public/plugin/table-fixed-header/table-fixed-header.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
     <title>
         @yield('title','Home')
     </title>
@@ -104,15 +104,7 @@
                     }else if($user->level=='patient'){
                         $dept_desc = ' / Patient';
                     }
-                   $requestedPatient = \App\PendingMeeting::select(
-            "pending_meetings.*",
-            "pending_meetings.id as meetID",
-            "pending_meetings.created_at as reqDate",
-            "pat.*",
-        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
-        ->where("pending_meetings.doctor_id","=", $user->id)
-        ->where('pending_meetings.status', 'Pending')->get();
-        ?>
+                    ?>
                     <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
                 </div>
             </div>
@@ -133,15 +125,6 @@
         </div>
     </div>
     <div class="container-fluid" >
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#"></a>
-        </div>
         <div id="navbar" class="navbar-collapse collapse" style="font-size: 13px;">
             <ul class="nav navbar-nav">
                 @if($user->level=='superadmin')
@@ -214,7 +197,7 @@
                 <!-- for doctors -->
                 @if($user->level=='doctor')
                 <li><a href="{{ asset('doctor') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-video"></i> Teleconsultation <span class="badge bg-red">@if(count($requestedPatient) > 0){{ count($requestedPatient) }}@endif</span></a></li>
+                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
@@ -317,7 +300,7 @@
 
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
-
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
 <script>
     $(document).ready(function() {
         $(".select2").select2();

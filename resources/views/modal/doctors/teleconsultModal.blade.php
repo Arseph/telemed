@@ -117,6 +117,16 @@
         	 <label>Patient:</label>
 	         <input type="text" class="form-control" value="" name="req_patient" readonly>
         </div>
+        <div class="form-group col-12">
+          <div class="text-center">
+            <a data-toggle="collapse" href="#moreInfo">More Patient Details</a>
+          </div>
+          <div id="moreInfo" class="collapse">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
 	     	<div class="form-group">
 		     	<label>Title:</label>
 		        <input type="text" class="form-control" value="" name="req_title" readonly>
@@ -179,7 +189,83 @@
   		</div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btnMeeting btn btn-primary"><i class="fas fa-play-circle"></i> Start Meeting</button>
+        <button type="button" class="btnMeeting btn btn-primary"><i class="fas fa-play-circle"></i> Start Consultation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myrequest_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalMeetingLabel">My Request</h4>
+      </div>
+      <div class="modal-body" id="meetingInfo">
+      	@if(count($data_my_req)>0)
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <tr class="bg-black">
+                            <th></th>
+                            <th>Teleconsult Date & Time</th>
+                            <th>Requested To:</th>
+                            <th>Date Requested:</th>
+                            <th>Title / Patient</th>
+                            <th>Status</th>
+                        </tr>
+                        @foreach($data_my_req as $row)
+                            <tr onclick="getMeeting('<?php echo $row->meet_id?>', 'yes')">
+                              <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
+                                <td style="width: 20%;">
+                                    <a href="#" class="title-info update_info">
+                                       {{ \Carbon\Carbon::parse($row->time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->time)->addMinutes($row->duration)->format('h:i A') }}
+                                        <br><b>
+                                            <small class="text-warning">
+                                                {{ \Carbon\Carbon::parse($row->datefrom)->format('l, F d, Y') }}
+                                            </small>
+                                        </b>
+                                    </a>
+                                </td>
+                                <td>
+                                  <b class="text-primary">{{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b><br>
+                                  <b>{{ $row->doctor->facility->facilityname }}</b>
+                                </td>
+                                <td>
+                                  <b class="text-warning"> {{ \Carbon\Carbon::parse($row->reqDate)->format('l, h:i A F d, Y') }}</b>
+                                </td>
+                                <td>
+                                  <b >{{ $row->title }}</b>
+                                  <br>
+                                  <b class="text-muted">Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                </td>
+                                <td>
+                                  @if($row->status == 'Accept')
+                                  <span class="badge bg-green">Accepted</span>
+                                  @elseif($row->status == 'Pending')
+                                  <span class="badge badge-warning">Pending</span>
+                                  @elseif($row->status == 'Declined')
+                                  <span class="badge bg-red">Declined</span>
+                                  @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                    <div class="pagination">
+                        {{ $data->links() }}
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-warning">
+                    <span class="text-warning">
+                        <i class="fa fa-warning"></i> No Teleconsultation found!
+                    </span>
+                </div>
+            @endif
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Okay</button>
+		     </div>
+	      </div>
       </div>
     </div>
   </div>

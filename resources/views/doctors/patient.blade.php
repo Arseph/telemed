@@ -11,25 +11,6 @@
     .disAble {
         pointer-events:none;
     }
-    .modal {
-      text-align: center;
-      padding: 0!important;
-    }
-
-    .modal:before {
-      content: '';
-      display: inline-block;
-      height: 100%;
-      vertical-align: middle;
-      margin-right: -4px;
-    }
-
-    .modal-dialog {
-          width: 80%;
-      display: inline-block;
-      text-align: left;
-      vertical-align: middle;
-    }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container-fluid">
@@ -38,7 +19,7 @@
             <div class="pull-right">
                 <form action="{{ asset('doctor/patient/list') }}" method="POST" class="form-inline">
                     {{ csrf_field() }}
-                    <div class="form-group-lg" style="margin-bottom: 10px;">
+                    <div class="form-group-md" style="margin-bottom: 10px;">
                         <input type="text" class="form-control" name="keyword" placeholder="Search patient..." value="{{ Session::get("keyword") }}">
                         <button type="submit" class="btn btn-success btn-sm btn-flat">
                             <i class="fa fa-search"></i> Search
@@ -68,19 +49,15 @@
                         </tr>
                         
                         @foreach($data as $row)
-                        <tr>
+                        <tr
+                           data-toggle="modal"
+                           data-id= "{{ $row->id }}"
+                           data-target="#patient_modal" 
+                           onclick="getDataFromData(this, '<?php echo $row->account_id?>')"\
+                        >
                             <td style="white-space: nowrap;">
-                                <b>
-                                    <a
-                                       href="#"
-                                       data-toggle="modal"
-                                       data-id= "{{ $row->id }}"
-                                       class="title-info update_info"
-                                       data-target="#patient_modal" 
-                                       onclick="getDataFromData(this, '<?php echo $row->account_id?>')" 
-                                    >
-                                        {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
-                                    </a>
+                                <b class="title-info update_info">
+                                    {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
                                 </b>
                             </td>
                             <td>{{ $row->sex }}</td>

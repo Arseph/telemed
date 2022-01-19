@@ -64,7 +64,7 @@ class ManageController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.facility_id', $user->facility_id)
+        ->where('patients.doctor_id', $user->id)
         ->where(function($q) use ($keyword){
             $q->where('patients.fname',"like","%$keyword%")
                 ->orwhere('patients.lname',"like","%$keyword%")
@@ -81,7 +81,7 @@ class ManageController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.facility_id', $user->facility_id)->get();
+        ->where('patients.doctor_id', $user->id)->get();
 
         $doctors = User::where('level', 'doctor')
                        ->where('facility_id', $user->facility_id)

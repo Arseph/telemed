@@ -49,7 +49,7 @@ class TeleController extends Controller
             "patients.*",
             "user.email as email"
         ) ->leftJoin("users as user","patients.account_id","=","user.id")
-         ->where('patients.facility_id',$user->facility_id)
+         ->where('patients.doctor_id',$user->id)
         ->get();
 
         $keyword_past = $request->view_all_past ? '' : $request->date_range_past;
@@ -89,6 +89,13 @@ class TeleController extends Controller
                 $q->whereDate('pending_meetings.datefrom', '<=', $date_end);
             });
         }
+        $status_req = $request->view_all_req ? '' : $request->status_req;
+        $active_tab = $request->active_tab ? $request->active_tab : 'upcoming';
+        if($status_req) {
+            $data_req = $data_req->where(function($q) use($status_req) {
+                $q->where('pending_meetings.status', $status_req);
+            });
+        }
         $data_req = $data_req->where("pat.facility_id","=", $user->facility_id)
                 ->where("pending_meetings.user_id", $user->id)
                 ->orderBy('pending_meetings.id', 'desc')
@@ -102,7 +109,9 @@ class TeleController extends Controller
             'search_past' => $keyword_past,
             'facilities' => $facilities,
             'data_req' => $data_req,
-            'search_req' => $keyword_req
+            'search_req' => $keyword_req,
+            'status_req' => $status_req,
+            'active_tab' => $active_tab
         ]);
     }
 

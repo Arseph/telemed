@@ -13,6 +13,7 @@
             minDate: today,
             "singleDatePicker": true
         });
+        $('#consolidate_date_range_req').daterangepicker();
        $('.clockpicker').clockpicker({
        		donetext: 'Done',
        		twelvehour: true,
@@ -63,14 +64,22 @@
                 doctor_id: doctor_id
             },
             success : function(data){
-                if(data > 0) {
+                if(data == 'Not valid') {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: "Please set a schedule before 3 hours of Teleconsultation",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    $("input[name=time]").val('');
+                }
+                else if(data > 0) {
                     Lobibox.notify('error', {
                         title: "Schedule",
                         msg: "Schedule is not available!",
                         size: 'normal',
                         rounded: true
                     });
-                    $("input[name=date_from]").val('');
                     $("input[name=time]").val('');
                 }
             }
@@ -107,7 +116,7 @@
         });
 	});
 
-    function getMeeting(id) {
+    function getMeeting(id, join) {
         var url = "{{ url('/meeting-info') }}";
         var tmp;
         $.ajax({
@@ -119,14 +128,22 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
-                $('#info_meeting_modal').modal('show'); 
-                $('#myInfoLabel').html(val['title']);
-                $('#meetlink').html(val['web_link']);
-                $('#meetnumber').html(val['meeting_number']);
-                $('#patientName').val(val['lname']+", "+val['fname']+" "+val['mname']);
-                $('#meetPass').html(val['password']);
-                $('#meetKey').html(val['host_key']);
-                $('.btnMeeting').val(val['meetID']);
+                if(val) {
+                    $('#myrequest_modal').modal('hide');
+                    $('#info_meeting_modal').modal('show'); 
+                    $('#myInfoLabel').html(val['title']);
+                    $('#meetlink').html(val['web_link']);
+                    $('#meetnumber').html(val['meeting_number']);
+                    $('#patientName').val(val['lname']+", "+val['fname']+" "+val['mname']);
+                    $('#meetPass').html(val['password']);
+                    $('#meetKey').html(val['host_key']);
+                    $('.btnMeeting').val(val['meetID']);
+                    if(join == 'no') {
+                        $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Start Consultation');
+                    } else {
+                        $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Join Consultation');
+                    }
+                }
             }
         });
     }
@@ -249,14 +266,13 @@
         $('#meetingInfo').removeClass('disAble');
     });
 
-    function infoMeeting(id) {
+    function infoMeeting(id, meet_id) {
         var url = "{{ url('/get-pending-meeting') }}";
         $.ajax({
             async: false,
             url: url+"/"+id,
             type: 'GET',
             success : function(data){
-                console.log(data)
                 var patient = data.patient.fname + ' ' + data.patient.mname + ' ' + data.patient.lname;
                 var encoded = data.encoded.fname + ' ' + data.encoded.mname + ' ' + data.encoded.lname;
                 var fac = data.encoded.facility.facilityname;
@@ -270,7 +286,11 @@
                 $('[name=req_date]').val(moment(data.datefrom).format('MMMM D, YYYY'));
                 $('[name=req_time]').val(data.time);
                 $('[name=req_duration]').val(data.duration + ' Minutes');
-                $('#tele_request_modal').modal('show');
+                if(meet_id > 0) {
+                    getMeeting(meet_id, 'no');
+                } else {
+                    $('#tele_request_modal').modal('show');
+                }
             }
         });
     }

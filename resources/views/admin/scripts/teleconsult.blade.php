@@ -128,14 +128,22 @@
                 doctor_id: doctor_id
             },
             success : function(data){
-                if(data > 0) {
+                if(data == 'Not valid') {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: "Please set a schedule before 3 hours of Teleconsultation",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    $("input[name=time]").val('');
+                }
+                else if(data > 0) {
                     Lobibox.notify('error', {
                         title: "Schedule",
                         msg: "Schedule is not available!",
                         size: 'normal',
                         rounded: true
                     });
-                    $("input[name=date_from]").val('');
                     $("input[name=time]").val('');
                 }
             }

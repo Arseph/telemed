@@ -54,21 +54,28 @@
         </div>
         <div class="box-body">
             <ul class="nav nav-pills">
-              <li class="active"><a data-toggle="tab" href="#upcoming">Upcoming</a></li>
-              <li><a data-toggle="tab" href="#request">Request</a></li>
-              <li><a data-toggle="tab" href="#completed">Completed</a></li>
+              <li class="@if($active_tab == 'upcoming')active @endif"><a data-toggle="tab" href="#upcoming">Upcoming</a></li>
+              <li class="@if($active_tab == 'request')active @endif"><a data-toggle="tab" href="#request">Request</a></li>
+              <li class="@if($active_tab == 'completed')active @endif"><a data-toggle="tab" href="#completed">Completed</a></li>
             </ul>
 
             <div class="tab-content">
-              <div id="request" class="tab-pane fade in">
+              <div id="request" class="tab-pane fade in @if($active_tab == 'request')active @endif">
                 <h3>Request</h3>
                 <br>
                 <div class="row">
                     <div class="col-md-12">
                         <form action="{{ asset('/admin-teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
-                            <div class="form-group-lg" style="margin-bottom: 10px;">
+                            <div class="form-group-md" style="margin-bottom: 10px;">
+                                <input type="hidden" name="active_tab" value="request">
                                 <input type="text" class="form-control" name="date_range_req" value="{{$search_req}}"placeholder="Filter your date here..." id="consolidate_date_range_req" readonly>
+                                <select class="form-control" name="status_req">
+                                    <option value="" selected>Select Status</option>
+                                    <option value="Pending" @if($status_req == 'Pending')selected @endif>Pending</option>
+                                    <option value="Accept" @if($status_req == 'Accept')selected @endif>Accepted</option>
+                                    <option value="Declined" @if($status_req == 'Declined')selected @endif>Declined</option>
+                                </select>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search
                                 </button>
@@ -130,14 +137,15 @@
                 </div>
                 </div>
               </div>
-              <div id="upcoming" class="tab-pane fade in active">
+              <div id="upcoming" class="tab-pane fade in @if($active_tab == 'upcoming')active @endif"">
                 <h3>Upcoming</h3>
                 <br>
                 <div class="row">
                     <div class="col-md-12">
                         <form action="{{ asset('/admin-teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
-                            <div class="form-group-lg" style="margin-bottom: 10px;">
+                            <div class="form-group-md" style="margin-bottom: 10px;">
+                                <input type="hidden" name="active_tab" value="upcoming">
                                 <input type="text" class="form-control" name="date_range" value="{{$search}}"placeholder="Filter your date here..." id="consolidate_date_range" readonly>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search
@@ -197,13 +205,14 @@
                 </div>
               </div>
               <!-- COmpleted Meetings -->
-              <div id="completed" class="tab-pane fade">
+              <div id="completed" class="tab-pane fade in @if($active_tab == 'completed')active @endif"">
                 <h3>Completed</h3>
                 <div class="row">
                     <div class="col-md-12">
                         <form action="{{ asset('/admin-teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
-                            <div class="form-group-lg" style="margin-bottom: 10px;">
+                            <div class="form-group-md" style="margin-bottom: 10px;">
+                                <input type="hidden" name="active_tab" value="completed">
                                 <input type="text" class="form-control" name="date_range_past" value="{{$search_past}}"placeholder="Filter your date here..." id="consolidate_date_range_past" readonly>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search

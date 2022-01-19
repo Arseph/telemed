@@ -16,7 +16,7 @@
                 <div class="col-md-12">
                     <form action="{{ asset('audit-trail') }}" method="POST" class="form-inline">
                         {{ csrf_field() }}
-                        <div class="form-group-lg" style="margin-bottom: 10px;">
+                        <div class="form-group-md" style="margin-bottom: 10px;">
                             <input type="text" class="form-control" name="date_range" value="{{$search}}"placeholder="Filter your date here..." id="consolidate_date_range" readonly>
                             <button type="submit" class="btn btn-info btn-sm btn-flat">
                                 <i class="fa fa-search"></i> Search

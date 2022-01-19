@@ -15,7 +15,7 @@
             <div class="pull-right">
                 <form action="{{ asset('barangay').'/'.$province_id.'/'.$province_name.'/'.$muncity_id.'/'.$muncity_name }}" method="POST" class="form-inline">
                     {{ csrf_field() }}
-                    <div class="form-group-lg" style="margin-bottom: 10px;">
+                    <div class="form-group-md" style="margin-bottom: 10px;">
                         <input type="text" class="form-control" name="keyword_barangay" placeholder="Search barangay..." value="{{ Session::get("keyword_barangay") }}">
                         <button type="submit" class="btn btn-success btn-sm btn-flat">
                             <i class="fa fa-search"></i> Search

@@ -26,7 +26,11 @@ class TeleConsultController extends Controller
         $data = Meeting::select(
         	"meetings.*",
         	"meetings.id as meetID",
-        	"pat.*"
+            "meetings.user_id as Creator",
+            "meetings.doctor_id as RequestTo",
+        	"pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword){
         	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[0]));
@@ -37,6 +41,7 @@ class TeleConsultController extends Controller
             });
         }
         $data = $data->where("meetings.doctor_id","=", $user->id)
+                ->orWhere("meetings.user_id", "=", $user->id)
         		->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
         		->orderBy('meetings.date_meeting', 'asc')
         		->paginate(20);
@@ -51,7 +56,9 @@ class TeleConsultController extends Controller
         $data_past = Meeting::select(
         	"meetings.*",
         	"meetings.id as meetID",
-        	"pat.*"
+        	"pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword_past){
         	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range_past)[0]));
@@ -71,7 +78,9 @@ class TeleConsultController extends Controller
             "pending_meetings.*",
             "pending_meetings.id as meetID",
             "pending_meetings.created_at as reqDate",
-            "pat.*",
+            "pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
         )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id");
         if($keyword_req){
             $date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range_req)[0]));
@@ -82,11 +91,36 @@ class TeleConsultController extends Controller
                 $q->whereDate('pending_meetings.datefrom', '<=', $date_end);
             });
         }
+        $status_req = $request->view_all_req ? '' : $request->status_req;
+        $active_tab = $request->active_tab ? $request->active_tab : 'upcoming';
+        if($status_req) {
+            $data_req = $data_req->where(function($q) use($status_req) {
+                $q->where('pending_meetings.status', $status_req);
+            });
+        }
         $data_req = $data_req->where("pending_meetings.doctor_id","=", $user->id)
-                ->where('pending_meetings.status', 'Pending')
                 ->orderBy('pending_meetings.id', 'desc')
                 ->paginate(20);
+
+        $data_my_req = PendingMeeting::select(
+            "pending_meetings.*",
+            "pending_meetings.id as meetID",
+            "pending_meetings.created_at as reqDate",
+            "pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
+        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
+        ->where("pending_meetings.user_id","=", $user->id)
+                ->orderBy('pending_meetings.id', 'desc')
+                ->paginate(10);
         $facilities = Facility::orderBy('facilityname', 'asc')->get();
+        $count_req = PendingMeeting::select(
+            "pending_meetings.*",
+            "pending_meetings.id as meetID",
+            "pending_meetings.created_at as reqDate",
+        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
+        ->where('pending_meetings.status', 'Pending')
+        ->where("pending_meetings.doctor_id","=", $user->id)->count();
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -95,105 +129,19 @@ class TeleConsultController extends Controller
             'search_past' => $keyword_past,
             'facilities' => $facilities,
             'search_req' => $keyword_req,
-            'data_req' => $data_req
+            'data_req' => $data_req,
+            'status_req' => $status_req,
+            'active_tab' => $active_tab,
+            'data_my_req' => $data_my_req,
+            'active_user' => $user,
+            'pending' => $count_req
         ]);
-    }
-
-    public function storeMeeting(Request $req) {
-    	$user = Session::get('auth');
-		$curl = curl_init();
-		$title = $req->title;
-		$date = date('Y-m-d', strtotime($req->datefrom));
-		$time = date('H:i:s', strtotime($req->time));
-		$endtime = Carbon::parse($time)
-				            ->addMinutes($req->duration)
-				            ->format('H:i:s');
-		$start = $date.'T'.$time.'+08:00';
-		$end = $date.'T'.$endtime.'+08:00';
-		$toInvite = explode('|', $req->email);
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => 'https://webexapis.com/v1/meetings',
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => '',
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 0,
-		  CURLOPT_FOLLOWLOCATION => true,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => 'POST',
-		  CURLOPT_POSTFIELDS =>'{
-		  "enabledAutoRecordMeeting": true,
-		  "allowAnyUserToBeCoHost": false,
-		  "enabledJoinBeforeHost": false,
-		  "enableConnectAudioBeforeHost": false,
-		  "excludePassword": false,
-		  "publicMeeting": false,
-		  "enableAutomaticLock": false,
-		  "allowFirstUserToBeCoHost": false,
-		  "allowAuthenticatedDevices": false,
-		  "sendEmail": '.$req->sendemail.',
-		  "title": "'.$title.'",
-		  "start": "'.$start.'",
-		  "end": "'.$end.'",
-		  "timezone": "Asia/Manila",
-		  "invitees": [
-		    {
-		      "email": "'.$toInvite[1].'",
-		      "displayName": "Patient",
-		      "coHost": false
-		    }
-		  ]
-		}',
-		  CURLOPT_HTTPHEADER => array(
-		    'Authorization: Bearer '.env('WEBEX_API').'',
-		    'Content-Type: application/json'
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		$meet = json_decode($response,true);
-		curl_close($curl);
-		$data = array(
-            'doctor_id' => $user->id,
-            'patient_id' => $toInvite[0],
-            'date_meeting' => $date,
-            'from_time' => $time,
-            'to_time' => $endtime,
-            'meeting_id' => $meet['id'],
-            'meeting_number' => $meet['meetingNumber'],
-            'title' => $meet['title'],
-            'password' => $meet['password'],
-            'phone_video_password' => $meet['phoneAndVideoSystemPassword'],
-            'meeting_type' => $meet['meetingType'],
-            'state' => $meet['state'],
-            'timezone' => $meet['timezone'],
-            'start' => $meet['start'],
-            'end' => $meet['end'],
-            'host_user_id' => $meet['hostUserId'],
-            'host_display_name' => $meet['hostDisplayName'],
-            'host_email' => $meet['hostEmail'],
-            'host_key' => $meet['hostKey'],
-            'site_url' => $meet['siteUrl'],
-            'web_link' => $meet['webLink'],
-            'sip_address' => $meet['sipAddress'],
-            'dial_in_ip_address' => $meet['dialInIpAddress'],
-            'enable_auto_record_meeting' => $meet['enabledAutoRecordMeeting'],
-            'allow_authenticate_device' => $meet['allowAuthenticatedDevices'],
-            'enable_join_before_host' => $meet['enabledJoinBeforeHost'],
-            'join_before_host_meeting' => $meet['joinBeforeHostMinutes'],
-            'enable_connect_audio_before_host' => $meet['enableConnectAudioBeforeHost'],
-            'exclude_password' => $meet['excludePassword'],
-            'public_meeting' => $meet['publicMeeting'],
-            'enable_automatic_lock' => $meet['enableAutomaticLock']
-        );
-
-        Session::put("action_made","Successfully added new meeting");
-        Meeting::create($data);
     }
 
     public function validateDateTime(Request $req) {
         $user = Session::get('auth');
     	$date = Carbon::parse($req->date)->format('Y-m-d');
-    	$time = Carbon::parse($req->time)->format('H:i:s');
+    	$time = $req->time ? Carbon::parse($req->time)->format('H:i:s') : '';
         $doctor_id = $req->doctor_id ? $req->doctor_id : $user->id;
     	$endtime = Carbon::parse($time)
 		            ->addMinutes($req->duration)
@@ -210,8 +158,8 @@ class TeleConsultController extends Controller
     	// 					->count();
 		$meetings = Meeting::whereDate('date_meeting','=', $date)->where('doctor_id', $doctor_id)->get();
 		$count = 1;
-        if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->format('H:i:s')) {
-            return $count;
+        if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->addMinutes('180')->format('H:i:s') && $time) {
+            return 'Not valid';
         }
 		foreach ($meetings as $meet) {
 			if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
@@ -363,7 +311,7 @@ class TeleConsultController extends Controller
             $create_meeting = Meeting::create($data);
 
         }
-        $meet_id = $create_meeting ? $create_meeting->id : '';
+        $meet_id = $action == 'Accept' ? $create_meeting->id : '';
         $data = array(
             'status' => $action,
             'meet_id' => $meet_id

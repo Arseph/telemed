@@ -51,8 +51,6 @@ class PatientController extends Controller
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
         ->where('patients.doctor_id', $user->id)
-        ->where('user.doctor_id', $user->id)
-        ->where('patients.is_accepted', 1)
         ->where(function($q) use ($keyword){
             $q->where('patients.fname',"like","%$keyword%")
                 ->orwhere('patients.lname',"like","%$keyword%")
@@ -70,7 +68,6 @@ class PatientController extends Controller
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
         ->where('patients.doctor_id', $user->id)
-        ->where('user.doctor_id', $user->id)
         ->where('patients.is_accepted', 0)
         ->get();
 
@@ -81,9 +78,8 @@ class PatientController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.doctor_id', $user->id)
-        ->where('user.doctor_id', $user->id)->get();
-        $users = User::where('doctor_id', $user->id)->get();
+        ->where('patients.doctor_id', $user->id)->get();
+        $users = User::all();
         $nationality = Countries::orderBy('nationality', 'asc')->get();
         $region = Region::all();
         $nationality_def = Countries::where('num_code', '608')->first();
@@ -176,7 +172,6 @@ class PatientController extends Controller
             $patient->update($data);
             if($req->email && $req->username && $req->password) {
                 $data = array(
-                    'doctor_id' => $doctor_id,
                     'fname' => $req->fname,
                     'mname' => $req->mname,
                     'lname' => $req->lname,
@@ -204,7 +199,6 @@ class PatientController extends Controller
             $patient = Patient::create($data);
             if($req->email && $req->username && $req->password) {
                 $data = array(
-                    'doctor_id' => $doctor_id,
                     'fname' => $req->fname,
                     'mname' => $req->mname,
                     'lname' => $req->lname,
@@ -232,8 +226,12 @@ class PatientController extends Controller
     public function deletePatient($id) {
         $patient = Patient::find($id);
         $account = User::find($patient->account_id);
-        $account->delete();
-        $patient->delete();
+        if($patient) {
+            $patient->delete();
+        }
+        if($account) {
+            $account->delete();
+        }
         Session::put("delete_action","Successfully delete Patient");
     }
 

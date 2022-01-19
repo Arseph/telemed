@@ -49,7 +49,7 @@
                 <a data-toggle="modal" class="btn btn-success btn-md" data-target="#tele_modal">
                     <i class="far fa-calendar-plus"></i> Schedule Teleconsult
                 </a>
-                <a data-toggle="modal" class="btn btn-info btn-md" data-target="#tele_modal">
+                <a data-toggle="modal" class="btn btn-info btn-md" data-target="#myrequest_modal">
                     <i class="far fa-calendar-plus"></i> My Request
                 </a>
             </div>
@@ -57,20 +57,21 @@
         </div>
         <div class="box-body">
             <ul class="nav nav-pills">
-              <li class="active"><a data-toggle="tab" href="#upcoming">Upcoming</a></li>
-              <li><a data-toggle="tab" href="#request">Request @if(count($data_req)>0)<span class="badge badge-danger">{{count($data_req)}}</span> @endif</a></li>
-              <li><a data-toggle="tab" href="#completed">Completed</a></li>
+              <li class="@if($active_tab == 'upcoming')active @endif"><a data-toggle="tab" href="#upcoming">Upcoming</a></li>
+              <li class="@if($active_tab == 'request')active @endif"><a data-toggle="tab" href="#request">Request @if($pending > 0)<span class="badge">{{$pending}}</span> @endif</a></li>
+              <li class="@if($active_tab == 'completed')active @endif"><a data-toggle="tab" href="#completed">Completed</a></li>
             </ul>
 
             <div class="tab-content">
-              <div id="upcoming" class="tab-pane fade in active">
+              <div id="upcoming" class="tab-pane fade in @if($active_tab == 'upcoming')active @endif">
                 <h3>Upcoming</h3>
                 <br>
                 <div class="row">
                     <div class="col-md-12">
                         <form action="{{ asset('doctor/teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
-                            <div class="form-group-lg" style="margin-bottom: 10px;">
+                            <div class="form-group-md" style="margin-bottom: 10px;">
+                                <input type="hidden" name="active_tab" value="upcoming">
                                 <input type="text" class="form-control" name="date_range" value="{{$search}}"placeholder="Filter your date here..." id="consolidate_date_range" readonly>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search
@@ -86,7 +87,15 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 @foreach($data as $row)
-                                    <tr onclick="getMeeting(<?php echo $row->meetID ?>)">
+                                <?php
+                                $join = '';
+                                if($row->RequestTo == $active_user->id) {
+                                  $join = 'no';
+                                } else if($row->Creator == $active_user->id) {
+                                  $join = 'yes';
+                                }
+                                ?>
+                                    <tr onclick="getMeeting('<?php echo $row->meetID ?>', '<?php echo $join ?>')">
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
                                             <a href="#" class="title-info update_info">
@@ -101,13 +110,31 @@
                                         <td>
                                           <b class="text-primary">{{ $row->title }}</b>
                                           <br>
-                                          <b>Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}</b>
+                                          <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                        </td>
+                                        @if($row->RequestTo == $active_user->id)
+                                        <td>
+                                          <b class="text-primary">Requested By: {{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b>
+                                          <br>
+                                          <b>{{ $row->encoded->facility->facilityname }}</b>
                                         </td>
                                         <td>
                                           <a href="#" class="btn-circle btn-primary" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
                                               <i class="fas fa-play-circle"></i> Start Consultation
                                           </a>
                                         </td>
+                                        @elseif($row->Creator == $active_user->id)
+                                        <td>
+                                          <b class="text-primary">Requested To: {{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b>
+                                          <br>
+                                          <b>{{ $row->doctor->facility->facilityname }}</b>
+                                        </td>
+                                        <td>
+                                          <a href="#" class="btn-circle btn-success" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
+                                              <i class="fas fa-play-circle"></i> Join Consultation
+                                          </a>
+                                        </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </table>
@@ -118,22 +145,29 @@
                     @else
                         <div class="alert alert-warning">
                             <span class="text-warning">
-                                <i class="fa fa-warning"></i> No Meetings found!
+                                <i class="fa fa-warning"></i> No Teleconsultation found!
                             </span>
                         </div>
                     @endif
                 </div>
                 </div>
               </div>
-              <div id="request" class="tab-pane fade in">
+              <div id="request" class="tab-pane fade in @if($active_tab == 'request')active @endif">
                 <h3>Request</h3>
                 <br>
                 <div class="row">
                     <div class="col-md-12">
-                        <form action="{{ asset('/admin-teleconsult') }}" method="POST" class="form-inline">
+                        <form action="{{ asset('/doctor/teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
-                            <div class="form-group-lg" style="margin-bottom: 10px;">
+                            <div class="form-group-md" style="margin-bottom: 10px;">
+                                <input type="hidden" name="active_tab" value="request">
                                 <input type="text" class="form-control" name="date_range_req" value="{{$search_req}}"placeholder="Filter your date here..." id="consolidate_date_range_req" readonly>
+                                <select class="form-control" name="status_req">
+                                    <option value="" selected>Select Status</option>
+                                    <option value="Pending" @if($status_req == 'Pending')selected @endif>Pending</option>
+                                    <option value="Accept" @if($status_req == 'Accept')selected @endif>Accepted</option>
+                                    <option value="Declined" @if($status_req == 'Declined')selected @endif>Declined</option>
+                                </select>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search
                                 </button>
@@ -156,7 +190,7 @@
                                     <th>Status</th>
                                 </tr>
                                 @foreach($data_req as $row)
-                                    <tr onclick="infoMeeting('<?php echo $row->meetID?>')">
+                                    <tr onclick="infoMeeting('<?php echo $row->meetID?>','<?php echo $row->meet_id?>')">
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
                                             <a href="#" class="title-info update_info">
@@ -178,15 +212,15 @@
                                         <td>
                                           <b >{{ $row->title }}</b>
                                           <br>
-                                          <b class="text-muted">Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}</b>
+                                          <b class="text-muted">Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
                                         </td>
                                         <td>
-                                          @if($row->status == 'Accepted')
-                                          <span class="badge badge-success">Accepted</span>
+                                          @if($row->status == 'Accept')
+                                          <span class="badge bg-green">Accepted</span>
                                           @elseif($row->status == 'Pending')
                                           <span class="badge badge-warning">Pending</span>
                                           @elseif($row->status == 'Declined')
-                                          <span class="badge badge-danger">Declined</span>
+                                          <span class="badge bg-red">Declined</span>
                                           @endif
                                         </td>
                                     </tr>
@@ -207,13 +241,14 @@
                 </div>
               </div>
               <!-- COmpleted Meetings -->
-              <div id="completed" class="tab-pane fade">
+              <div id="completed" class="tab-pane fade in @if($active_tab == 'completed')active @endif">
                 <h3>Completed</h3>
                 <div class="row">
                     <div class="col-md-12">
                         <form action="{{ asset('doctor/teleconsult') }}" method="POST" class="form-inline">
                             {{ csrf_field() }}
-                            <div class="form-group-lg" style="margin-bottom: 10px;">
+                            <div class="form-group-md" style="margin-bottom: 10px;">
+                                <input type="hidden" name="active_tab" value="completed">
                                 <input type="text" class="form-control" name="date_range_past" value="{{$search_past}}"placeholder="Filter your date here..." id="consolidate_date_range_past" readonly>
                                 <button type="submit" class="btn btn-info btn-sm btn-flat">
                                     <i class="fa fa-search"></i> Search
@@ -248,7 +283,7 @@
                                         <td>
                                           <b class="text-primary">{{ $row->title }}</b>
                                           <br>
-                                          <b>Patient: {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}</b>
+                                          <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
                                         </td>
                                     </tr>
                                 @endforeach
