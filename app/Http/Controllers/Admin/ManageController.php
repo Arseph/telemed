@@ -64,7 +64,7 @@ class ManageController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.facility_id', $user->facility_id)
+        ->where('patients.doctor_id', $user->id)
         ->where(function($q) use ($keyword){
             $q->where('patients.fname',"like","%$keyword%")
                 ->orwhere('patients.lname',"like","%$keyword%")
@@ -81,7 +81,7 @@ class ManageController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.facility_id', $user->facility_id)->get();
+        ->where('patients.doctor_id', $user->id)->get();
 
         $doctors = User::where('level', 'doctor')
                        ->where('facility_id', $user->facility_id)
@@ -103,10 +103,15 @@ class ManageController extends Controller
     }
 
     public function schedTeleStore(Request $req) {
+        $date = date('Y-m-d', strtotime($req->date_from));
+        $req->request->add([
+            'status' => 'Pending',
+            'datefrom' => $date
+        ]);
         if($req->meeting_id) {
-            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id'));
+            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id', 'date_from'));
         } else {
-            PendingMeeting::create($req->except('meeting_id'));
+            PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
         }
         Session::put("action_made","Please wait for the confirmation of doctor.");
     }

@@ -284,7 +284,7 @@
 			     </div>
 			 </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btnCancel btn btn-danger" data-dismiss="modal" onclick=""><i class="fas fa-times"></i>&nbsp;Decline</button>
+		        <button type="button" class="btnCancel btn btn-danger" data-dismiss="modal" onclick="acceptPatient('-1')"><i class="fas fa-times"></i>&nbsp;Decline</button>
 		        <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Accept</button>
 		     </div>
 	      </div>

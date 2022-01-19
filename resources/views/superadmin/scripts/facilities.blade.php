@@ -141,9 +141,10 @@
 	    $("input[name=facilityhead_mi]").val(edit[0].facilityhead_mi);
 	    $("input[name=facilityhead_position]").val(edit[0].facilityhead_position);
 	    $("input[name=facilityhead_fname]").val(edit[0].facilityhead_fname);
+	    $("input[name=ownership]").val(edit[0].ownership);
 	    $("[name=status]").select2().select2('val', edit[0].status);
-	    $("input[name=hosp_licensestatus]").val(edit[0].hosp_licensestatus);
-	    $("input[name=hosp_servcapability]").val(edit[0].hosp_servcapability);
+	    $("[name=hosp_licensestatus]").select2().select2('val', edit[0].hosp_licensestatus);
+	    $("[name=hosp_servcapability]").select2().select2('val', edit[0].hosp_servcapability);
 	    $("input[name=hosp_bedcapacity]").val(edit[0].hosp_bedcapacity);
 	    $("input[name=latitude]").val(edit[0].latitude);
 	    $("input[name=longitude]").val(edit[0].longitude);
@@ -172,8 +173,8 @@
 	    $("input[name=facilityhead_position]").val('');
 	    $("input[name=facilityhead_fname]").val('');
 	    $("[name=status]").select2().select2('val', '');
-	    $("input[name=hosp_licensestatus]").val('');
-	    $("input[name=hosp_servcapability]").val('');
+	    $("[name=hosp_licensestatus]").select2().select2('val', '');
+	    $("[name=hosp_servcapability]").select2().select2('val', '');
 	    $("input[name=hosp_bedcapacity]").val('');
 	    $("input[name=latitude]").val('');
 	    $("input[name=longitude]").val('');
@@ -181,5 +182,6 @@
 	    $('#divMun').addClass('hide');
 		$('#divBrgy').addClass('hide');
 		$("#deleteBtn").addClass("hide");
+		$("input[name=ownership]").val('');
     });
 </script>

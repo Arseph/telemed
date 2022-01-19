@@ -438,7 +438,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Date of Referral:</label>
-                                                        <input type="text" id="daterange" value="" name="date_referral" class="form-control" placeholder="Select Date" required/>
+                                                        <input type="text" value="" name="date_referral" class="form-control daterange" placeholder="Select Date" required/>
                                                 </div>
                                             </div>
                                         </div>
@@ -526,7 +526,7 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<!-- <script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script> -->
+<script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script>
 <script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script>
 <script src="{{ asset('public/assets/js/jquery.min.js?v='.date('mdHis')) }}"></script>
 <!-- jQuery UI 1.11.4 -->
@@ -555,8 +555,17 @@
 
 <script>
     $(document).ready(function() {
+        window.onbeforeunload = function() {
+        return "Are you sure you want to leave?";
+    }
+        var date = new Date();
+        var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        $('.daterange').daterangepicker({
+            minDate: today,
+            "singleDatePicker": true
+        });
         $(".select2").select2();
-        // $('#meeting_modal').modal('show');
+        $('#meeting_modal').modal('show');
         setTimeout(function(){
             $('.btnJoin').prop("disabled", false);
             $('.btnJoin').html('<i class="far fa-play-circle"></i> Start');

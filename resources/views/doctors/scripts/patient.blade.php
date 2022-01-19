@@ -47,10 +47,10 @@
     @endif
 	$('.select_phic').on('change',function(){
         var status = $(this).val();
-        if(status!='none'){
-            $('.phicID').attr('disabled',false);
+        if(status=='None'){
+            $('.phicID').attr('disabled',true);
         }else{
-            $('.phicID').val('').attr('disabled',true);
+            $('.phicID').val('').attr('disabled',false);
         }
     });
 
@@ -145,9 +145,6 @@
 	    });
         if(edit.length > 0 ) {
     	    $('.select_phic').val(edit[0].phic_status).change();
-            if(user.level == 'admin') {
-                $("#doctor_id").select2().select2('val', edit[0].doctor_id);
-            }
             $("[name=region]").select2().select2('val', edit[0].region);
             $("[name=province]").select2().select2('val', edit[0].province);
     	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
@@ -184,11 +181,8 @@
     }
 	$('#patient_modal').on('hidden.bs.modal', function () {
         $("#myModalLabel").html('Add Patient');
-        if(user.level == 'admin') {
-            $("#doctor_id").select2().select2('val', '');
-        }
 		$("#deleteBtn").addClass("hide");
-		$('.select_phic').val('');
+		$('.select_phic').val('None');
 	    $("input[name=phic_id]").val('');
 	    $("input[name=fname]").val('');
 	    $("input[name=mname]").val('');
@@ -210,6 +204,7 @@
         $("input[name=street]").val('');
         existUsername = '';
         $('input[name=password]').attr('required',true);
+        $("#patient_id").val('');
 	});
 
     $( ".generateUsername" ).click(function() {
@@ -423,21 +418,25 @@
             }
         });
     }
-    $('#consultation_form').on('submit',function(e){
-        e.preventDefault();
+    function acceptPatient(is) {
         var id = $("input[name=meeting_info_id]").val();
-        console.log(id)
         $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Accepting...');
         $('#consultation_form').ajaxSubmit({
             url:  "{{ url('/patient-accept') }}/"+id,
             type: "POST",
+            data: {
+                respo: is
+            },
             success: function(data){
                 setTimeout(function(){
                     window.location.reload(false);
                 },500);
             },
         });
-        
+    }
+    $('#consultation_form').on('submit',function(e){
+        e.preventDefault();
+        acceptPatient('1');
     });
 
     function getUsername() {

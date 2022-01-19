@@ -19,7 +19,7 @@
             <div class="pull-right">
                 <form action="{{ asset('/admin-patient') }}" method="POST" class="form-inline">
                     {{ csrf_field() }}
-                    <div class="form-group-lg" style="margin-bottom: 10px;">
+                    <div class="form-group-md" style="margin-bottom: 10px;">
                         <input type="text" class="form-control" name="keyword" placeholder="Search patient..." value="{{ Session::get("keyword") }}">
                         <button type="submit" class="btn btn-success btn-sm btn-flat">
                             <i class="fa fa-search"></i> Search
@@ -45,25 +45,19 @@
                             <th>Age / DOB</th>
                             <th>Barangay</th>
                             <th>Contact</th>
-                            <th>Status</th>
-                            <th>Schedule</th>
-                            <th></th>
+                            <th>Username</th>
                         </tr>
                         
                         @foreach($data as $row)
-                        <tr>
+                        <tr
+                           data-toggle="modal"
+                           data-id= "{{ $row->id }}"
+                           data-target="#patient_modal" 
+                           onclick="getDataFromData(this, '<?php echo $row->account_id?>')" 
+                        >
                             <td style="white-space: nowrap;">
-                                <b>
-                                    <a
-                                       href="#"
-                                       data-toggle="modal"
-                                       data-id= "{{ $row->id }}"
-                                       class="title-info update_info"
-                                       data-target="#patient_modal" 
-                                       onclick="getDataFromData(this, '<?php echo $row->account_id?>')" 
-                                    >
-                                        {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
-                                    </a>
+                                <b class="title-info update_info">
+                                    {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
                                 </b>
                             </td>
                             <td>{{ $row->sex }}</td>
@@ -81,26 +75,7 @@
                             </td>
                             <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
-                            <td>@if($row->is_accepted == 0)
-                                    <span class="badge bg-red"><span>Not Accepted</span></span>
-                                @else
-                                    <span class="badge bg-green"><span>Accepted</span></span>
-                                @endif</td>
-                            <td>@if($row->meeting)
-                                <b>{{$row->meeting->datefrom}} {{$row->meeting->time}}</b>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                @if($row->meeting)
-                                <a data-toggle="modal" class="btn btn-success btn-sm btn-flat" data-target="#meeting_modal" onclick="getSchedule('<?php echo $row->meeting->id; ?>', '<?php echo $row->fname?>', '<?php echo $row->mname?>', '<?php echo $row->lname?>')">
-                                    <i class="far fa-clock"></i> Schedule
-                                </a>
-                                @else
-                                <a data-toggle="modal" class="btn btn-danger btn-sm btn-flat" data-target="#meeting_modal" onclick="getEmail('<?php echo $row->email?>', '<?php echo $row->fname?>', '<?php echo $row->mname?>', '<?php echo $row->lname?>', '<?php echo $row->id?>')">
-                                    <i class="far fa-clock"></i> Schedule
-                                </a>
-                                @endif
-                            </td>
+                            <td>@if($row->account){{ $row->account->username }}@endif</td>
                         </tr>
                         @endforeach
                     </table>
@@ -116,11 +91,9 @@
         </div>
     </div>
 </div>
-    @include('modal.admin.scheduleconsult')
     @include('modal.doctors.patientmodal')
 @endsection
 @section('js')
     @include('doctors.scripts.patient')
-    @include('doctors.scripts.teleconsult')
 @endsection
 

@@ -133,7 +133,11 @@
                 </div>
                 <hr>
                 <div class="row">
-                    <div class="col-md-4">
+                     <div class="col-md-3">
+                        <label>Ownership:</label>
+                        <input type="text" class="form-control" value="{{$facility->ownership}}" name="ownership">
+                      </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Status:</label>
                             <select class="form-control" name="status">
@@ -142,16 +146,26 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Hospital License Status:</label>
-                            <input type="text" class="form-control" value="{{$facility->hosp_licensestatus}}" name="hosp_licensestatus">
+                            <select class="form-control" name="hosp_licensestatus">
+                                <option value="With License" @if($facility->hosp_licensestatus == 'With License')selected @endif>With License</option>
+                                <option value="Without License" @if($facility->hosp_licensestatus == 'Without License')selected @endif>Without License</option>
+                                <option value="N/A" @if($facility->hosp_licensestatus == 'N/A')selected @endif>N/A</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                          <div class="form-group">
                             <label>Service Capability:</label>
-                            <input type="text" class="form-control" value="{{$facility->hosp_servcapability}}" name="hosp_servcapability">
+                            <select class="form-control" name="hosp_servcapability">
+                                <option value="Level 1" @if($facility->hosp_servcapability == 'Level 1')selected @endif>Level 1</option>
+                                <option value="Level 2" @if($facility->hosp_servcapability == 'Level 2')selected @endif>Level 2</option>
+                                <option value="Level 3" @if($facility->hosp_servcapability == 'Level 3')selected @endif>Level 3</option>
+                                <option value="Level 4" @if($facility->hosp_servcapability == 'Level 4')selected @endif>Level 4</option>
+                                <option value="Infirmary" @if($facility->hosp_servcapability == 'Infirmary')selected @endif>Infirmary</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-4">

@@ -88,6 +88,10 @@
         </div>
         <hr>
         <div class="form-group">
+            <label>Ownership:</label>
+            <input type="text" class="form-control" value="" name="ownership">
+        </div>
+        <div class="form-group">
             <label>Status:</label>
             <select class="form-control" name="status">
                 <option value="1" selected="">Active</option>
@@ -96,11 +100,23 @@
         </div>
         <div class="form-group">
             <label>Hospital License Status:</label>
-            <input type="text" class="form-control" value="" name="hosp_licensestatus">
+            <select class="form-control" name="hosp_licensestatus" required>
+              <option value="" selected>Select License Status</option>
+                <option value="With License">With License</option>
+                <option value="Without License">Without License</option>
+                <option value="N/A">N/A</option>
+            </select>
         </div>
         <div class="form-group">
             <label>Service Capability:</label>
-            <input type="text" class="form-control" value="" name="hosp_servcapability">
+            <select class="form-control" name="hosp_servcapability" required>
+              <option value="" selected>Select Service Capability</option>
+                <option value="Level 1">Level 1</option>
+                <option value="Level 2">Level 2</option>
+                <option value="Level 3">Level 3</option>
+                <option value="Level 4">Level 4</option>
+                <option value="Infirmary">Infirmary</option>
+            </select>
         </div>
         <div class="form-group">
             <label>Bed Capacity:</label>

@@ -13,6 +13,8 @@ use App\MunicipalCity;
 use App\Province;
 use App\User;
 use App\Patient;
+use App\Login;
+use App\TeleCategory;
 class ManageController extends Controller
 {
     public function __construct()
@@ -193,6 +195,7 @@ class ManageController extends Controller
             'facilityhead_lname' => $req->facilityhead_lname,
             'facilityhead_mi' => $req->facilityhead_mi,
             'facilityhead_position' => $req->facilityhead_position,
+            'ownership' => $req->ownership,
             'status' => $req->status,
             'hosp_licensestatus' => $req->hosp_licensestatus,
             'hosp_servcapability' => $req->hosp_servcapability,
@@ -240,6 +243,7 @@ class ManageController extends Controller
         Session::put('keyword',$keyword);
         $provinces = Province::all();
         $data = Province::where('prov_name',"like","%$keyword%")
+            ->where('reg_psgc', '120000000')
             ->orderBy("prov_name","asc")
             ->paginate(20);
         return view('superadmin.provinces',[
@@ -395,6 +399,75 @@ class ManageController extends Controller
                         ->where('level', '=', 'doctor')
                         ->orderBy('lname', 'asc')->get();
         return response()->json(['doctors'=>$doctors]);
+    }
+
+    public function indexAudit(Request $request) {
+        $user = Session::get('auth');
+        $keyword = $request->view_all ? '' : $request->date_range;
+        $data = Login::select('logins.*');
+        if($keyword){
+            $date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[0]));
+            $date_end = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[1]));
+            $data = $data
+                ->where(function($q) use($date_start, $date_end) {
+                $q->whereBetween('login', [$date_start, $date_end]);
+            });
+        }
+        $data = $data->orderBy('login', 'asc')
+                    ->paginate(20);
+
+        return view('superadmin.audit',[
+            'data' => $data,
+            'search' => $keyword
+        ]);
+
+    }
+
+    public function indexTeleCat(Request $request) {
+        if($request->view_all == 'view_all')
+            $keyword = '';
+        else{
+            if(Session::get("keyword")){
+                if(!empty($request->keyword) && Session::get("keyword") != $request->keyword)
+                    $keyword = $request->keyword;
+                else
+                    $keyword = Session::get("keyword");
+            } else {
+                $keyword = $request->keyword;
+            }
+        }
+
+        Session::put('keyword',$keyword);
+        $telecat = TeleCategory::all();
+        $data = TeleCategory::where('category_name',"like","%$keyword%")
+            ->orderBy("category_name","asc")
+            ->paginate(20);
+        return view('superadmin.telecat',[
+            'title' => 'List of Teleconsultant Category',
+            'telecat' => $telecat,
+            'data' => $data
+        ]);
+    }
+
+    public function storeTelecat(Request $req) {
+        $province = Province::find($req->telecat_id);
+        $data = array(
+            'category_name' => $req->category_name,
+        );
+        if(!$req->telecat_id){
+            Session::put("action_made","Successfully added new province");
+            TeleCategory::create($data);
+        }
+        else{
+            Session::put("action_made","Successfully updated province");
+            TeleCategory::find($req->telecat_id)->update($data);
+        }
+    }
+
+     public function deleteTelecat($id) {
+        $tele = TeleCategory::find($id);
+        $tele->delete();
+        Session::put("delete_action","Successfully delete tele Category");
     }
 
 }

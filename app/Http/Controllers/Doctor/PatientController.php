@@ -28,7 +28,6 @@ class PatientController extends Controller
     public function patientList(Request $request)
     {
         $user = Session::get('auth');
-
         $municity =  MunicipalCity::all();
         $province = Province::all();
         if($request->view_all == 'view_all')
@@ -52,8 +51,6 @@ class PatientController extends Controller
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
         ->where('patients.doctor_id', $user->id)
-        ->where('user.doctor_id', $user->id)
-        ->where('patients.is_accepted', 1)
         ->where(function($q) use ($keyword){
             $q->where('patients.fname',"like","%$keyword%")
                 ->orwhere('patients.lname',"like","%$keyword%")
@@ -71,7 +68,6 @@ class PatientController extends Controller
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
         ->where('patients.doctor_id', $user->id)
-        ->where('user.doctor_id', $user->id)
         ->where('patients.is_accepted', 0)
         ->get();
 
@@ -82,9 +78,8 @@ class PatientController extends Controller
             "user.username as username",
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.doctor_id', $user->id)
-        ->where('user.doctor_id', $user->id)->get();
-        $users = User::where('doctor_id', $user->id)->get();
+        ->where('patients.doctor_id', $user->id)->get();
+        $users = User::all();
         $nationality = Countries::orderBy('nationality', 'asc')->get();
         $region = Region::all();
         $nationality_def = Countries::where('num_code', '608')->first();
@@ -177,7 +172,6 @@ class PatientController extends Controller
             $patient->update($data);
             if($req->email && $req->username && $req->password) {
                 $data = array(
-                    'doctor_id' => $doctor_id,
                     'fname' => $req->fname,
                     'mname' => $req->mname,
                     'lname' => $req->lname,
@@ -205,7 +199,6 @@ class PatientController extends Controller
             $patient = Patient::create($data);
             if($req->email && $req->username && $req->password) {
                 $data = array(
-                    'doctor_id' => $doctor_id,
                     'fname' => $req->fname,
                     'mname' => $req->mname,
                     'lname' => $req->lname,
@@ -233,8 +226,12 @@ class PatientController extends Controller
     public function deletePatient($id) {
         $patient = Patient::find($id);
         $account = User::find($patient->account_id);
-        $account->delete();
-        $patient->delete();
+        if($patient) {
+            $patient->delete();
+        }
+        if($account) {
+            $account->delete();
+        }
         Session::put("delete_action","Successfully delete Patient");
     }
 
@@ -274,88 +271,95 @@ class PatientController extends Controller
         $email = $req->email;
         $sendemail = $req->sendemail;
         $patient_id = $req->patient_meeting_id;
-        curl_setopt_array($curl, array(
-          CURLOPT_URL => 'https://webexapis.com/v1/meetings',
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => '',
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => 'POST',
-          CURLOPT_POSTFIELDS =>'{
-          "enabledAutoRecordMeeting": true,
-          "allowAnyUserToBeCoHost": false,
-          "enabledJoinBeforeHost": false,
-          "enableConnectAudioBeforeHost": false,
-          "excludePassword": false,
-          "publicMeeting": false,
-          "enableAutomaticLock": false,
-          "allowFirstUserToBeCoHost": false,
-          "allowAuthenticatedDevices": false,
-          "sendEmail": '.$sendemail.',
-          "title": "'.$title.'",
-          "start": "'.$start.'",
-          "end": "'.$end.'",
-          "timezone": "Asia/Manila",
-          "invitees": [
-            {
-              "email": "'.$email.'",
-              "displayName": "Patient",
-              "coHost": false
-            }
-          ]
-        }',
-          CURLOPT_HTTPHEADER => array(
-            'Authorization: Bearer '.env('WEBEX_API').'',
-            'Content-Type: application/json'
-          ),
-        ));
+        if($req->respo > 0) {
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => 'https://webexapis.com/v1/meetings',
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_POSTFIELDS =>'{
+              "enabledAutoRecordMeeting": true,
+              "allowAnyUserToBeCoHost": false,
+              "enabledJoinBeforeHost": false,
+              "enableConnectAudioBeforeHost": false,
+              "excludePassword": false,
+              "publicMeeting": false,
+              "enableAutomaticLock": false,
+              "allowFirstUserToBeCoHost": false,
+              "allowAuthenticatedDevices": false,
+              "sendEmail": '.$sendemail.',
+              "title": "'.$title.'",
+              "start": "'.$start.'",
+              "end": "'.$end.'",
+              "timezone": "Asia/Manila",
+              "invitees": [
+                {
+                  "email": "'.$email.'",
+                  "displayName": "Patient",
+                  "coHost": false
+                }
+              ]
+            }',
+              CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer '.env('WEBEX_API').'',
+                'Content-Type: application/json'
+              ),
+            ));
 
-        $response = curl_exec($curl);
-        $meet = json_decode($response,true);
-        curl_close($curl);
-        $data = array(
-            'doctor_id' => $user->id,
-            'patient_id' => $patient_id,
-            'date_meeting' => $date,
-            'from_time' => $time,
-            'to_time' => $endtime,
-            'meeting_id' => $meet['id'],
-            'meeting_number' => $meet['meetingNumber'],
-            'title' => $meet['title'],
-            'password' => $meet['password'],
-            'phone_video_password' => $meet['phoneAndVideoSystemPassword'],
-            'meeting_type' => $meet['meetingType'],
-            'state' => $meet['state'],
-            'timezone' => $meet['timezone'],
-            'start' => $meet['start'],
-            'end' => $meet['end'],
-            'host_user_id' => $meet['hostUserId'],
-            'host_display_name' => $meet['hostDisplayName'],
-            'host_email' => $meet['hostEmail'],
-            'host_key' => $meet['hostKey'],
-            'site_url' => $meet['siteUrl'],
-            'web_link' => $meet['webLink'],
-            'sip_address' => $meet['sipAddress'],
-            'dial_in_ip_address' => $meet['dialInIpAddress'],
-            'enable_auto_record_meeting' => $meet['enabledAutoRecordMeeting'],
-            'allow_authenticate_device' => $meet['allowAuthenticatedDevices'],
-            'enable_join_before_host' => $meet['enabledJoinBeforeHost'],
-            'join_before_host_meeting' => $meet['joinBeforeHostMinutes'],
-            'enable_connect_audio_before_host' => $meet['enableConnectAudioBeforeHost'],
-            'exclude_password' => $meet['excludePassword'],
-            'public_meeting' => $meet['publicMeeting'],
-            'enable_automatic_lock' => $meet['enableAutomaticLock']
-        );
-        $meeting_approved = Meeting::create($data);
+            $response = curl_exec($curl);
+            $meet = json_decode($response,true);
+            curl_close($curl);
+            $data = array(
+                'doctor_id' => $user->id,
+                'patient_id' => $patient_id,
+                'date_meeting' => $date,
+                'from_time' => $time,
+                'to_time' => $endtime,
+                'meeting_id' => $meet['id'],
+                'meeting_number' => $meet['meetingNumber'],
+                'title' => $meet['title'],
+                'password' => $meet['password'],
+                'phone_video_password' => $meet['phoneAndVideoSystemPassword'],
+                'meeting_type' => $meet['meetingType'],
+                'state' => $meet['state'],
+                'timezone' => $meet['timezone'],
+                'start' => $meet['start'],
+                'end' => $meet['end'],
+                'host_user_id' => $meet['hostUserId'],
+                'host_display_name' => $meet['hostDisplayName'],
+                'host_email' => $meet['hostEmail'],
+                'host_key' => $meet['hostKey'],
+                'site_url' => $meet['siteUrl'],
+                'web_link' => $meet['webLink'],
+                'sip_address' => $meet['sipAddress'],
+                'dial_in_ip_address' => $meet['dialInIpAddress'],
+                'enable_auto_record_meeting' => $meet['enabledAutoRecordMeeting'],
+                'allow_authenticate_device' => $meet['allowAuthenticatedDevices'],
+                'enable_join_before_host' => $meet['enabledJoinBeforeHost'],
+                'join_before_host_meeting' => $meet['joinBeforeHostMinutes'],
+                'enable_connect_audio_before_host' => $meet['enableConnectAudioBeforeHost'],
+                'exclude_password' => $meet['excludePassword'],
+                'public_meeting' => $meet['publicMeeting'],
+                'enable_automatic_lock' => $meet['enableAutomaticLock']
+            );
+            $meeting_approved = Meeting::create($data);
+            $meeting = PendingMeeting::find($id)->update([
+                'meet_id' => $meeting_approved->id
+            ]);
+        }
         $patient = Patient::find($patient_id)->update([
-            'is_accepted' => 1
+            'is_accepted' => $req->respo
         ]);
-        $meeting = PendingMeeting::find($id)->update([
-            'meet_id' => $meeting_approved->id
-        ]);
-        Session::put("action_made","Successfully accept patient.\n Successfully added new teleconsultation");
+        if($req->respo > 0) {
+            $action = "Successfully accept patient.\n Successfully added new teleconsultation";
+        } else {
+            $action = "Successfully decline patient";
+        }
+        Session::put("action_made", $action);
     }
 
     public function patientConsultInfo($id) {
