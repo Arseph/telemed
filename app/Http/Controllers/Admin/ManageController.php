@@ -120,4 +120,16 @@ class ManageController extends Controller
         $meeting = PendingMeeting::find($req->meet_id);
         return json_encode($meeting);
     }
+    public function clinical($id) {
+        $patient = Patient::find($id);
+        return view('admin.clinical',[
+            'patient' => $patient
+        ]);
+    }
+    public function covid($id) {
+    }
+    public function diagnosis($id) {
+    }
+    public function plan($id) {
+    }
 }
