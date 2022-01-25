@@ -11,6 +11,24 @@
     .disAble {
         pointer-events:none;
     }
+    .btnSaveMove {
+        position: fixed;
+        bottom: 30px;
+        right: 92px;
+        z-index: 99;
+        animation-name: fadeInOpacity;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-duration: 0.5s;
+    }
+    @keyframes fadeInOpacity {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
 </style>
 <div class="container">
     <div class="box box-success">

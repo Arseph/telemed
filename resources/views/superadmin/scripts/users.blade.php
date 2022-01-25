@@ -49,6 +49,7 @@
 		Deactivate = 'yes';
 		var id = $("#user_id").val();
 		if(Deactivate) {
+			$(".loading").show();
 			$.ajax({
 				headers: {
 	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -60,6 +61,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		}
 	});
@@ -93,7 +103,7 @@
 			$('#password2').css("border","red solid 3px");
 		}
 		else if(processOne && processTwo && invalid == 0) {
-			$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+			$(".loading").show();
 			$('#user_form').ajaxSubmit({
 	            url:  "{{ url('/user-store') }}",
 	            type: "POST",
@@ -102,6 +112,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		}
 	});
@@ -162,6 +181,7 @@
 		var level = this.value
 		var id = $("[name=facility_id]").val();
 		if(level == 'patient') {
+			$(".loading").show();
 			$.ajax({
 	            url: "doctor-option/"+id+"",
 	            method: 'GET',
@@ -192,6 +212,15 @@
 	                    });
 					  	$('#doctorID').removeClass('hide');
 	                }
+	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
 	            }
 	        });
 		} else {

@@ -53,6 +53,7 @@
 
 	$('#facility_form').on('submit',function(e){
 		e.preventDefault();
+        $(".loading").show();
 		$('#facility_form').ajaxSubmit({
             url:  "{{ url('/update-facility') }}",
             type: "POST",
@@ -63,4 +64,12 @@
             },
         });
 	});
+
+    $( window ).scroll(function() {
+      if($(window).scrollTop() > 250) {
+        $( '.btnSave' ).addClass('btnSaveMove');
+      } else {
+        $( '.btnSave' ).removeClass('btnSaveMove');
+      }
+    });
 </script>

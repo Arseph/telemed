@@ -8,6 +8,13 @@
     var processOne;
     var processTwo;
     var existUsername;
+    $('.table-responsive').on('show.bs.dropdown', function () {
+         $('.table-responsive').css( "overflow", "inherit" );
+    });
+
+    $('.table-responsive').on('hide.bs.dropdown', function () {
+         $('.table-responsive').css( "overflow", "auto" );
+    })
     $(document).ready(function() {
         var date = new Date();
         var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -121,7 +128,7 @@
 	});
     $('#patient_form').on('submit',function(e){
 		e.preventDefault();
-        $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $(".loading").show();
 		$('#patient_form').ajaxSubmit({
             url:  "{{ url('/patient-store') }}",
             type: "POST",
@@ -130,6 +137,15 @@
                     window.location.reload(false);
                 },500);
             },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            }
         });
 		
 	});
@@ -227,8 +243,8 @@
 
     $('#create_form').on('submit',function(e){
         e.preventDefault();
+        $(".loading").show();
         if(processOne && processTwo) {
-            $('.btnSaveAccount').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
             $('#create_form').ajaxSubmit({
                 url:  "{{ url('/create-patient-account') }}",
                 type: "POST",
@@ -237,6 +253,15 @@
                         window.location.reload(false);
                     },500);
                 },
+                error : function(data){
+                    $(".loading").hide();
+                    Lobibox.notify('error', {
+                        title: "",
+                        msg: "Something Went Wrong. Please Try again.",
+                        size: 'mini',
+                        rounded: true
+                    });
+                }
             });
         }
     });
@@ -432,10 +457,20 @@
                     window.location.reload(false);
                 },500);
             },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            }
         });
     }
     $('#consultation_form').on('submit',function(e){
         e.preventDefault();
+        $(".loading").show();
         acceptPatient('1');
     });
 

@@ -47,7 +47,7 @@
             background: url('{{ asset('public/img/backdrop.png') }}'), -webkit-gradient(radial, center center, 0, center center, 460, from(#ccc), to(#ddd));
         }
         .loading {
-            background: rgba(255, 255, 255, 0.9) url('{{ asset('public/img/loading.gif')}}') no-repeat center;
+            background: rgba(255, 255, 255, 0.6) url('{{ asset('public/img/load.gif')}}') no-repeat center;
             position:fixed;
             width:100%;
             height:100%;
@@ -55,6 +55,21 @@
             left:0px;
             z-index:999999999;
             display: none;
+        }
+
+        #loading {
+          position: fixed;
+          top: 0; left: 0; z-index: 9999;
+          width: 100vw; height: 100vh;
+          background: rgb(89,171,145,0.3);
+          opacity: 0.5;
+          transition: opacity 0.2s;
+        }
+
+        #loading svg {
+          position: absolute;
+          top: 30%; left: 50%;
+          transform: translate(-50%);
         }
 
         #myBtn {
@@ -278,6 +293,7 @@
     <main class="py-4">
         @include('modal.others.listPatientModal')
         @yield('content')
+        <div class="loading"></div>
     </main>
 </div>
 

@@ -28,6 +28,7 @@
 	$('#diagmaincat').on('change', function() {
 		var id = this.value;
 		if(id) {
+			$(".loading").show();
 			$.ajax({
 	            url: "diagnosis/"+id+"/maincat",
 	            method: 'GET',
@@ -50,6 +51,15 @@
 	                    });
 					  	$('#divCat').removeClass('hide');
 	                }
+	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
 	            }
 	        });
 		}
@@ -60,7 +70,7 @@
 	});
 	$('#diagnosis_form').on('submit',function(e){
 		e.preventDefault();
-		$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+		$(".loading").show();
 		if(toDelete) {
 			var id = $("#diagnosis_id").val();
 			$('#diagnosis_form').ajaxSubmit({
@@ -71,6 +81,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		} else {
 			$('#diagnosis_form').ajaxSubmit({
@@ -81,6 +100,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		}
 	});

@@ -14,6 +14,10 @@ use App\Region;
 use App\MunicipalCity;
 use App\Province;
 use App\PendingMeeting;
+use Carbon\Carbon;
+use App\ClinicalHistory;
+use App\CovidAssessment;
+use App\CovidScreening;
 class ManageController extends Controller
 {
 	public function __construct()
@@ -122,11 +126,36 @@ class ManageController extends Controller
     }
     public function clinical($id) {
         $patient = Patient::find($id);
+        $facility = Facility::orderBy('facilityname', 'asc')->get();
+        $date_referral = '';
+        $date_onset_illness = '';
+        if($patient->clinical) {
+            $date_referral = date('m/d/Y', strtotime($patient->clinical->date_referral));
+            $date_onset_illness = date('m/d/Y', strtotime($patient->clinical->date_onset_illness));
+        }
         return view('admin.clinical',[
-            'patient' => $patient
+            'patient' => $patient,
+            'facility' => $facility,
+            'date_referral' => $date_referral,
+            'date_onset_illness' => $date_onset_illness
         ]);
     }
+    public function clinicalStore(Request $req) {
+       $date_illness = date('Y-m-d', strtotime($req->date_onset_illness));
+       $date_referral = date('Y-m-d', strtotime($req->date_referral));
+       $data = $req->all();
+       $data['date_onset_illness'] = $date_illness;
+       $data['date_referral'] = $date_referral;
+       if($req->id) {
+        ClinicalHistory::find($req->id)->update($data);
+        Session::put("action_made","Successfully Update Clinical History and Physical Exam");
+       } else {
+        ClinicalHistory::create($data);
+        Session::put("action_made","Successfully Created Clinical History and Physical Exam");
+       }
+    }
     public function covid($id) {
+
     }
     public function diagnosis($id) {
     }

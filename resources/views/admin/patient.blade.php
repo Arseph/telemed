@@ -11,6 +11,12 @@
     .disAble {
         pointer-events:none;
     }
+    .dropdown-left-manual {
+      right: 0;
+      left: auto;
+      padding-left: 1px;
+      padding-right: 1px;
+    }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container-fluid">
@@ -46,6 +52,7 @@
                             <th>Barangay</th>
                             <th>Contact</th>
                             <th>Username</th>
+                            <th class="text-center">More</th>
                         </tr>
                         
                         @foreach($data as $row)
@@ -76,10 +83,23 @@
                             <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
                             <td>@if($row->account){{ $row->account->username }}@endif</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                  <a class="dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></a>
+                                  <ul class="dropdown-menu dropdown-left-manual">
+                                    <li><a href="{{ url('admin/clinical').'/'.$row->id }}">Clinical History & Physical Exam</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ url('admin/covid').'/'.$row->id }}">Covid 19 Screening</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ url('admin/diagnosis').'/'.$row->id }}">Diagnosis/Assessment</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ url('admin/plan').'/'.$row->id }}">Plan of Management</a></li>
+                                  </ul>
+                                </div>
+                            </td>
                         </tr>
                         @endforeach
                     </table>
-                    
                 </div>
             @else
                 <div class="alert alert-warning">

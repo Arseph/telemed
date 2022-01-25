@@ -26,12 +26,29 @@
         var date = new Date();
         var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         $('#consolidate_date_range').daterangepicker({
-            minDate: today
+            minDate: today,
         });
         $('#consolidate_date_range_past').daterangepicker({
-            maxDate: today
+            maxDate: today,
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
         });
-        $('#consolidate_date_range_req').daterangepicker();
+        $('#consolidate_date_range_req').daterangepicker({
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
         $('.daterange').daterangepicker({
             minDate: today,
             "singleDatePicker": true
@@ -153,6 +170,7 @@
     $('#schedule_form').on('submit',function(e){
         e.preventDefault();
         $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $(".loading").show();
         $('#schedule_form').ajaxSubmit({
             url:  "{{ url('/admin-sched-pending') }}",
             type: "GET",
@@ -163,6 +181,7 @@
             },
             error: function (data) {
                 $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
                 Lobibox.notify('error', {
                     title: "Schedule",
                     msg: "Something went wrong, Please try again.",
