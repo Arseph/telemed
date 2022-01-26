@@ -85,6 +85,7 @@ Route::get('/get-doctors-facility','Admin\TeleController@getDoctorsFacility');
 Route::get('/admin/clinical/{id}','Admin\ManageController@clinical');
 Route::post('/admin/clinical-store','Admin\ManageController@clinicalStore');
 Route::get('/admin/covid/{id}','Admin\ManageController@covid');
+Route::post('/admin/covid-store','Admin\ManageController@covidStore');
 Route::get('/admin/diagnosis/{id}','Admin\ManageController@diagnosis');
 Route::get('/admin/plan/{id}','Admin\ManageController@plan');
 

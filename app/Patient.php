@@ -37,10 +37,10 @@ class Patient extends Model
     public function clinical() {
         return $this->hasOne(ClinicalHistory::class, 'patient_id', 'id');
     }
-    public function covidassessment() {
+    public function covidassess() {
         return $this->hasOne(CovidAssessment::class, 'patient_id', 'id');
     }
-    public function covidscreening() {
+    public function covidscreen() {
         return $this->hasOne(CovidScreening::class, 'patient_id', 'id');
     }
 }

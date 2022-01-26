@@ -95,6 +95,7 @@
                         </div>
                     </div>
                     <div class="col-md-12">
+                    <hr>
                         <h4>Physical Examination(Inspection)</h4>
                         <div class="form-group">
                             <label>Clinical Status at the Time of Consult:</label>

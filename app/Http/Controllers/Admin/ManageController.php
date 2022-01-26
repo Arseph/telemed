@@ -155,7 +155,73 @@ class ManageController extends Controller
        }
     }
     public function covid($id) {
+        $patient = Patient::find($id);
+        $countries = Countries::orderBy('en_short_name', 'asc')->get();
+        $date_departure = '';
+        $date_arrival_ph = '';
+        $date_contact_known_covid_case = '';
+        $acco_date_last_expose = '';
+        $food_es_date_last_expose = '';
+        $store_date_last_expose = '';
+        $fac_date_last_expose = '';
+        $event_date_last_expose = '';
+        $wp_date_last_expose = '';
+        $list_name_occasion = [];
+        if($patient->covidscreen) {
+            $date_departure = date('m/d/Y', strtotime($patient->covidscreen->date_departure));
+            $date_arrival_ph = date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph));
+            $date_contact_known_covid_case = date('m/d/Y', strtotime($patient->covidscreen->date_contact_known_covid_case));
+            $acco_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->acco_date_last_expose));
+            $food_es_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->food_es_date_last_expose));
+            $store_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->store_date_last_expose));
+            $fac_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->fac_date_last_expose));
+            $event_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->event_date_last_expose));
+            $wp_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->wp_date_last_expose));
+            $list_name_occasion = explode("|",$patient->covidscreen->list_name_occasion);
+        }
+        return view('admin.covid',[
+            'patient' => $patient,
+            'countries' => $countries,
+            'date_departure' => $date_departure,
+            'date_arrival_ph' => $date_arrival_ph,
+            'date_contact' => $date_contact_known_covid_case,
+            'acco_date_last_expose' => $acco_date_last_expose,
+            'food_es_date_last_expose' => $food_es_date_last_expose,
+            'store_date_last_expose' => $store_date_last_expose,
+            'fac_date_last_expose' => $fac_date_last_expose,
+            'event_date_last_expose' => $event_date_last_expose,
+            'wp_date_last_expose' => $wp_date_last_expose,
+            'list_name_occasion' => $list_name_occasion
+        ]);
+    }
 
+    public function covidStore(Request $req) {
+        $list_name_occasion = implode('|', $req->list_name_occa);
+        $req->request->add([
+            'list_name_occasion' =>  $list_name_occasion
+        ]);
+        $data = $req->all();
+        $data['date_departure'] = $req->date_departure ? date('Y-m-d', strtotime($req->date_departure)) : null;
+        $data['date_arrival_ph'] = $req->date_arrival_ph ? date('Y-m-d', strtotime($req->date_arrival_ph)) : null;
+        $data['date_contact_known_covid_case'] = $req->date_contact_known_covid_case ? date('Y-m-d', strtotime($req->date_contact_known_covid_case)) : null;
+        $data['acco_date_last_expose'] = $req->acco_date_last_expose ? date('Y-m-d', strtotime($req->acco_date_last_expose)) : null;
+        $data['food_es_date_last_expose'] = $req->food_es_date_last_expose ? date('Y-m-d', strtotime($req->food_es_date_last_expose)) : null;
+        $data['store_date_last_expose'] = $req->store_date_last_expose ? date('Y-m-d', strtotime($req->store_date_last_expose)) : null;
+        $data['fac_date_last_expose'] = $req->fac_date_last_expose ? date('Y-m-d', strtotime($req->fac_date_last_expose)) : null;
+        $data['event_date_last_expose'] = $req->event_date_last_expose ? date('Y-m-d', strtotime($req->event_date_last_expose)) : null;
+        $data['wp_date_last_expose'] = $req->wp_date_last_expose ? date('Y-m-d', strtotime($req->wp_date_last_expose)) : null;
+        $screenid = $req->screen_id;
+        $assessid = $req->assess_id;
+        unset($data['screen_id']);
+        unset($data['assess_id']);
+        unset($data['list_name_occa']);
+        if($screenid) {
+            CovidScreening::find($screenid)->update($data);
+            Session::put("action_made","Successfully Update Covid-19 Screening");
+        } else {
+            CovidScreening::create($data);
+            Session::put("action_made","Successfully Created Covid-19 Screening");
+        }
     }
     public function diagnosis($id) {
     }
