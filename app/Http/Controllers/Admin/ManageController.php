@@ -167,17 +167,37 @@ class ManageController extends Controller
         $event_date_last_expose = '';
         $wp_date_last_expose = '';
         $list_name_occasion = [];
+        $days_14_date_onset_illness = '';
+        $referral_date = '';
+        $xray_date = '';
+        $date_collected = '';
+        $date_sent_ritm = '';
+        $date_received_ritm = '';
+        $scrum = [];
+        $oro_naso_swab = [];
+        $spe_others = [];
         if($patient->covidscreen) {
-            $date_departure = date('m/d/Y', strtotime($patient->covidscreen->date_departure));
-            $date_arrival_ph = date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph));
-            $date_contact_known_covid_case = date('m/d/Y', strtotime($patient->covidscreen->date_contact_known_covid_case));
-            $acco_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->acco_date_last_expose));
-            $food_es_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->food_es_date_last_expose));
-            $store_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->store_date_last_expose));
-            $fac_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->fac_date_last_expose));
-            $event_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->event_date_last_expose));
-            $wp_date_last_expose = date('m/d/Y', strtotime($patient->covidscreen->wp_date_last_expose));
-            $list_name_occasion = explode("|",$patient->covidscreen->list_name_occasion);
+            $date_departure = $patient->covidscreen->date_departure ? date('m/d/Y', strtotime($patient->covidscreen->date_departure)) : '';
+            $date_arrival_ph = $patient->covidscreen->date_arrival_ph ? date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph)) : '';
+            $date_contact_known_covid_case = $patient->covidscreen->date_contact_known_covid_case ? date('m/d/Y', strtotime($patient->covidscreen->date_contact_known_covid_case)) : '';
+            $acco_date_last_expose = $patient->covidscreen->acco_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->acco_date_last_expose)) : '';
+            $food_es_date_last_expose = $patient->covidscreen->food_es_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->food_es_date_last_expose)) : '';
+            $store_date_last_expose = $patient->covidscreen->store_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->store_date_last_expose)) : '';
+            $fac_date_last_expose = $patient->covidscreen->fac_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->fac_date_last_expose)) : '';
+            $event_date_last_expose = $patient->covidscreen->event_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->event_date_last_expose)) : '';
+            $wp_date_last_expose = $patient->covidscreen->wp_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->wp_date_last_expose)) : '';
+            $list_name_occasion = $patient->covidscreen->list_name_occasion ? explode("|",$patient->covidscreen->list_name_occasion) : [];
+        }
+        if($patient->covidassess) {
+            $days_14_date_onset_illness = $patient->covidassess->days_14_date_onset_illness ? date('m/d/Y', strtotime($patient->covidassess->days_14_date_onset_illness)) : '';
+            $referral_date = $patient->covidassess->referral_date ? date('m/d/Y', strtotime($patient->covidassess->referral_date)) : '';
+            $xray_date = $patient->covidassess->xray_date ? date('m/d/Y', strtotime($patient->covidassess->xray_date)) : '';
+            $date_collected = $patient->covidassess->date_collected ? date('m/d/Y', strtotime($patient->covidassess->date_collected)) : '';
+            $date_sent_ritm = $patient->covidassess->date_sent_ritm ? date('m/d/Y', strtotime($patient->covidassess->date_sent_ritm)) : '';
+            $date_received_ritm = $patient->covidassess->date_received_ritm ? date('m/d/Y', strtotime($patient->covidassess->date_received_ritm)) : '';
+            $scrum = $patient->covidassess->scrum ? explode("|",$patient->covidscreen->scrum) : [];
+            $oro_naso_swab = $patient->covidassess->oro_naso_swab ? explode("|",$patient->covidscreen->oro_naso_swab) : [];
+            $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidscreen->spe_others) : [];
         }
         return view('admin.covid',[
             'patient' => $patient,
@@ -191,7 +211,16 @@ class ManageController extends Controller
             'fac_date_last_expose' => $fac_date_last_expose,
             'event_date_last_expose' => $event_date_last_expose,
             'wp_date_last_expose' => $wp_date_last_expose,
-            'list_name_occasion' => $list_name_occasion
+            'list_name_occasion' => $list_name_occasion,
+            'days_14_date_onset_illness' => $days_14_date_onset_illness,
+            'referral_date' => $referral_date,
+            'xray_date' => $xray_date,
+            'date_collected' => $date_collected,
+            'date_sent_ritm' => $date_sent_ritm,
+            'date_received_ritm' => $date_received_ritm,
+            'scrum' => $scrum,
+            'oro_naso_swab' => $oro_naso_swab,
+            'spe_others' => $spe_others
         ]);
     }
 
