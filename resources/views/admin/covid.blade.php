@@ -400,7 +400,7 @@
                       </div>
                 </form>
                       <div id="clinical" class="tab-pane fade">
-                        <form id="clinical_form" method="POST">
+                        <form id="assess_form" method="POST">
                         <input type="hidden" name="assess_id" value="@if($patient->covidassess){{ $patient->covidassess->id }} @endif">
                         {{ csrf_field() }}
                         <h4>Clinical Assessment</h4>
@@ -444,7 +444,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Fever(°C):</label>
-                                    <input type="number" class="form-control" value="@if($patient->covidassess){{ $patient->covidassess->fever }} @endif" name="fever">
+                                    <input type="text" class="form-control" value="@if($patient->covidassess){{ $patient->covidassess->fever }} @endif" name="fever">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -634,14 +634,35 @@
                         <h4>Classification</h4>
                         <hr>
                         <div class="row">
-                            
+                            <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="radio-inline"><input type="radio" name="classification" value="1" required @if($patient->covidassess)@if($patient->covidassess->classification == 1)checked @endif @endif>Suspect Case</label>
+                                    <label class="radio-inline"><input type="radio" name="classification" value="0"  @if($patient->covidassess)@if($patient->covidassess->classification == 0)checked @endif @endif>Probable Case</label>
+                                    <label class="radio-inline"><input type="radio" name="classification" value="2"  @if($patient->covidassess)@if($patient->covidassess->classification == 2)checked @endif @endif>Confirmed Case</label>
+                                </div>
+                            </div>
                         </div>
                       </div>
                       <div id="outcome" class="tab-pane fade">
                         <h4>Outcome</h4>
                         <hr>
                         <div class="row">
-                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Date of Discharge:</label>
+                                    <input type="text" class="form-control daterange" value="{{ $outcome_date_discharge }}" name="outcome_date_discharge">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label>Condition on Discharge</label>
+                                    <label class="radio-inline"><input type="radio" name="outcome_condition_discharge" value="1" required @if($patient->covidassess)@if($patient->covidassess->outcome_condition_discharge == 1)checked @endif @endif>Died</label>
+                                    <label class="radio-inline"><input type="radio" name="outcome_condition_discharge" value="0"  @if($patient->covidassess)@if($patient->covidassess->outcome_condition_discharge == 0)checked @endif @endif>Improved</label>
+                                    <label class="radio-inline"><input type="radio" name="outcome_condition_discharge" value="2"  @if($patient->covidassess)@if($patient->covidassess->outcome_condition_discharge == 2)checked @endif @endif>Recovered</label>
+                                    <label class="radio-inline"><input type="radio" name="outcome_condition_discharge" value="3"  @if($patient->covidassess)@if($patient->covidassess->outcome_condition_discharge == 3)checked @endif @endif>Transferred</label>
+                                    <label class="radio-inline"><input type="radio" name="outcome_condition_discharge" value="4"  @if($patient->covidassess)@if($patient->covidassess->outcome_condition_discharge == 4)checked @endif @endif>Absconded</label>
+                                </div>
+                            </div>
                         </div>
                         </form>
                       </div>

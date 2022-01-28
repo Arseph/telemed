@@ -29,6 +29,7 @@
 		$( '.btnRemoveRow' ).removeClass('hide');
 		$( '.btnAddrowScrum' ).removeClass('hide');
 		$( '.btnAddrowSwab' ).removeClass('hide');
+		$( '.btnAddrowother' ).removeClass('hide');
 	}
 	$('#clinical_form').on('submit',function(e){
 		e.preventDefault();
@@ -44,7 +45,7 @@
             error: function (data) {
             	$(".loading").hide();
                 Lobibox.notify('error', {
-                    title: "Schedule",
+                    title: "",
                     msg: "Something went wrong, Please try again.",
                     size: 'normal',
                     rounded: true
@@ -57,22 +58,51 @@
 		e.preventDefault();
 		var values = $("input[name='list_name_occasion[]']")
               .map(function(){return $(this).val();}).get();
+        var scrum = $("input[name='scrum[]']")
+              .map(function(){return $(this).val();}).get();
+        console.log(scrum)
+        var oro_naso_swab = $("input[name='oro_naso_swab[]']")
+              .map(function(){return $(this).val();}).get();
+        var spe_others = $("input[name='spe_others[]']")
+              .map(function(){return $(this).val();}).get();
+        var patient_id = $('input[name="patient_id"]').val();
 		$(".loading").show();
 		$('#covid_form').ajaxSubmit({
 			url:  "{{ url('/admin/covid-store') }}",
             type: "POST",
             data: {
-            	list_name_occa: values
+            	list_name_occa: values ? values : ''
             },
             success: function(data){
-                setTimeout(function(){
-                    window.location.reload(false);
-                },500);
+                $('#assess_form').ajaxSubmit({
+					url:  "{{ url('/admin/assess-store') }}",
+		            type: "POST",
+		            data: {
+		            	patient_id: patient_id,
+		            	scrumee: scrum,
+		            	oro_naso_swabee: oro_naso_swab ? oro_naso_swab : '',
+		            	spe_othersee: spe_others ? spe_others : ''
+		            },
+		            success: function(data){
+		                setTimeout(function(){
+		                    window.location.reload(false);
+		                },500);
+		            },
+		            error: function (data) {
+		            	$(".loading").hide();
+		                Lobibox.notify('error', {
+		                    title: "",
+		                    msg: "Something went wrong, Please try again.",
+		                    size: 'normal',
+		                    rounded: true
+		                });
+		            },
+				});
             },
             error: function (data) {
             	$(".loading").hide();
                 Lobibox.notify('error', {
-                    title: "Schedule",
+                    title: "",
                     msg: "Something went wrong, Please try again.",
                     size: 'normal',
                     rounded: true

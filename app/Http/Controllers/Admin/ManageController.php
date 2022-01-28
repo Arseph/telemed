@@ -176,6 +176,7 @@ class ManageController extends Controller
         $scrum = [];
         $oro_naso_swab = [];
         $spe_others = [];
+        $outcome_date_discharge = '';
         if($patient->covidscreen) {
             $date_departure = $patient->covidscreen->date_departure ? date('m/d/Y', strtotime($patient->covidscreen->date_departure)) : '';
             $date_arrival_ph = $patient->covidscreen->date_arrival_ph ? date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph)) : '';
@@ -195,9 +196,10 @@ class ManageController extends Controller
             $date_collected = $patient->covidassess->date_collected ? date('m/d/Y', strtotime($patient->covidassess->date_collected)) : '';
             $date_sent_ritm = $patient->covidassess->date_sent_ritm ? date('m/d/Y', strtotime($patient->covidassess->date_sent_ritm)) : '';
             $date_received_ritm = $patient->covidassess->date_received_ritm ? date('m/d/Y', strtotime($patient->covidassess->date_received_ritm)) : '';
-            $scrum = $patient->covidassess->scrum ? explode("|",$patient->covidscreen->scrum) : [];
-            $oro_naso_swab = $patient->covidassess->oro_naso_swab ? explode("|",$patient->covidscreen->oro_naso_swab) : [];
-            $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidscreen->spe_others) : [];
+            $scrum = $patient->covidassess->scrum ? explode("|",$patient->covidassess->scrum) : [];
+            $oro_naso_swab = $patient->covidassess->oro_naso_swab ? explode("|",$patient->covidassess->oro_naso_swab) : [];
+            $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidassess->spe_others) : [];
+            $outcome_date_discharge = $patient->covidassess->outcome_date_discharge ? date('m/d/Y', strtotime($patient->covidassess->outcome_date_discharge)) : '';
         }
         return view('admin.covid',[
             'patient' => $patient,
@@ -220,12 +222,13 @@ class ManageController extends Controller
             'date_received_ritm' => $date_received_ritm,
             'scrum' => $scrum,
             'oro_naso_swab' => $oro_naso_swab,
-            'spe_others' => $spe_others
+            'spe_others' => $spe_others,
+            'outcome_date_discharge' => $outcome_date_discharge
         ]);
     }
 
     public function covidStore(Request $req) {
-        $list_name_occasion = implode('|', $req->list_name_occa);
+        $list_name_occasion = $req->list_name_occa ? implode('|', $req->list_name_occa) : '';
         $req->request->add([
             'list_name_occasion' =>  $list_name_occasion
         ]);
@@ -242,15 +245,48 @@ class ManageController extends Controller
         $screenid = $req->screen_id;
         $assessid = $req->assess_id;
         unset($data['screen_id']);
-        unset($data['assess_id']);
         unset($data['list_name_occa']);
         if($screenid) {
             CovidScreening::find($screenid)->update($data);
-            Session::put("action_made","Successfully Update Covid-19 Screening");
         } else {
             CovidScreening::create($data);
+        }
+    }
+    public function assessStore(Request $req) {
+        $scrum = $req->scrumee ? implode('|', $req->scrumee) : '';
+        $oro_naso_swab = $req->oro_naso_swabee ? implode('|', $req->oro_naso_swabee) : '';
+        $spe_others = $req->spe_othersee ? implode('|', $req->spe_othersee) : '';
+        $days_14_date_onset_illness = $req->days_14_date_onset_illness ? date('Y-m-d', strtotime($req->days_14_date_onset_illness)) : null;
+        $referral_date = $req->referral_date ? date('Y-m-d', strtotime($req->referral_date)) : null;
+        $xray_date = $req->xray_date ? date('Y-m-d', strtotime($req->xray_date)) : null;
+        $date_collected = $req->date_collected ? date('Y-m-d', strtotime($req->date_collected)) : null;
+        $date_sent_ritm = $req->date_sent_ritm ? date('Y-m-d', strtotime($req->date_sent_ritm)) : null;
+        $date_received_ritm = $req->date_received_ritm ? date('Y-m-d', strtotime($req->date_received_ritm)) : null;
+        $outcome_date_discharge = $req->outcome_date_discharge ? date('Y-m-d', strtotime($req->outcome_date_discharge)) : null;
+        $assessid = $req->assess_id;
+        $data = $req->all();
+        $data['scrum'] = $scrum;
+        $data['oro_naso_swab'] = $oro_naso_swab;
+        $data['spe_others'] = $spe_others;
+        $data['days_14_date_onset_illness'] = $days_14_date_onset_illness;
+        $data['referral_date'] = $referral_date;
+        $data['xray_date'] = $xray_date;
+        $data['date_collected'] = $date_collected;
+        $data['date_sent_ritm'] = $date_sent_ritm;
+        $data['date_received_ritm'] = $date_received_ritm;
+        $data['outcome_date_discharge'] = $outcome_date_discharge;
+        unset($data['assess_id']);
+        unset($data['scrumee']);
+        unset($data['oro_naso_swabee']);
+        unset($data['spe_othersee']);
+        if($assessid) {
+            CovidAssessment::find($assessid)->update($data);
+            Session::put("action_made","Successfully Update Covid-19 Screening");
+        } else {
+            CovidAssessment::create($data);
             Session::put("action_made","Successfully Created Covid-19 Screening");
         }
+
     }
     public function diagnosis($id) {
     }
