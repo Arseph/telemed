@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use App\Diagnosis;
 use App\DiagMainCat;
 use App\DiagSubCat;
+
 class DiagnosisController extends Controller
 {
     public function __construct()

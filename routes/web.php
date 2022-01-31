@@ -105,3 +105,35 @@ Route::match(['GET','POST'],'/doctor-sched-pending','Doctor\TeleConsultControlle
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
 
+
+//JM superadmin //Drugs/Meds
+Route::get('drugsmeds/', 'Superadmin\DrugsMedsCtrl@index'); 
+Route::post('drugsmeds/', 'Superadmin\DrugsMedsCtrl@index'); 
+Route::post('drugmeds/drugsmeds_body', 'Superadmin\DrugsMedsCtrl@drugsmedsBody');
+Route::post('drugsmeds/drugsmeds/delete', 'Superadmin\DrugsMedsCtrl@drugsmedsDelete');
+Route::post('drugsmeds/drugsmeds/add', 'Superadmin\DrugsMedsCtrl@drugsmedsOptions');
+Route::get('drugsmeds/unitofmes', 'Superadmin\DrugsMedsCtrl@unitofmesIndex');
+Route::post('drugsmeds/unitofmes', 'Superadmin\DrugsMedsCtrl@unitofmesIndex');
+Route::post('drugmeds/unitofmes_body', 'Superadmin\DrugsMedsCtrl@unitofmesBody');
+Route::post('drugsmeds/unitofmes/add', 'Superadmin\DrugsMedsCtrl@unitofmesOptions'); 
+Route::post('drugmeds/unitofmes/delete', 'Superadmin\DrugsMedsCtrl@unitofmesDelete');
+Route::get('drugsmeds/subcategory', 'Superadmin\DrugsMedsCtrl@subcatIndex');
+Route::post('drugsmeds/subcategory', 'Superadmin\DrugsMedsCtrl@subcatIndex');
+Route::post('drugmeds/subcat_body', 'Superadmin\DrugsMedsCtrl@subcatBody');
+Route::post('drugsmeds/subcat/add', 'Superadmin\DrugsMedsCtrl@subcatOptions');
+Route::post('drugsmeds/subcat/delete', 'Superadmin\DrugsMedsCtrl@subcatDelete');
+
+
+//Doc type
+Route::get('document/type', 'Superadmin\DocumentCtrl@index');
+Route::post('document/type', 'Superadmin\DocumentCtrl@index');
+Route::post('superadmin/doc_type/body', 'Superadmin\DocumentCtrl@doctypeBody');
+Route::post('superadmin/doc_type/add', 'Superadmin\DocumentCtrl@doctypeOptions'); 
+Route::post('superadmin/doc_type/delete', 'Superadmin\DocumentCtrl@doctypeDelete');
+
+//Lab Request
+Route::get('superadmin/lab_request', 'Superadmin\LabRequestCtrl@index');
+Route::post('superadmin/lab_request', 'Superadmin\LabRequestCtrl@index');
+Route::post('superadmin/lab_request/body', 'Superadmin\LabRequestCtrl@labrequestBody');
+Route::post('superadmin/lab_request/add', 'Superadmin\LabRequestCtrl@labrequestOptions'); 
+Route::post('superadmin/lab_request/delete', 'Superadmin\LabRequestCtrl@labrequestDelete');

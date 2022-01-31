@@ -139,7 +139,13 @@
                                 <li><a href="{{ asset('/diagnosis-sub-category') }}"><i class="fas fa-th"></i>&nbsp; Sub Category</a></li>
                             </ul>
                         </li>
-                        <li><a href="#"><i class="fas fa-medkit"></i>&nbsp; Drugs/Meds</a></li>
+                        <li class="dropdown-submenu">
+                            <a href="{{ asset('/drugsmeds') }}" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false"> <span class="nav-label"><i class="fas fa-pills"></i>&nbsp; Drugs/Meds</span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ asset('drugsmeds/unitofmes') }}"><i class="fas fa-balance-scale-right"></i>&nbsp; Unit of Measure</a></li>
+                                <li><a href="{{ asset('drugsmeds/subcategory') }}"><i class="fas fa-th"></i>&nbsp; Sub Category</a></li>
+                            </ul>
+                        </li>
                         <li class="dropdown-submenu"><a href="#"><i class="fas fa-chart-area"></i>&nbsp; Demographic</a>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ asset('provinces') }}"><i class="fa fa-hospital-o"></i>&nbsp; Province</a></li>
@@ -153,6 +159,8 @@
                                 </li>
                             </ul>
                         </li>
+                        <li><a href="{{ asset('document/type') }}"><i class="fa fa-file-word"></i>Document Type</a></li>
+                        <li><a href="{{ asset('superadmin/lab_request') }}"><i class="fa fa-vial"></i>Lab Request</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
