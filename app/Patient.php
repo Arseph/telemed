@@ -3,9 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use OwenIt\Auditing\Contracts\Auditable;
 class Patient extends Model
 {
+    use \OwenIt\Auditing\Auditable;
     protected $table = 'patients';
     protected $guarded = array();
 
