@@ -1,4 +1,8 @@
 <script>
+	var canvas = document.getElementById('signature-pad');
+	var signaturePad = new SignaturePad(canvas, {
+	  backgroundColor: 'rgb(255, 255, 255)'
+	});
 	@if(Session::get('action_made'))
 	    Lobibox.notify('success', {
 	        title: "",
@@ -18,10 +22,12 @@
         $('input[type=radio][name=history_illness]').change();
         $('input[type=radio][name=xray]').change();
         $('input[type=radio][name=pregnant]').change();
+        $('input[name="clinical_classification"]').change();
     });
 	function enableView() {
 		$('#formEdit').removeClass('disAble');
 		$( 'textarea[name="reason_consult"]' ).focus();
+		$( 'textarea[name="summary_assess"]' ).focus();
 		$( '.btnSave' ).removeClass('hide');
 		$( '#btnEdit' ).addClass('hide');
 		$( '.btnAddrow' ).removeClass('hide');
@@ -30,6 +36,7 @@
 		$( '.btnAddrowScrum' ).removeClass('hide');
 		$( '.btnAddrowSwab' ).removeClass('hide');
 		$( '.btnAddrowother' ).removeClass('hide');
+		$( '.actionsignature' ).removeClass('hide');
 	}
 	$('#clinical_form').on('submit',function(e){
 		e.preventDefault();
@@ -217,4 +224,49 @@
 
         $('#otherRow').append(html);
     });
+
+    $('input[name="clinical_classification"]').change(function() {
+	    if($("input[name='clinical_classification']:checked").val() == 1) {
+	    	$('.ifCovid').removeClass('hide');
+	    } else {
+	    	$('.ifCovid').addClass('hide');
+	    }
+	});
+	$('#diag_form').on('submit',function(e){
+		e.preventDefault();
+		$(".loading").show();
+		$('#diag_form').ajaxSubmit({
+			url:  "{{ url('/admin/diagnosis-store') }}",
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error: function (data) {
+            	$(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'normal',
+                    rounded: true
+                });
+            },
+		});
+
+	});
+	document.getElementById('clear').addEventListener('click', function () {
+	  signaturePad.clear();
+	});
+
+	document.getElementById('draw').addEventListener('click', function () {
+	  var ctx = canvas.getContext('2d');
+	  console.log(ctx.globalCompositeOperation);
+	  ctx.globalCompositeOperation = 'source-over'; // default value
+	});
+
+	document.getElementById('erase').addEventListener('click', function () {
+	  var ctx = canvas.getContext('2d');
+	  ctx.globalCompositeOperation = 'destination-out';
+	});
 </script>

@@ -88,6 +88,7 @@ Route::get('/admin/covid/{id}','Admin\ManageController@covid');
 Route::post('/admin/covid-store','Admin\ManageController@covidStore');
 Route::post('/admin/assess-store','Admin\ManageController@assessStore');
 Route::get('/admin/diagnosis/{id}','Admin\ManageController@diagnosis');
+Route::post('/admin/diagnosis-store','Admin\ManageController@diagnosisStore');
 Route::get('/admin/plan/{id}','Admin\ManageController@plan');
 
 // Doctor Module

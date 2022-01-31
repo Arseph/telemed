@@ -36,6 +36,14 @@
     }
 </style>
 <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url('admin/clinical').'/'.$patient->id }}">Clinical History & Physical Exam</a></li>
+        <li class="breadcrumb-item active">Covid 19 Screening</li>
+        <li class="breadcrumb-item"><a href="{{ url('admin/diagnosis').'/'.$patient->id }}">Diagnosis/Assessment</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('admin/plan').'/'.$patient->id }}">Plan of Management</a></li>
+      </ol>
+    </nav>
     <div class="box box-success">
         <div class="box-header with-border">
         <form id="covid_form" method="POST">

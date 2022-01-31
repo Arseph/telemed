@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use App\ClinicalHistory;
 use App\CovidAssessment;
 use App\CovidScreening;
+use App\DiagnosisAssessment;
 class ManageController extends Controller
 {
 	public function __construct()
@@ -289,7 +290,27 @@ class ManageController extends Controller
 
     }
     public function diagnosis($id) {
+        $patient = Patient::find($id);
+        return view('admin.diagnosis',[
+            'patient' => $patient
+        ]);
+
+    }
+
+    public function diagnosisStore(Request $req) {
+       if($req->id) {
+        DiagnosisAssessment::find($req->id)->update($req->all());
+        Session::put("action_made","Successfully Update Diagnosis/Assessment");
+       } else {
+        DiagnosisAssessment::create($req->all());
+        Session::put("action_made","Successfully Created Diagnosis/Assessment");
+       }
+
     }
     public function plan($id) {
+        $patient = Patient::find($id);
+        return view('admin.plan',[
+            'patient' => $patient
+        ]);
     }
 }

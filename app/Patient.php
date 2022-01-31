@@ -44,4 +44,10 @@ class Patient extends Model implements Auditable
     public function covidscreen() {
         return $this->hasOne(CovidScreening::class, 'patient_id', 'id');
     }
+    public function diagassess() {
+        return $this->hasOne(DiagnosisAssessment::class, 'patient_id', 'id');
+    }
+    public function planmanage() {
+        return $this->hasOne(PlanManagement::class, 'patient_id', 'id');
+    }
 }
