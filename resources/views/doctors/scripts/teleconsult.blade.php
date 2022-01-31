@@ -7,7 +7,15 @@
             minDate: today
         });
         $('#consolidate_date_range_past').daterangepicker({
-            maxDate: today
+            maxDate: today,
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
         });
         $('.daterange').daterangepicker({
             minDate: today,
@@ -96,6 +104,7 @@
     $('#meeting_form').on('submit',function(e){
 		e.preventDefault();
         $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $(".loading").show();
 		$('#meeting_form').ajaxSubmit({
             url:  "{{ url('/add-meeting') }}",
             type: "GET",
@@ -105,6 +114,7 @@
                 },500);
             },
             error: function (data) {
+                $(".loading").hide();
                 $('.btnSave').html('<i class="fas fa-check"></i> Save');
                 Lobibox.notify('error', {
                     title: "Schedule",
@@ -191,6 +201,7 @@
     $('#schedule_form').on('submit',function(e){
         e.preventDefault();
         $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $(".loading").show();
         $('#schedule_form').ajaxSubmit({
             url:  "{{ url('/admin-sched-pending') }}",
             type: "GET",
@@ -201,6 +212,7 @@
             },
             error: function (data) {
                 $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
                 Lobibox.notify('error', {
                     title: "Schedule",
                     msg: "Something went wrong, Please try again.",
@@ -310,6 +322,7 @@
             });
         } else {
             $(this).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+            $(".loading").show();
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -326,6 +339,7 @@
                     },500);
                 },
                 error: function (data) {
+                    $(".loading").hide();
                     var ht = action == 'Accept' ? '<i class="fas fa-check"></i> Accept' : '<i class="fas fa-times"></i> Decline';
                     $(this).html(ht);
                     Lobibox.notify('error', {
@@ -367,6 +381,7 @@
     $('#tele_form').on('submit',function(e){
         e.preventDefault();
         $('.btnSavePend').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $(".loading").show();
         $('#tele_form').ajaxSubmit({
             url:  "{{ url('/doctor-sched-pending') }}",
             type: "GET",
@@ -377,6 +392,7 @@
             },
             error: function (data) {
                 $('.btnSavePend').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
                 Lobibox.notify('error', {
                     title: "Schedule",
                     msg: "Something went wrong, Please try again.",

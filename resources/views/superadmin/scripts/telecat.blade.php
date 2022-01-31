@@ -28,7 +28,7 @@
 	});
 	$('#tele_form').on('submit',function(e){
 		e.preventDefault();
-		$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+		$(".loading").show();
 		var id = $("#telecat_id").val();
 		if(toDelete) {
 			$('#tele_form').ajaxSubmit({
@@ -39,6 +39,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		} else {
 			$('#tele_form').ajaxSubmit({
@@ -49,15 +58,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
-	            error: function(xhr, status, error) {
-				  Lobibox.notify('error', {
-			            title: "",
-			            msg: "Something went wrong. Please Try again.",
-			            size: 'mini',
-			            rounded: true
-			        });
-				  $('.btnSave').html('<i class="fas fa-check"></i> Save');
-				}
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		}
 	});

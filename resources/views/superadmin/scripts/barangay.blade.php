@@ -28,7 +28,7 @@
 	});
 	$('#brgy_form').on('submit',function(e){
 		e.preventDefault();
-		$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+		$(".loading").show();
 		var id = $("#brgy_id").val();
 		if(toDelete) {
 			$('#brgy_form').ajaxSubmit({
@@ -39,6 +39,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		} else {
 			$('#brgy_form').ajaxSubmit({
@@ -49,6 +58,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		}
 	});

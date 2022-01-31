@@ -82,6 +82,13 @@ Route::get('/admin-join-meeting','Admin\TeleController@joinMeeting');
 Route::get('/admin-meeting-info','Admin\TeleController@meetingInfo');
 Route::get('/join-meeting/{id}','Admin\TeleController@indexCall');
 Route::get('/get-doctors-facility','Admin\TeleController@getDoctorsFacility');
+Route::get('/admin/clinical/{id}','Admin\ManageController@clinical');
+Route::post('/admin/clinical-store','Admin\ManageController@clinicalStore');
+Route::get('/admin/covid/{id}','Admin\ManageController@covid');
+Route::post('/admin/covid-store','Admin\ManageController@covidStore');
+Route::post('/admin/assess-store','Admin\ManageController@assessStore');
+Route::get('/admin/diagnosis/{id}','Admin\ManageController@diagnosis');
+Route::get('/admin/plan/{id}','Admin\ManageController@plan');
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');

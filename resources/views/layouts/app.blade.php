@@ -47,7 +47,7 @@
             background: url('{{ asset('public/img/backdrop.png') }}'), -webkit-gradient(radial, center center, 0, center center, 460, from(#ccc), to(#ddd));
         }
         .loading {
-            background: rgba(255, 255, 255, 0.9) url('{{ asset('public/img/loading.gif')}}') no-repeat center;
+            background: rgba(255, 255, 255, 0.6) url('{{ asset('public/img/load.gif')}}') no-repeat center;
             position:fixed;
             width:100%;
             height:100%;
@@ -55,6 +55,21 @@
             left:0px;
             z-index:999999999;
             display: none;
+        }
+
+        #loading {
+          position: fixed;
+          top: 0; left: 0; z-index: 9999;
+          width: 100vw; height: 100vh;
+          background: rgb(89,171,145,0.3);
+          opacity: 0.5;
+          transition: opacity 0.2s;
+        }
+
+        #loading svg {
+          position: absolute;
+          top: 30%; left: 50%;
+          transform: translate(-50%);
         }
 
         #myBtn {
@@ -125,6 +140,15 @@
         </div>
     </div>
     <div class="container-fluid" >
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"></a>
+        </div>
         <div id="navbar" class="navbar-collapse collapse" style="font-size: 13px;">
             <ul class="nav navbar-nav">
                 @if($user->level=='superadmin')
@@ -191,7 +215,35 @@
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
-                        <li><a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
+                        <li class="dropdown-submenu">
+                            <a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" 
+                                       data-toggle="modal"
+                                       data-target="#list_patient_modal"
+                                       onclick="seturl('clinical')" 
+                                    >Clinical History & Physical Exam</a>
+                                </li>
+                                <li><a href="#" 
+                                       data-toggle="modal"
+                                       data-target="#list_patient_modal"
+                                       onclick="seturl('covid')"
+                                    >Covid 19 Screening</a>
+                                </li>
+                                <li><a href="#"
+                                       data-toggle="modal"
+                                       data-target="#list_patient_modal"
+                                       onclick="seturl('diagnosis')"
+                                       >Diagnosis/Assessment</a>
+                                </li>
+                                <li><a href="#"
+                                       data-toggle="modal"
+                                       data-target="#list_patient_modal"
+                                       onclick="seturl('plan')"
+                                       >Plan of Management</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -247,7 +299,9 @@
 </nav>
 <div id="app">
     <main class="py-4">
+        @include('modal.others.listPatientModal')
         @yield('content')
+        <div class="loading"></div>
     </main>
 </div>
 
@@ -280,7 +334,6 @@
   </div>
 </div>
 
-
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
@@ -309,60 +362,8 @@
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
-<script>
-    $(document).ready(function() {
-        $(".select2").select2();
-    });
-    function refreshPage(){
-        <?php
-            use Illuminate\Support\Facades\Route;
-            $current_route = Route::getFacadeRoot()->current()->uri();
-        ?>
-        $('.loading').show();
-        window.location.replace("<?php echo asset($current_route) ?>");
-    }
-
-    function loadPage(){
-        $('.loading').show();
-    }
-    //Get the button
-    var mybutton = document.getElementById("myBtn");
-
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            mybutton.style.display = "block";
-        } else {
-            mybutton.style.display = "none";
-        }
-    }
-
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-        $('body,html').animate({
-            scrollTop : 0 // Scroll to top of body
-        }, 500);
-    }
-
-    $('#webex_form').on('submit',function(e){
-        e.preventDefault();
-        $('.btnSaveWebex').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
-        $('#webex_form').ajaxSubmit({
-            url:  "{{ url('/webex-token') }}",
-            type: "POST",
-            success: function(data){
-                setTimeout(function(){
-                    window.location.reload(false);
-                },500);
-            },
-        });
-    });
-
-</script>
-
 @yield('js')
+@include('others.scripts.app')
 
 </body>
 </html>

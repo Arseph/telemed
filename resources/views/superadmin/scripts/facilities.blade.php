@@ -8,6 +8,7 @@
 	$('#province').on('change', function() {
 		var id = this.value;
 		if(id) {
+			$(".loading").show();
 			$.ajax({
 	            url: "facilities/"+id+"/municipality",
 	            method: 'GET',
@@ -30,12 +31,22 @@
 	                    });
 					  	$('#divMun').removeClass('hide');
 	                }
+	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
 	            }
 	        });
 		}
 	});
 	$('#municipality').on('change', function() {
 		var id = this.value;
+		$(".loading").show();
 		$.ajax({
             url: "facilities/"+id+"/barangay",
             method: 'GET',
@@ -58,6 +69,15 @@
                     });
 				  	$('#divBrgy').removeClass('hide');
                 }
+            },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
             }
         });
 	});
@@ -66,7 +86,7 @@
 	});
 	$('#facility_form').on('submit',function(e){
 		e.preventDefault();
-		$('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+		$(".loading").show();
 		if(toDelete) {
 			var id = $("#facility_id").val();
 			$('#facility_form').ajaxSubmit({
@@ -77,6 +97,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		} else {
 			$('#facility_form').ajaxSubmit({
@@ -87,6 +116,15 @@
 	                    window.location.reload(false);
 	                },500);
 	            },
+	            error : function(data){
+	                $(".loading").hide();
+	                Lobibox.notify('error', {
+	                    title: "",
+	                    msg: "Something Went Wrong. Please Try again.",
+	                    size: 'mini',
+	                    rounded: true
+	                });
+	            }
 	        });
 		}
 	});
