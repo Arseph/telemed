@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-class Login extends Model
+class Login extends Model implements Auditable
 {
 	use \OwenIt\Auditing\Auditable;
     protected $table = 'logins';
