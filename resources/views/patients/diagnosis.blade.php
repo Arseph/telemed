@@ -33,10 +33,10 @@
 <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url('admin/clinical').'/'.$patient->id }}">Clinical History & Physical Exam</a></li>
-        <li class="breadcrumb-item"><a href="{{ url('admin/covid').'/'.$patient->id }}">Covid 19 Screening</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/patient/clinical').'/'.$patient->id }}">Clinical History & Physical Exam</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/patient/covid').'/'.$patient->id }}">Covid 19 Screening</a></li>
         <li class="breadcrumb-item active">Diagnosis/Assessment</li>
-        <li class="breadcrumb-item active"><a href="{{ url('admin/plan').'/'.$patient->id }}">Plan of Management</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url('/patient/plan').'/'.$patient->id }}">Plan of Management</a></li>
       </ol>
     </nav>
     <div class="box box-success">

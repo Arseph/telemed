@@ -36,15 +36,15 @@
 <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url('admin/clinical').'/'.$patient->id }}">Clinical History & Physical Exam</a></li>
-        <li class="breadcrumb-item"><a href="{{ url('admin/covid').'/'.$patient->id }}">Covid 19 Screening</a></li>
-        <li class="breadcrumb-item"><a href="{{ url('admin/diagnosis').'/'.$patient->id }}">Diagnosis/Assessment</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/patient/clinical').'/'.$patient->id }}">Clinical History & Physical Exam</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/patient/covid').'/'.$patient->id }}">Covid 19 Screening</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/patient/diagnosis').'/'.$patient->id }}">Diagnosis/Assessment</a></li>
         <li class="breadcrumb-item active">Plan of Management</li>
       </ol>
     </nav>
     <div class="box box-success">
         <div class="box-header with-border">
-        <form id="diag_form" method="POST">
+        <form id="plan_form" method="POST">
             <div class="pull-right">
                 <button title="save" type="submit" class="btnSave btn btn-success hide"><i class="far fa-save"></i></button>
                 <h4 id="btnEdit" title="Edit Facility" onclick="enableView()"><a href="#"><i class="far fa-edit"></i></a></h4>
@@ -54,6 +54,7 @@
         </div>
         <div id="formEdit" class="box-body disAble">
             <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+            <input type="hidden" name="signaturephy" value="@if($patient->planmanage){{ $patient->planmanage->signature }} @endif">
             <input type="hidden" name="id" value="@if($patient->planmanage){{ $patient->planmanage->id }} @endif">
                 {{ csrf_field() }}
                 <div class="row">
@@ -82,7 +83,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <canvas id="signature-pad" class="signature-pad" width=340 height=100></canvas>
+                        <canvas id="signature-pad" class="signature-pad " width=340 height=100></canvas>
                         <div class="actionsignature hide text-right">
                             <button type="button" id="draw">Sign</button>
                             <button type="button" id="erase">Erase</button>

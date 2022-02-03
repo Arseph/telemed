@@ -130,7 +130,6 @@
                     @endif
                 </div>
             </div>
-
             <div class="clearfix"></div>
         </div>
     </div>
@@ -261,7 +260,35 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
+                        <li class="dropdown-submenu">
+                        <a href="{{ asset('doctor/patient/list') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" 
+                                   data-toggle="modal"
+                                   data-target="#list_patient_modal"
+                                   onclick="seturl('clinical')" 
+                                >Clinical History & Physical Exam</a>
+                            </li>
+                            <li><a href="#" 
+                                   data-toggle="modal"
+                                   data-target="#list_patient_modal"
+                                   onclick="seturl('covid')"
+                                >Covid 19 Screening</a>
+                            </li>
+                            <li><a href="#"
+                                   data-toggle="modal"
+                                   data-target="#list_patient_modal"
+                                   onclick="seturl('diagnosis')"
+                                   >Diagnosis/Assessment</a>
+                            </li>
+                            <li><a href="#"
+                                   data-toggle="modal"
+                                   data-target="#list_patient_modal"
+                                   onclick="seturl('plan')"
+                                   >Plan of Management</a>
+                            </li>
+                        </ul>
+                    </li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -299,7 +326,7 @@
 </nav>
 <div id="app">
     <main class="py-4">
-        @include('modal.others.listPatientModal')
+        @include('modal.others.layoutModal')
         @yield('content')
         <div class="loading"></div>
     </main>
@@ -311,28 +338,6 @@
         <p class="pull-right">All Rights Reserved {{ date("Y") }} | Version 1.0</p>
     </div>
 </footer>
-<div class="modal fade" id="webex_modal" role="dialog" aria-labelledby="webex_modal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="webex_form" method="POST">
-        {{ csrf_field() }}
-        <small>Get your personal access webex token </small><a href="https://developer.webex.com/docs/getting-started" target="_blank">here</a><br>
-        <div class="form-group">
-            <label>Your Personal Access Token:</label>
-            <input type="password" class="form-control" value="" name="webextoken" placeholder="Paste here..." required>
-        </div>
-        <small style="color: red;">Note: Please change your webex token every 12 hours.</small>
-      <div class="modal-footer">
-        <button type="submit" class="btnSaveWebex btn btn-success"><i class="fas fa-check"></i> Save</button>
-    </form>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->

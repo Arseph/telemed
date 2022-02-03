@@ -1,8 +1,7 @@
 <script>
-	var canvas = document.getElementById('signature-pad');
-	var signaturePad = new SignaturePad(canvas, {
-	  backgroundColor: 'rgb(255, 255, 255)'
-	});
+	var canvas = document.getElementById('signature-pad') ? document.getElementById('signature-pad') : '';
+	var signaturePad = document.getElementById('signature-pad') ? new SignaturePad(canvas) : '';
+	context = document.getElementById('signature-pad') ? canvas.getContext('2d') : '';
 	@if(Session::get('action_made'))
 	    Lobibox.notify('success', {
 	        title: "",
@@ -23,7 +22,25 @@
         $('input[type=radio][name=xray]').change();
         $('input[type=radio][name=pregnant]').change();
         $('input[name="clinical_classification"]').change();
+        make_base(document.getElementById('signature-pad'));
     });
+    function make_base(is)
+	{
+		<?php
+		$sign = '';
+		if($patient->planmanage) {
+			$sign = asset('public/signatures/'.$patient->planmanage->signature);
+		}
+		?>
+		if(is) {
+		  var url = '<?php echo $sign ?>';
+		  base_image = new Image();
+		  base_image.src = url;
+		  base_image.onload = function(){
+		    context.drawImage(base_image, 0, 0);
+		  }
+		}
+	}
 	function enableView() {
 		$('#formEdit').removeClass('disAble');
 		$( 'textarea[name="reason_consult"]' ).focus();
@@ -42,7 +59,7 @@
 		e.preventDefault();
 		$(".loading").show();
 		$('#clinical_form').ajaxSubmit({
-			url:  "{{ url('/admin/clinical-store') }}",
+			url:  "{{ url('/clinical-store') }}",
             type: "POST",
             success: function(data){
                 setTimeout(function(){
@@ -75,14 +92,14 @@
         var patient_id = $('input[name="patient_id"]').val();
 		$(".loading").show();
 		$('#covid_form').ajaxSubmit({
-			url:  "{{ url('/admin/covid-store') }}",
+			url:  "{{ url('/covid-store') }}",
             type: "POST",
             data: {
             	list_name_occa: values ? values : ''
             },
             success: function(data){
                 $('#assess_form').ajaxSubmit({
-					url:  "{{ url('/admin/assess-store') }}",
+					url:  "{{ url('/assess-store') }}",
 		            type: "POST",
 		            data: {
 		            	patient_id: patient_id,
@@ -217,7 +234,7 @@
         html += '<div class="input-group">';
         html += '<input type="text" name="spe_others[]" class="form-control" placeholder="___/___/____">';
         html += '<div class="input-group-btn">';
-        html += '<button class="btnRemoveRow btn btn-danger" type="button">Remove</button>';
+        html += '<button class="btnRemoveRow btn btn-danger" type="button">Remove</button>'; 	
         html += '</div>';
         html += '</div>';
         html += '</div>';
@@ -236,7 +253,7 @@
 		e.preventDefault();
 		$(".loading").show();
 		$('#diag_form').ajaxSubmit({
-			url:  "{{ url('/admin/diagnosis-store') }}",
+			url:  "{{ url('/diagnosis-store') }}",
             type: "POST",
             success: function(data){
                 setTimeout(function(){
@@ -255,18 +272,52 @@
 		});
 
 	});
-	document.getElementById('clear').addEventListener('click', function () {
-	  signaturePad.clear();
-	});
+	var clear = document.getElementById('clear') ? document.getElementById('clear') : '';
+	var draw = document.getElementById('draw') ? document.getElementById('draw') : '';
+	var erase = document.getElementById('erase') ? document.getElementById('erase') : '';
+	if(clear) {
+		clear.addEventListener('click', function () {
+		  signaturePad.clear();
+		});
+	}
+	if(draw) {
+		draw.addEventListener('click', function () {
+		  var ctx = canvas.getContext('2d');
+		  console.log(ctx.globalCompositeOperation);
+		  ctx.globalCompositeOperation = 'source-over'; // default value
+		});
+	}
+	if(erase) {
+		erase.addEventListener('click', function () {
+		  var ctx = canvas.getContext('2d');
+		  ctx.globalCompositeOperation = 'destination-out';
+		});
+	}
 
-	document.getElementById('draw').addEventListener('click', function () {
-	  var ctx = canvas.getContext('2d');
-	  console.log(ctx.globalCompositeOperation);
-	  ctx.globalCompositeOperation = 'source-over'; // default value
-	});
+	$('#plan_form').on('submit',function(e){
+		e.preventDefault();
+		$(".loading").show();
+		$('#plan_form').ajaxSubmit({
+			url:  "{{ url('/plan-store') }}",
+            type: "POST",
+            data: {
+            	signature: signaturePad.toDataURL('image/png')
+            },
+            success: function(data){
+                // setTimeout(function(){
+                //     window.location.reload(false);
+                // },500);
+            },
+            error: function (data) {
+            	$(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'normal',
+                    rounded: true
+                });
+            },
+		});
 
-	document.getElementById('erase').addEventListener('click', function () {
-	  var ctx = canvas.getContext('2d');
-	  ctx.globalCompositeOperation = 'destination-out';
 	});
 </script>

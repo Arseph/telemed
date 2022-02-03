@@ -82,14 +82,7 @@ Route::get('/admin-join-meeting','Admin\TeleController@joinMeeting');
 Route::get('/admin-meeting-info','Admin\TeleController@meetingInfo');
 Route::get('/join-meeting/{id}','Admin\TeleController@indexCall');
 Route::get('/get-doctors-facility','Admin\TeleController@getDoctorsFacility');
-Route::get('/admin/clinical/{id}','Admin\ManageController@clinical');
-Route::post('/admin/clinical-store','Admin\ManageController@clinicalStore');
-Route::get('/admin/covid/{id}','Admin\ManageController@covid');
-Route::post('/admin/covid-store','Admin\ManageController@covidStore');
-Route::post('/admin/assess-store','Admin\ManageController@assessStore');
-Route::get('/admin/diagnosis/{id}','Admin\ManageController@diagnosis');
-Route::post('/admin/diagnosis-store','Admin\ManageController@diagnosisStore');
-Route::get('/admin/plan/{id}','Admin\ManageController@plan');
+
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');
@@ -113,6 +106,15 @@ Route::match(['GET','POST'],'/doctor-sched-pending','Doctor\TeleConsultControlle
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
 
+Route::get('/patient/clinical/{id}','Patient\PatientController@clinical');
+Route::post('/clinical-store','Patient\PatientController@clinicalStore');
+Route::get('/patient/covid/{id}','Patient\PatientController@covid');
+Route::post('/covid-store','Patient\PatientController@covidStore');
+Route::post('/assess-store','Patient\PatientController@assessStore');
+Route::get('/patient/diagnosis/{id}','Patient\PatientController@diagnosis');
+Route::post('/diagnosis-store','Patient\PatientController@diagnosisStore');
+Route::get('/patient/plan/{id}','Patient\PatientController@plan');
+Route::post('/plan-store','Patient\PatientController@planStore');
 
 //JM superadmin //Drugs/Meds
 Route::get('drugsmeds/', 'Superadmin\DrugsMedsCtrl@index'); 

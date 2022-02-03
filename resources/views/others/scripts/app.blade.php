@@ -14,9 +14,11 @@
 
     function seturl(set) {
         loc = set
+        console.log(loc)
     }
     function gourl(id) {
-        var url = "{{ url('admin') }}"+"/"+loc+"/"+id;
+        var url = "{{ url('patient') }}"+"/"+loc+"/"+id;
+        console.log(url)
         $.ajax({
             url: url,
             type: 'GET',

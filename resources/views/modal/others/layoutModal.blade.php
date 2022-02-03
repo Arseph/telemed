@@ -11,7 +11,28 @@ $patients = \App\Patient::select(
     ->orderby('patients.lname','asc')
     ->paginate(10);
 ?>
-
+<div class="modal fade" id="webex_modal" role="dialog" aria-labelledby="webex_modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="webex_form" method="POST">
+        {{ csrf_field() }}
+        <small>Get your personal access webex token </small><a href="https://developer.webex.com/docs/getting-started" target="_blank">here</a><br>
+        <div class="form-group">
+            <label>Your Personal Access Token:</label>
+            <input type="password" class="form-control" value="" name="webextoken" placeholder="Paste here..." required>
+        </div>
+        <small style="color: red;">Note: Please change your webex token every 12 hours.</small>
+      <div class="modal-footer">
+        <button type="submit" class="btnSaveWebex btn btn-success"><i class="fas fa-check"></i> Save</button>
+    </form>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal fade" id="list_patient_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -78,3 +99,4 @@ $patients = \App\Patient::select(
     </div>
   </div>
 </div>
+

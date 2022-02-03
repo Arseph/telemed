@@ -11,6 +11,7 @@ use App\Meeting;
 use Carbon\Carbon;
 use App\PendingMeeting;
 use App\Facility;
+use App\TeleCategory;
 class TeleConsultController extends Controller
 {
 	public function __construct()
@@ -40,9 +41,10 @@ class TeleConsultController extends Controller
                 $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
             });
         }
-        $data = $data->where("meetings.doctor_id","=", $user->id)
-                ->orWhere("meetings.user_id", "=", $user->id)
-        		->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
+        $data = $data->where(function($q) use($user){
+            $q->where("meetings.doctor_id","=", $user->id)
+            ->orWhere("meetings.user_id", "=", $user->id);
+            })->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
         		->orderBy('meetings.date_meeting', 'asc')
         		->paginate(20);
     	$patients =  Patient::select(
@@ -121,6 +123,7 @@ class TeleConsultController extends Controller
         )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
         ->where('pending_meetings.status', 'Pending')
         ->where("pending_meetings.doctor_id","=", $user->id)->count();
+        $telecat = TeleCategory::orderBy('category_name', 'asc')->get();
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -134,7 +137,8 @@ class TeleConsultController extends Controller
             'active_tab' => $active_tab,
             'data_my_req' => $data_my_req,
             'active_user' => $user,
-            'pending' => $count_req
+            'pending' => $count_req,
+            'telecat' => $telecat
         ]);
     }
 
