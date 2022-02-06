@@ -158,7 +158,7 @@
             <div class="col-md-4">
                 <div class="pull-left">
                     <span class="title-info">{{ $meeting->title }}</span><br>
-                    <b style="color: white;">Meeting with:</b> <span style="color: white;">{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }} </span>
+                    <b style="color: white;">Teleconsultation with:</b> <span style="color: white;">{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }} </span>
                 </div>
             </div>
 
@@ -173,6 +173,9 @@
             <div class="col-md-6">
                 <div class="box box-success">
                     <div class="box-body">
+                        <div class="pull-right">
+                            <button type="button" title="save" class="btnSaveall btn btn-success">Save</button>
+                        </div>
                         <ul class="nav nav-tabs">
                             <li class="active"><a href="#tab1" data-toggle="tab">Demographic Profile</a></li>
                             <li><a href="#tab2" data-toggle="tab">Clinical History and Physical Examination</a></li>
@@ -187,77 +190,7 @@
                                         <h4 style="">Demographic Profile</h4>
                                     </div>
                                     <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Name of physician:</label>
-                                                    <input type="text" class="form-control" value="" name="physician" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Date and Time of Teleconsultation:</label>
-                                                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->date_meeting)->format('M d, Y') }} {{ \Carbon\Carbon::parse($meeting->from_time)->format('h:i A') }}" name="dateandtime" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Name and Address of Health Facility<em>(if applicable):</em></label>
-                                                    <input type="text" class="form-control" value="" name="address_health">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Name of Telemedicine Partner<em>(if applicable):</em><small><br>If none, Indicate telemedicine platform being used:</small></label>
-                                                    <input type="text" class="form-control" value="" name="tele_partner_platform" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <label>Prior to teleconsultation proper, obtain patient consent:</label>
-                                                <label class="radio-inline">
-                                                  <input type="radio" name="prior_tele_proper" required>Yes
-                                                </label>
-                                                <label class="radio-inline">
-                                                  <input type="radio" name="prior_tele_proper">No
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <label>Is patient accompanied/assisted by another person during the consultation:</label>
-                                                <label class="radio-inline">
-                                                  <input type="radio" name="is_patient_accompanied" value="Yes" required>Yes
-                                                </label>
-                                                <label class="radio-inline">
-                                                  <input type="radio" name="is_patient_accompanied" value="No">No
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div id="companion" class="row hide">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Name of Companion:</label>
-                                                    <input type="text" class="form-control" value="" name="companion_name" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Relationship:</label>
-                                                    <input type="text" class="form-control" value="" name="companion_relation" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Contact No:</label>
-                                                    <input type="text" class="form-control" value="" name="companion_contact" required>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @include('forms.demographic')
                                     </div>
                                 </div>
                                 <div class="box box-success">
@@ -274,140 +207,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Last Name:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->lname }}@endif" name="lname" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>First Name:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->fname }}@endif" name="fname" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>First Name:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->mname }}@endif" name="mname" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Birthday:</label>
-                                                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->patient->dob)->format('m/d/Y') }}" name="bday" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Age:</label>
-                                                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->patient->dob)->diff(\Carbon\Carbon::now())->format('%y years old') }}" name="age" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Sex:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->sex }}@endif" name="mname" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Occupation:</label>
-                                                    <input type="text" class="form-control" value="{{ $meeting->occupation }}" name="occupation" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Civil Status:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->civil_status }}@endif" name="civil_status" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Nationality:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient->nationality){{ $meeting->patient->nationality->nationality }}@endif" name="nationality" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Philheath No:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->phic_id }}@endif" name="phic_id" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Passport No:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->passport_no }}@endif" name="passport_no" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Region:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient->reg){{ $meeting->patient->reg->reg_desc }}@endif" name="region" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>House No./Lot/Bldg:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->house_no }}@endif" name="house_no" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Street:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->street }}@endif" name="street" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Province:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient->prov){{ $meeting->patient->prov->prov_name }}@endif" name="province" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Municipality:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient->muni){{ $meeting->patient->muni->muni_name }}@endif" name="muni_name" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Barangay:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient->barangay){{ $meeting->patient->barangay->brg_name }}@endif" name="barangay" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Contact No:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient){{ $meeting->patient->contact }}@endif" name="province" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Email Address:</label>
-                                                    <input type="text" class="form-control" value="@if($meeting->patient->account){{ $meeting->patient->account->email }}@endif" name="muni_name" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @include('forms.patientprof')
                                 </div>
                             </div>
                             <div class="tab-pane" id="tab2">
@@ -416,46 +216,18 @@
                                         <h4 style="">Clinical History</h4>
                                     </div>
                                     <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label>Reason for Consultation:</label>
-                                                    <input type="text" class="form-control" value="" name="reason_consult" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Date of Onset of Illness:</label>
-                                                    <input type="text" class="form-control" value="" name="reason_consult" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Referral Health Facility:</label>
-                                                    <input type="text" class="form-control" value="" name="reason_consult" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Date of Referral:</label>
-                                                        <input type="text" value="" name="date_referral" class="form-control daterange" placeholder="Select Date" required/>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @include('forms.clinical')
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="tab3">
-                                <h4>Covid-19 Screening</h4>
+                                @include('forms.covid')
                             </div>
                             <div class="tab-pane" id="tab4">
-                                <h4>Diagnosis/Assessment</h4>
+                                @include('forms.diagnosis')
                             </div>
                             <div class="tab-pane" id="tab5">
-                                <h4>Plan of Management</h4>
-                                <div class="pull-right">
-                                    
-                                </div>
+                                @include('forms.plan')
                             </div>
                         </div>
                         <br>
@@ -552,6 +324,7 @@
 
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -561,11 +334,10 @@
         var date = new Date();
         var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         $('.daterange').daterangepicker({
-            minDate: today,
             "singleDatePicker": true
         });
         $(".select2").select2();
-        $('#meeting_modal').modal('show');
+        // $('#meeting_modal').modal('show');
         setTimeout(function(){
             $('.btnJoin').prop("disabled", false);
             $('.btnJoin').html('<i class="far fa-play-circle"></i> Start');
@@ -623,6 +395,6 @@
 </script>
 
 @yield('js')
-
+@include('admin.scripts.patient')
 </body>
 </html>

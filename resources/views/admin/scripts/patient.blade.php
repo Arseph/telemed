@@ -320,4 +320,7 @@
 		});
 
 	});
+	$('.btnSaveall').on('click',function(e){
+		alert('yehey')
+	});
 </script>

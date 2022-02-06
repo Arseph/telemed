@@ -309,6 +309,6 @@
     @include('modal.doctors.teleconsultModal')
 @endsection
 @section('js')
-    @include('doctors.scripts.teleconsult')
+    @include('admin.scripts.teleconsult')
 @endsection
 
