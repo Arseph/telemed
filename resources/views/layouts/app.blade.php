@@ -289,6 +289,7 @@
                             </li>
                         </ul>
                     </li>
+                    <li><a href="{{ asset('doctor/prescription') }}"><i class="fas fa-prescription"></i>&nbsp; Prescription</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

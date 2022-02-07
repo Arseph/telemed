@@ -102,6 +102,8 @@ Route::post('/patient-consult-info/{id}', 'Doctor\PatientController@patientConsu
 Route::get('/get-pending-meeting/{id}', 'Doctor\TeleConsultController@getPendingMeeting');
 Route::post('/accept-decline-meeting/{id}', 'Doctor\TeleConsultController@acceptDeclineMeeting');
 Route::match(['GET','POST'],'/doctor-sched-pending','Doctor\TeleConsultController@schedTeleStore');
+Route::match(['GET','POST'],'doctor/prescription','Doctor\ManageController@prescription');
+Route::post('/prescription-store', 'Doctor\ManageController@prescriptionStore');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
