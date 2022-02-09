@@ -60,4 +60,11 @@ class Prescription extends Model implements Auditable
         	return 'OTHERS';
         }
     }
+
+    public function encoded() {
+        return $this->hasOne(User::class, 'id', 'encodedby');
+    }
+    public function modified() {
+        return $this->hasOne(User::class, 'id', 'modifyby');
+    }
 }

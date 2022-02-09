@@ -290,12 +290,13 @@
                         </ul>
                     </li>
                     <li><a href="{{ asset('doctor/prescription') }}"><i class="fas fa-prescription"></i>&nbsp; Prescription</a></li>
+                    <li><a href="{{ asset('doctor/order') }}"><i class="fas fa-notes-medical"></i>&nbsp; Doctor Orders</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-paste"></i>&nbsp; Reports <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fas fa-exchange-alt"></i> Daily Transaction</a></li>
+                        <li><a href="#"><i class="fas fa-notes-medical"></i>&nbsp;Doctor Orders</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

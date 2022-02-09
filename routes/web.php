@@ -104,6 +104,10 @@ Route::post('/accept-decline-meeting/{id}', 'Doctor\TeleConsultController@accept
 Route::match(['GET','POST'],'/doctor-sched-pending','Doctor\TeleConsultController@schedTeleStore');
 Route::match(['GET','POST'],'doctor/prescription','Doctor\ManageController@prescription');
 Route::post('/prescription-store', 'Doctor\ManageController@prescriptionStore');
+Route::post('/prescription-delete/{id}', 'Doctor\ManageController@prescriptionDelete');
+Route::match(['GET','POST'],'doctor/order','Doctor\ManageController@doctorOrder');
+Route::post('/docorder-store', 'Doctor\ManageController@doctorOrderStore');
+Route::post('/docorder-delete/{id}', 'Doctor\ManageController@docorderDelete');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

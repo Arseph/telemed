@@ -124,6 +124,15 @@
                     window.location.reload(false);
                 },500);
             },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            }
         });
 	});
     $('#patient_form').on('submit',function(e){

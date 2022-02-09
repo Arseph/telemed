@@ -78,7 +78,7 @@
           </div>
           <div class="form-group">
               <label>Encoded By:</label>
-              <input type="text" class="form-control" value="{{ $user->lname }}, {{ $user->fname }} {{ $user->mname }}" disabled>
+              <input type="text" class="encodedBy form-control" value="{{ $user->lname }}, {{ $user->fname }} {{ $user->mname }}" disabled>
           </div>
       </div>
       <div class="modal-footer">
