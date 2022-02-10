@@ -19,7 +19,8 @@
         @endif
         <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
         <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Save</button>
-  	</form>
+     </div>
+   </form>
 
     <script>
    $('.btn_subremove').click(function(e){

@@ -194,14 +194,16 @@
                         <li><a href="#"><i class="fas fa-list-ul"></i>&nbsp; Role/Permission</a></li>
                         <li><a href="{{ asset('facilities') }}"><i class="fas fa-hospital-alt"></i>&nbsp;&nbsp;Facilities</a></li>
                         <li><a href="{{ asset('tele-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Teleconsultation Category</a></li>
-                    </ul>
+                        <li><a href="{{ asset('superadmin/feedback') }}"><i class="fas fa-list"></i>&nbsp;&nbsp;Feedback List</a></li>
+                    </ul>                       
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="far fa-newspaper"></i> Reports <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="far fa-file"></i>&nbsp; Monitoring Report</a></li>
                         <li><a href="{{ asset('audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; Audit Trail</a></li>
-                        <li><a href="#"><i class="fas fa-comments"></i>&nbsp; Feedback</a></li>
+                        <li><a href="{{ asset('superadim/audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; Audit Trail 2</a></li>
+                        <li><a href="{{ asset('feedback') }}"><i class="fas fa-comments"></i>&nbsp; Feedback</a></li>
                     </ul>
                 </li>
                 @endif
@@ -291,6 +293,8 @@
                     </li>
                     <li><a href="{{ asset('doctor/prescription') }}"><i class="fas fa-prescription"></i>&nbsp; Prescription</a></li>
                     <li><a href="{{ asset('doctor/order') }}"><i class="fas fa-notes-medical"></i>&nbsp; Doctor Orders</a></li>
+                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
+                        <li><a href="{{ asset('feedback/view') }}"><i class="far fa-list"></i> Feedback List</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -319,7 +323,14 @@
                 @endif
                 <!-- For doctors and rhu -->
                 @if($user->level=='doctor' || $user->level=='admin')
-                <li><a href="#"><i class="fas fa-comment-dots"></i> Feedback</a></li>
+                <li><a href="{{ asset('doctor/issuesconcern') }}"><i class="fas fa-notes-medical"></i> Issues and Concern</a>
+                </li>
+                <li>
+                  <a href="#feedbackModal" data-toggle="modal" data-link="{{ asset('feedback') }}" id="feedback" title="Write a feedback" data-trigger="focus" data-container="body"  data-placement="top" data-content="Help us improve our system by just sending feedback.">
+                        <i class="fa fa-sign-out"></i> Feedback
+                    </a>
+                </li>
+              
                 @endif
                 <li><a href="{{ asset('logout') }}"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
             </ul>
@@ -394,6 +405,5 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 @yield('js')
 @include('others.scripts.app')
-
 </body>
 </html>

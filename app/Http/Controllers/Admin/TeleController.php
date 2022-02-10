@@ -71,7 +71,10 @@ class TeleController extends Controller
                 $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
             });
         }
-        $data_past = $data_past->where("meetings.doctor_id","=", $user->id)
+        $data_past =  $data_past->where(function($q) use($user){
+            $q->where("meetings.doctor_id","=", $user->id)
+            ->orWhere("meetings.user_id", "=", $user->id);
+            })
                 ->whereDate("meetings.date_meeting", "<", Carbon::now()->toDateString())
                 ->orderBy('meetings.date_meeting', 'desc')
                 ->paginate(20);

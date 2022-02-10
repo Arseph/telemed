@@ -86,4 +86,28 @@
         });
     });
 
+    $('#feedback').click(function(){
+            var url = $(this).data('link');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) {
+                    $('.feedback_body').html(data);
+                }
+            });
+        });
+
+
+        @if(Session::get('feedback_add'))
+        Lobibox.notify('success', {
+            title: "",
+            msg: "Successfully added Feedback",
+            size: 'mini',
+            rounded: true
+        });
+        <?php
+            Session::put("feedback_add",false);
+        ?>
+    @endif
+
 </script>

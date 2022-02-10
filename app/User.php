@@ -50,5 +50,6 @@ class User extends Authenticatable implements Auditable
 
     public function facility() {
         return $this->hasOne(Facility::class, 'id', 'facility_id');
+        
     }
 }

@@ -285,6 +285,13 @@
                                           <br>
                                           <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
                                         </td>
+                                        <td>
+                                        <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                          <br>
+                                          <a href="#IssueAndConcern" data-issue_from ='{{$row->encoded->facility->id}}' data-meet_id ='{{$row->meetID}}' data-toggle="modal" class="btn-circle btn-danger btn-issue-referred">
+                                              <i class="fas fa-exclamation-triangle"></i> Issues & concern
+                                          </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </table>
@@ -306,7 +313,7 @@
     </div>
     
 </div>
-    @include('modal.doctors.teleconsultModal')
+@include('modal.doctors.issueModal')
 @endsection
 @section('js')
     @include('doctors.scripts.teleconsult')

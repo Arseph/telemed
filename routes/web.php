@@ -139,7 +139,6 @@ Route::post('drugmeds/subcat_body', 'Superadmin\DrugsMedsCtrl@subcatBody');
 Route::post('drugsmeds/subcat/add', 'Superadmin\DrugsMedsCtrl@subcatOptions');
 Route::post('drugsmeds/subcat/delete', 'Superadmin\DrugsMedsCtrl@subcatDelete');
 
-
 //Doc type
 Route::get('document/type', 'Superadmin\DocumentCtrl@index');
 Route::post('document/type', 'Superadmin\DocumentCtrl@index');
@@ -153,3 +152,21 @@ Route::post('superadmin/lab_request', 'Superadmin\LabRequestCtrl@index');
 Route::post('superadmin/lab_request/body', 'Superadmin\LabRequestCtrl@labrequestBody');
 Route::post('superadmin/lab_request/add', 'Superadmin\LabRequestCtrl@labrequestOptions'); 
 Route::post('superadmin/lab_request/delete', 'Superadmin\LabRequestCtrl@labrequestDelete');
+
+//Audit Trail 2
+Route::get('superadim/audit-trail', 'Superadmin\AuditTrailCtrl@index');
+Route::post('superadim/audit-trail', 'Superadmin\AuditTrailCtrl@index');
+
+//feedback
+Route::match(['get','post'] ,'feedback', 'FeedbackCtrl@index');
+Route::match(['get','post'] ,'feedback/view', 'FeedbackCtrl@view');
+
+//super admin feedback supderadmin/feedback
+Route::match(['get','post'] ,'superadmin/feedback', 'FeedbackCtrl@sindex');
+Route::post('superadmin/sfeedback_body', 'FeedbackCtrl@sindexBody'); 
+Route::post('superadmin/feedback/response', 'FeedbackCtrl@sfeedbackResponse');
+
+//issue and concern
+Route::match(['get','post'] ,'doctor/issuesconcern', 'Doctor\IssueConcernCtrl@index');
+Route::get('issue/concern/{meet_id}/{issue_from}','Doctor\IssueConcernCtrl@IssueAndConcern'); 
+Route::post('issue/concern/submit','Doctor\IssueConcernCtrl@issueSubmit');

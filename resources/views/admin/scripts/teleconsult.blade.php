@@ -221,4 +221,55 @@
             rounded: true
         });
     }
+
+    $('body').on('click','.btn-issue-referred',function(){
+        var meet_id = $(this).data('meet_id'); 
+        var issue_from = $(this).data('issue_from');
+        var user_facility_id = "<?php echo \Illuminate\Support\Facades\Session::get('auth')->facility_id; ?>";
+
+        if(user_facility_id == issue_from)
+        $(".issue_footer").remove();
+
+        $('#issue_meeting_id').val(meet_id);
+        $("#issue_and_concern_body").html("Loading....");
+        var url = "<?php echo asset('issue/concern').'/'; ?>"+meet_id+"/"+issue_from; 
+        $.get(url,function(data){
+            setTimeout(function(){
+                $("#issue_and_concern_body").html(data);
+            },500);
+        });
+    });
+
+    $('.btn-issue-incoming').on('click',function () {
+        console.log('issue');
+        $(".issue_footer").remove();
+        var meet_id = $(this).data('meet_id'); 
+        var issue_from = $(this).data('issue_from');
+        $("#issue_and_concern_body").html("Loading....");
+        var url = "<?php echo asset('issue/concern').'/'; ?>"+meet_id+"/"+issue_from; 
+        $.get(url,function(data){
+            setTimeout(function(){
+                $("#issue_and_concern_body").html(data);
+            },500);
+        });
+    });
+
+    $('#sendIssue').submit(function (e) {
+        e.preventDefault();
+        var issue_message = $("#issue_message").val();
+        $("#issue_message").val('').attr('placeholder','Sending...');
+        $.ajax({
+            url: "{{ url('issue/concern/submit') }}",
+            type: 'post',
+            data: {
+                _token : "{{ csrf_token() }}",
+                issue: issue_message,
+                meeting_id : $("#issue_meeting_id").val()
+            },
+            success: function(data) {
+                $("#issue_and_concern_body").append(data);
+                $("#message").val('').attr('placeholder','Type a message for your issue and concern regarding your referral..');
+            }
+        });
+    });
 </script>
