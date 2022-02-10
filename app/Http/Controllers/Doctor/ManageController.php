@@ -142,10 +142,11 @@ class ManageController extends Controller
             'remarks' => $req->remarks,
             'encodedby' => $docid,
             'modifyby' => $req->id ? $docid : null,
-            'void' => 1
+            'void' => 1,
+            'meet_id' => $req->doctororder_meet_id
         );
-        if($req->id) {
-            DoctorOrder::find($req->id)->update($data);
+        if($req->doctororder_id) {
+            DoctorOrder::find($req->doctororder_id)->update($data);
             Session::put("action_made","Successfully Update Doctor Order.");
         } else {
             DoctorOrder::create($data);

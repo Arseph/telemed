@@ -1,5 +1,6 @@
 <script>
     var patients = {!! json_encode($patients->toArray()) !!};
+    var docorder = {!! json_encode($docorder->toArray()) !!};
 	$(document).ready(function() {
 		var date = new Date();
 		var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -462,6 +463,69 @@
             success: function(data) {
                 $("#issue_and_concern_body").append(data);
                 $("#message").val('').attr('placeholder','Type a message for your issue and concern regarding your referral..');
+            }
+        });
+    });
+
+    function getDataDocOrder(id, fname, mname, lname, meetid, patientid) {
+        console.log(id)
+        // $("#deleteBtn").removeClass("hide");
+        $("#doctororder_id").val(id);
+        $("#doctororder_meet_id").val(meetid);
+        $("#patientid").val(patientid);
+        $("#patient_name").val(fname + ' ' + mname + ' ' + lname);
+        const edit = [];
+        $.each(docorder, function(key, value) {
+            if(value.id == id) {
+                edit.push(value);
+            }
+        });
+        if(edit.length > 0) {
+            var labreq = edit[0].labrequestcodes.split(',');
+            var img = edit[0].imagingrequestcodes.split(',');
+            $('#patientid').val(edit[0].patientid).change();
+            $('#labrequestcodes').val(labreq).change();
+            $('#imagingrequestcodes').val(img).change();
+            $('textarea[name=alertdescription]').append(edit[0].alertdescription);
+            $('textarea[name=treatmentplan]').append(edit[0].treatmentplan);
+            $('textarea[name=remarks]').append(edit[0].remarks);
+        }
+    }
+
+    $('#docorder_modal').on('hidden.bs.modal', function () {
+        // $("#deleteBtn").addClass("hide");
+        $('#labrequestcodes').val([]).change();
+        $('#imagingrequestcodes').val([]).change();
+        $('textarea[name=alertdescription]').append('');
+        $('textarea[name=treatmentplan]').append('');
+        $('textarea[name=remarks]').append('');
+    });
+
+    $('#docorder_form').on('submit',function(e){
+        e.preventDefault();
+        $(".loading").show();
+        var labreq = $("#labrequestcodes").val();
+        var img = $("#imagingrequestcodes").val();
+        $('#docorder_form').ajaxSubmit({
+            url:  "{{ url('/docorder-store') }}",
+            type: "POST",
+            data: {
+                labrequestcodes: labreq,
+                imagingrequestcodes: img
+            },
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
             }
         });
     });

@@ -13,6 +13,8 @@ use App\PendingMeeting;
 use App\Facility;
 use App\TeleCategory;
 use App\Countries;
+use App\LabRequest;
+use App\DoctorOrder;
 class TeleConsultController extends Controller
 {
 	public function __construct()
@@ -33,6 +35,7 @@ class TeleConsultController extends Controller
         	"pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
+            "pat.id as PatID",
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword){
         	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[0]));
@@ -125,6 +128,9 @@ class TeleConsultController extends Controller
         ->where('pending_meetings.status', 'Pending')
         ->where("pending_meetings.doctor_id","=", $user->id)->count();
         $telecat = TeleCategory::orderBy('category_name', 'asc')->get();
+        $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
+        $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
+        $docorder = DoctorOrder::where('doctorid', $user->id)->get();
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -139,7 +145,10 @@ class TeleConsultController extends Controller
             'data_my_req' => $data_my_req,
             'active_user' => $user,
             'pending' => $count_req,
-            'telecat' => $telecat
+            'telecat' => $telecat,
+            'labreq' => $labreq,
+            'imaging' => $imaging,
+            'docorder' => $docorder
         ]);
     }
 

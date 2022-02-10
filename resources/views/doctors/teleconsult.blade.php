@@ -31,7 +31,7 @@
     .btn-circle {
       position: relative;
       display: inline-block;
-      padding: 2%;
+      padding: 5%;
       border-radius: 30px;
       text-align: center;
     }
@@ -95,10 +95,10 @@
                                   $join = 'yes';
                                 }
                                 ?>
-                                    <tr onclick="getMeeting('<?php echo $row->meetID ?>', '<?php echo $join ?>')">
+                                    <tr>
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
-                                            <a href="#" class="title-info update_info">
+                                            <a href="#" class="title-info update_info" onclick="getMeeting('<?php echo $row->meetID ?>', '<?php echo $join ?>')">
                                                {{ \Carbon\Carbon::parse($row->from_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->to_time)->format('h:i A') }}
                                                 <br><b>
                                                     <small class="text-warning">
@@ -135,6 +135,9 @@
                                           </a>
                                         </td>
                                         @endif
+                                        <td><a href="#docorder_modal" class="btn-circle btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
+                                              <i class="fas fa-user-md"></i> Doctor Order
+                                          </a></td>
                                     </tr>
                                 @endforeach
                             </table>
@@ -314,6 +317,8 @@
     
 </div>
 @include('modal.doctors.issueModal')
+@include('modal.doctors.teleconsultModal')
+@include('modal.doctors.docordermodal')
 @endsection
 @section('js')
     @include('doctors.scripts.teleconsult')

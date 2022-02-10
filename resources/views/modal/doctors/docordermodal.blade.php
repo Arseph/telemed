@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Add Doctor Order</h4>
+        <h4 class="modal-title" id="myModalLabel">Doctor Order</h4>
       </div>
       <div class="modal-body">
       	<form id="docorder_form" method="POST">
@@ -11,15 +11,12 @@
           <div class="text-right">
             <button id="deleteBtn" type="submit" class="btnSave btn btn-danger hide"><i class="fas fa-trash"></i> Delete</button>
           </div>
-          <input type="hidden" class="form-control" value="" autofocus="" name="id" id="id">
+          <input type="hidden" class="form-control" value="" autofocus="" name="doctororder_id" id="doctororder_id">
+          <input type="hidden" class="form-control" value="" autofocus="" name="doctororder_meet_id" id="doctororder_meet_id">
+          <input type="hidden" class="form-control" value="" autofocus="" name="patientid" id="patientid">
           <div class="form-group">
             <label>Patient:</label>
-            <select class="select2" name="patientid" id="patientid" required>
-                <option>Select Patient</option>
-                @foreach($patients as $row)
-                    <option value="{{ $row->id }}">{{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}</option>
-                @endforeach
-            </select>
+            <input type="text" class="form-control" id="patient_name" disabled>
           </div>
           <div class="form-group">
             <label>Lab Request Codes:</label>
@@ -66,7 +63,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
-        <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Save</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Save</button>
   	</form>
       </div>
     </div>

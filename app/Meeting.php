@@ -25,4 +25,7 @@ class Meeting extends Model implements Auditable
     public function encoded() {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+    public function docorder() {
+        return $this->hasOne(DoctorOrder::class, 'meet_id', 'id');
+    }
 }
