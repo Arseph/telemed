@@ -43,6 +43,7 @@
                @endforeach 
           </select>
         </div>
+        <hr>
 	     	<div class="form-group">
 		     	<label>Title:</label>
 		        <input type="text" class="form-control" value="" name="title" required>
@@ -64,30 +65,17 @@
 			     <div class="col-sm-3">
 			     	<label>Duration:</label>
 			     	<select class="form-control duration" name="duration" onchange="validateTIme()" required>
+		                <option value="5">5 Minutes</option>
 		                <option value="10">10 Minutes</option>
-		                <option value="20">20 Minutes</option>
-		                <option value="30">30 Minutes</option>
-		                <option value="40">40 Minutes</option>
-		                <option value="50">50 Minutes</option>
+		                <option value="15">15 Minutes</option>
+                    <option value="20">20 Minutes</option>
+                    <option value="25">25 Minutes</option>
+                    <option value="30">30 Minutes</option>
 		            </select>
 			     </div>
 			 </div>
-			 <div class="row">
-			     <div class="col-sm-6">
-			     	<div class="form-group">
-			            <label>Patient Email:</label>
-				        <input type="text" class="form-control" value="" name="email" required>
-			        </div>
-			     </div>
-			     <div class="col-sm-6">
-			     	<div class="form-group">
-		     		  <br>
-		              <label>Send Email to patient:</label><br>
-		                <label><input type="radio" name="sendemail" value="true"  checked required>Yes</label>
-		                <label><input type="radio" name="sendemail" value="false" required/>No</label>
-			        </div>
-			     </div>
-			 </div>
+       <br>
+       <br>
 		      <div class="modal-footer">
 		        <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
 		        <button id="saveBtn" type="submit" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
@@ -126,16 +114,6 @@
         	 <label>Patient:</label>
 	         <input type="text" class="form-control" value="" name="req_patient" readonly>
         </div>
-        <div class="form-group col-12">
-          <div class="text-center">
-            <a data-toggle="collapse" href="#moreInfo">More Patient Details</a>
-          </div>
-          <div id="moreInfo" class="collapse">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </div>
-        </div>
 	     	<div class="form-group">
 		     	<label>Title:</label>
 		        <input type="text" class="form-control" value="" name="req_title" readonly>
@@ -155,6 +133,8 @@
 			     </div>
 			 </div>
 		      <div class="modal-footer">
+            <label class="countdowntoken"></label>
+            <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank">Refresh your token here</a>
 		        <button type="button" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
 		        <button type="button" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
@@ -191,10 +171,6 @@
   		<div class="form-group">
   			<label class="text-success">Password:</label><br>
   			<label id="meetPass"></label>
-  		</div>
-  		<div class="form-group">
-  			<label class="text-success">Host Key:</label><br>
-  			<label id="meetKey"></label>
   		</div>
       </div>
       <div class="modal-footer">

@@ -123,6 +123,9 @@
                                               <i class="fas fa-play-circle"></i> Start Consultation
                                           </a>
                                         </td>
+                                        <td><a href="#docorder_modal" class="btn-circle btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
+                                              <i class="fas fa-user-md"></i> Doctor Order
+                                          </a></td>
                                         @elseif($row->Creator == $active_user->id)
                                         <td>
                                           <b class="text-primary">Requested To: {{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b>
@@ -134,10 +137,10 @@
                                               <i class="fas fa-play-circle"></i> Join Consultation
                                           </a>
                                         </td>
+                                        <td><button class="btn-circle btn-info"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}')">
+                                              <i class="fas fa-file-medical"></i> Lab Request
+                                          </button></td>
                                         @endif
-                                        <td><a href="#docorder_modal" class="btn-circle btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
-                                              <i class="fas fa-user-md"></i> Doctor Order
-                                          </a></td>
                                     </tr>
                                 @endforeach
                             </table>

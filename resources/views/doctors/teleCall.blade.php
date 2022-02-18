@@ -37,31 +37,94 @@
     <link href="{{ asset('public/plugin/daterangepicker_old/daterangepicker-bs3.css') }}" rel="stylesheet">
 
     <link href="{{ asset('public/plugin/table-fixed-header/table-fixed-header.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
     <title>
         @yield('title','Home')
     </title>
 
     @yield('css')
     <style>
+        #zmmtg-root {
+            display: block;
+            transition: margin-left .5s;
+        }
         body {
             background: url('{{ asset('public/img/backdrop.png') }}'), -webkit-gradient(radial, center center, 0, center center, 460, from(#ccc), to(#ddd));
         }
-        .loading {
-            background: rgba(255, 255, 255, 0.9) url('{{ asset('public/img/loading.gif')}}') no-repeat center;
-            position:fixed;
-            width:100%;
-            height:100%;
-            top:0px;
-            left:0px;
-            z-index:999999999;
-            display: none;
-        }
-
-        #myBtn {
+        .btnPlan {
             display: none;
             position: fixed;
-            bottom: 20px;
-            right: 30px;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnDiagnosis {
+            display: none;
+            position: fixed;
+            bottom: 180px;
+            right: 18px;
+            z-index: 99;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnCovid {
+            display: none;
+            position: fixed;
+            bottom: 240px;
+            right: 18px;
+            z-index: 99;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnClinical {
+            display: none;
+            position: fixed;
+            bottom: 300px;
+            right: 18px;
+            z-index: 99;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnDemo {
+            display: none;
+            position: fixed;
+            bottom: 360px;
+            right: 18px;
+            z-index: 99;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        #myBtn {
+            position: fixed;
+            bottom: 54px;
+            right: 18px;
             z-index: 99;
             font-size: 18px;
             border: none;
@@ -70,7 +133,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 4px;
+            border-radius: 1px;
         }
         #myBtn:hover {
             background-color: #555;
@@ -78,228 +141,148 @@
         .select2 {
             width:100%!important;
         }
-
-        .modal {
-          text-align: center;
-          padding: 0!important;
-        }
-
-        .modal:before {
-          content: '';
-          display: inline-block;
-          height: 100%;
-          vertical-align: middle;
-          margin-right: -4px;
-        }
-
-        .modal-dialog {
-          width: 30%;
-          display: inline-block;
-          text-align: left;
-          vertical-align: middle;
-        }
-        .hangup {
-            background-color: red;
-            color: #FFF;
-            border-radius: 100%;
-            text-align: center;
-            font-size: 30px;
-            border-style: hidden;
-        }
-        .mic {
-            background-color: gray;
-            color: #FFF;
-            border-radius: 100%;
-            text-align: center;
-            font-size: 100%;
-            border-style: hidden;
-        }
-        #self-view {
-            position: fixed;
-            width: 15%;
-            right: 10px;
-        }
-        #remote-view-video {
-            width: 100%;
-            height: 505px;
-        }
-        @media only screen and (max-width: 800px) {
-            #self-view {
-                position: inherit;
-                width: 100%;
-            }
-            #remote-view-video {
-                width: 100%;
-                height: 100%;
-            }
-        }
         label {
             padding: 0px;
         }
         .form-group {
             margin-bottom: 10px;
         }
-        .vertical-scrollable{
-          height:399px;
-          overflow-y: scroll; 
+        .sidenav {
+          height: 100%;
+          width: 0;
+          position: fixed;
+          z-index: 1;
+          top: 0;
+          left: 0;
+          background-color: #fff;
           overflow-x: hidden;
+          transition: 0.5s;
+          padding-top: 60px;
+        }
+
+        .sidenav a {
+          padding: 8px 8px 8px 32px;
+          text-decoration: none;
+          font-size: 25px;
+          color: #818181;
+          display: block;
+          transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+          color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+          position: absolute;
+          top: 0;
+          right: 5px;
+          font-size: 36px;
+          margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+          .sidenav {padding-top: 15px;}
+          .sidenav a {font-size: 18px;}
+        }
+        /* width */
+        ::-webkit-scrollbar {
+          width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+          background: #f1f1f1; 
+        }
+         
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 10px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+          background: #555; 
         }
     </style>
 </head>
 
 <body>
 
-<!-- Fixed navbar -->
-
-<nav class="navbar navbar-default fixed-top" >
-    <div class="header" style="background-color:#2F4054;padding:10px;">
-        <meta id="webex-token" content="{{ env('WEBEX_API') }}">
-        <div>
-            <div class="col-md-4">
-                <div class="pull-left">
-                    <span class="title-info">{{ $meeting->title }}</span><br>
-                    <b style="color: white;">Teleconsultation with:</b> <span style="color: white;">{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }} </span>
-                </div>
-            </div>
-
-            <div class="clearfix"></div>
+<button id="myBtn" title="Teleconsultation forms"><i class="fas fa-file"></i></button>
+<button type="button" class="btnDemo btn btn-success" onclick="showForm('demoDiv')"> Demographic Profille</button>
+<button type="button" class="btnClinical btn btn-success" onclick="showForm('cliDiv')"> Clinical History and Physical Examination</button>
+<button type="button" class="btnCovid btn btn-success" onclick="showForm('covDiv')"> Covid-19 Screening</button>
+<button type="button" class="btnDiagnosis btn btn-success" onclick="showForm('diagDiv')"> Diagnosis/Assessment</button>
+<button type="button" class="btnPlan btn btn-success" onclick="showForm('planDiv')">Plan of Management</button>
+<div id="demoDiv" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('demoDiv')">&times;</a>
+  <div class="">
+        <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+            <h4 style="">Demographic Profile</h4>
+        </div>
+        <div class="box-body">
+            @include('forms.demographic')
         </div>
     </div>
-</nav>
-<div id="app">
-    <main class="py-4">
-        <form method="POST">
-        <div id="contentTele" class="row">
-            <div class="col-md-6">
-                <div class="box box-success">
-                    <div class="box-body">
-                        <div class="pull-right">
-                            <button type="button" title="save" class="btnSaveall btn btn-success">Save</button>
-                        </div>
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab1" data-toggle="tab">Demographic Profile</a></li>
-                            <li><a href="#tab2" data-toggle="tab">Clinical History and Physical Examination</a></li>
-                            <li><a href="#tab3" data-toggle="tab">Covid-19 Screening</a></li>
-                            <li><a href="#tab4" data-toggle="tab">Diagnosis/Assessment</a></li>
-                            <li><a href="#tab5" data-toggle="tab">Plan of Management</a></li>
-                        </ul>
-                        <div class="tab-content vertical-scrollable">
-                            <div class="tab-pane active" id="tab1">
-                                <div class="box box-success">
-                                    <div class="box-header with-border" style="background-color: #00a65a; color: white;">
-                                        <h4 style="">Demographic Profile</h4>
-                                    </div>
-                                    <div class="box-body">
-                                        @include('forms.demographic')
-                                    </div>
-                                </div>
-                                <div class="box box-success">
-                                    <div class="box-header with-border" style="background-color: #00a65a; color: white;">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <h4 style="">Patient Profile</h4>
-                                            </div>
-                                            <div class="col-md-6 form-inline">
-                                                <div class="form-group">
-                                                    <label>Case #:</label>
-                                                    <input type="text" class="form-control" value="{{ $case_no }}" name="case_no" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @include('forms.patientprof')
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab2">
-                                <div class="box box-success">
-                                    <div class="box-header with-border" style="background-color: #00a65a; color: white;">
-                                        <h4 style="">Clinical History</h4>
-                                    </div>
-                                    <div class="box-body">
-                                        @include('forms.clinical')
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab3">
-                                @include('forms.covid')
-                            </div>
-                            <div class="tab-pane" id="tab4">
-                                @include('forms.diagnosis')
-                            </div>
-                            <div class="tab-pane" id="tab5">
-                                @include('forms.plan')
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="pull-right">
-                                <a title="Previous" class="btn btnPrevious hide" >Previous &nbsp;<i class="fas fa-less-than"></i></a>
-                                <a title="Next" class="btn btnNext" >Next &nbsp;<i class="fas fa-greater-than"></i></a>
-                            </div>
-                        </div>
+    <div class="">
+        <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 style="">Patient Profile</h4>
+                </div>
+                <div class="col-md-6 form-inline">
+                    <div class="form-group">
+                        <label>Case #:</label>
+                        <input type="text" class="form-control" value="{{ $case_no }}" name="case_no" readonly>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="box box-success">
-                  <div class="pull-right">
-                      <video id="self-view" autoplay></video>
-                  </div>
-                  <div style="width:100%; height: 100%;">
-                    <audio id="remote-view-audio" autoplay></audio>
-                    <video id="remote-view-video" autoplay></video>
-                  </div>
-                  <div class="text-center">
-                      <!-- <button id="turnoffcamera" title="turn off camera" type="button" class="mic"><small><i class="fas fa-video"></i></small></button>
-                      <button id="turnoffmic" title="turn off mic" type="button" class="mic"><i class="fas fa-microphone"></i></button> -->
-                      <button id="hangup" title="hangup" type="button" class="hangup"><small><i class="fas fa-phone-alt"></i></small></button>&nbsp;
-                  </div>
-                </div>
-            </div>
         </div>
-        </form>
-    </main>
+        @include('forms.patientprof')
+    </div>
+</div>
+<div id="cliDiv" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('cliDiv')">&times;</a>
+    <div class="">
+        <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+            <h4 style="">Clinical History</h4>
+        </div>
+        <div class="box-body">
+            @include('forms.clinical')
+        </div>
+    </div>
+</div>
+<div id="covDiv" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('covDiv')">&times;</a>
+  @include('forms.covid')
+</div>
+<div id="diagDiv" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('diagDiv')">&times;</a>
+  @include('forms.diagnosis')
+</div>
+<div id="planDiv" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('planDiv')">&times;</a>
+  @include('forms.plan')
 </div>
 
-<div class="modal fade" id="meeting_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title title-info" id="myModalLabel">{{ $meeting->title }}</h4>
-      </div>
-      <div class="modal-body">
-        <form id="destination">
-          <input
-            id="invitee"
-            name="invitee"
-            placeholder="Person ID or Email Address or SIP URI or Room ID"
-            type="hidden"
-            value="{{ $meeting->web_link }}"
-           />
-           <div class="text-center">
-            <h3>Meeting with:</h3> <h3><b>{{ $meeting->lname }}, {{ $meeting->fname }} {{ $meeting->mname }}</b> </h3><br><br>
-            <label class="tired hide">Tired of waiting? Try reload the page</label><br>
-            <button type="submit" id="join" title="join" class="btnJoin btn btn-success" onclick="joining()" disabled><i class="fa fa-spinner fa-spin"></i> Loading SDK...</button>
-           </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- For either view: import Web Meeting SDK JS dependencies -->
+<script src="https://source.zoom.us/2.2.0/lib/vendor/react.min.js"></script>
+<script src="https://source.zoom.us/2.2.0/lib/vendor/react-dom.min.js"></script>
+<script src="https://source.zoom.us/2.2.0/lib/vendor/redux.min.js"></script>
+<script src="https://source.zoom.us/2.2.0/lib/vendor/redux-thunk.min.js"></script>
+<script src="https://source.zoom.us/2.2.0/lib/vendor/lodash.min.js"></script>
+<!-- For Component View -->
+<script src="https://source.zoom.us/2.2.0/zoom-meeting-embedded-2.2.0.min.js"></script>
 
-<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-arrow-up"></i></button>
-<footer class="footer">
-    <div class="container">
-        <p class="pull-right">All Rights Reserved {{ date("Y") }} | Version 1.0</p>
-    </div>
-</footer>
-
-
+<!-- For Client View -->
+<script src="https://source.zoom.us/zoom-meeting-2.2.0.min.js"></script>
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script>
-<script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script>
+<!-- <script crossorigin src="https://unpkg.com/webex@^1/umd/webex.min.js"></script> -->
+<!-- <script src="{{ asset('resources/views/doctors/scripts/webex_function.js') }}"></script> -->
 <script src="{{ asset('public/assets/js/jquery.min.js?v='.date('mdHis')) }}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ asset('public/plugin/bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
@@ -325,64 +308,78 @@
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-
 <script>
+    var activeForm = '';
+    var signature = "{!! $signature !!}";
+    var api_key = "{!! $api_key !!}";
+    var meetnum = "{!! $meetnum !!}";
+    var passw = "{!! $passw !!}";
+    var username = "{!! $username !!}"
+    function closeNav(ele) {
+        if(ele) {
+          document.getElementById(ele).style.width = "0";
+          activeForm = '';
+        }
+    }
+    $( function() {
+        $( "#demoDiv").resizable();
+        $( "#cliDiv").resizable();
+        $( "#covDiv").resizable();
+        $( "#diagDiv").resizable();
+        $( "#planDiv").resizable();
+    });
+    ZoomMtg.preLoadWasm();
+    ZoomMtg.prepareWebSDK();
+    ZoomMtg.i18n.load('en-US');
+    ZoomMtg.i18n.reload('en-US');
+    ZoomMtg.setZoomJSLib('https://source.zoom.us/2.2.0/lib', '/av'); 
     $(document).ready(function() {
         window.onbeforeunload = function() {
-        return "Are you sure you want to leave?";
-    }
+            return "Are you sure you want to leave?";
+        }
         var date = new Date();
         var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         $('.daterange').daterangepicker({
             "singleDatePicker": true
         });
         $(".select2").select2();
-        // $('#meeting_modal').modal('show');
-        setTimeout(function(){
-            $('.btnJoin').prop("disabled", false);
-            $('.btnJoin').html('<i class="far fa-play-circle"></i> Start');
-        }, 7000);
+        var leaveUrl = "{{ url('thank-you-page') }}";
+        ZoomMtg.init({
+          leaveUrl: leaveUrl,
+          success: (success) => {
+            console.log(success)
+            ZoomMtg.join({
+                signature: signature,
+                apiKey: api_key,
+                meetingNumber: meetnum,
+                userName: username,
+                passWord: passw,
+                success: (success) => {
+                    console.log(success)
+                },
+                error: (error) => {
+                    console.log(error)
+                }
+            })
+          },
+          error: (error) => {
+            console.log(error)
+          }
+        });
     });
-    var mybutton = document.getElementById("myBtn");
-    window.onscroll = function() {scrollFunction()};
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            mybutton.style.display = "block";
-        } else {
-            mybutton.style.display = "none";
-        }
-    }
-    function topFunction() {
-        $('body,html').animate({
-            scrollTop : 0
-        }, 500);
-    }
-    function joining() {
-        setTimeout(function(){ $('.tired').removeClass('hide'); }, 15000);
-        $('.btnJoin').html('<i class="fa fa-spinner fa-spin"></i> Please wait...');
-    }
-    var val = 0;
-     $('.btnNext').click(function(){
-       val++;
-       $('.nav-tabs > .active').next('li').find('a').trigger('click');
-       if(val > 0) {
-         $('.btnPrevious').removeClass('hide');
-       }
-       if(val >= 4) {
-        $(this).addClass('hide');
-       }
+    $("#myBtn").click(function(){
+        $(".btnDemo").fadeToggle();
+        $(".btnClinical").fadeToggle("slow");
+        $(".btnCovid").fadeToggle(500);
+        $(".btnDiagnosis").fadeToggle(1000);
+        $(".btnPlan").fadeToggle(1500);
     });
-    $('.btnPrevious').click(function(){
-      val--;
-      if(val <= 0) {
-        $(this).addClass('hide');
-      }
-      if(val > 0) {
-         $('.btnNext').removeClass('hide');
-       }
-      $('.nav-tabs > .active').prev('li').find('a').trigger('click');
-    });
-
+    function showForm(ele) {
+        document.getElementById(ele).style.width = "650px";
+        $("#myBtn").click();
+        closeNav(activeForm);
+        activeForm = ele;
+    }
     $('input[type=radio][name=is_patient_accompanied]').change(function() {
     if (this.value == 'Yes') {
         $('#companion').removeClass('hide');

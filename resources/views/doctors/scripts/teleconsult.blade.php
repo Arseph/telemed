@@ -1,6 +1,46 @@
 <script>
     var patients = {!! json_encode($patients->toArray()) !!};
     var docorder = {!! json_encode($docorder->toArray()) !!};
+    var currentFile = null;
+    var last_update = "{!! $zoomtoken->updated_at !!}";
+    var zoomtoken = new Date(last_update);
+    var expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
+    var interval;
+    Dropzone.autoDiscover = false,
+    $("#labReqFile").dropzone({
+      addRemoveLinks: true,
+      maxFiles: 4,
+      parallelUploads: 10000,
+      uploadMultiple: true,
+      autoProcessQueue: false,
+      acceptedFiles: ".pdf,.xls,.docx,.jpg,.png",
+      url: "{{asset('/lab-request-doctor-order')}}",
+      dictDefaultMessage: 'Click or drop files here.',
+      init: function() {
+        var myDropzone = this;
+
+        // Update selector to match your button
+        $("#buttonLabReq").click(function (e) {
+            e.preventDefault();
+            myDropzone.processQueue();
+        });
+
+        this.on('sending', function(file, xhr, formData) {
+            // Append all form inputs to the formData Dropzone will POST
+            var data = $('#labrequest_form').serializeArray();
+            $.each(data, function(key, el) {
+                formData.append(el.name, el.value);
+            });
+        });
+      }   
+    });
+    $('.countdowntoken').countdown(expirewill, function(event) {
+        if(event.strftime('%H:%M:%S') == '00:00:00') {
+          $(this).html('Your access token is expired.');
+        } else {
+            $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+        }
+    });
 	$(document).ready(function() {
 		var date = new Date();
 		var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -140,12 +180,13 @@
             success : function(data){
                 var val = JSON.parse(data);
                 if(val) {
+                    var mname = val['mname'] ? val['mname'] : '';
                     $('#myrequest_modal').modal('hide');
                     $('#info_meeting_modal').modal('show'); 
                     $('#myInfoLabel').html(val['title']);
                     $('#meetlink').html(val['web_link']);
-                    $('#meetnumber').html(val['meeting_number']);
-                    $('#patientName').val(val['lname']+", "+val['fname']+" "+val['mname']);
+                    $('#meetnumber').html(val['meeting_id']);
+                    $('#patientName').val(val['lname']+", "+val['fname']+" "+mname);
                     $('#meetPass').html(val['password']);
                     $('#meetKey').html(val['host_key']);
                     $('.btnMeeting').val(val['meetID']);
@@ -286,7 +327,8 @@
             url: url+"/"+id,
             type: 'GET',
             success : function(data){
-                var patient = data.patient.fname + ' ' + data.patient.mname + ' ' + data.patient.lname;
+                var mname = data.mname ? data.mname : '';
+                var patient = data.patient.fname + ' ' + mname + ' ' + data.patient.lname;
                 var encoded = data.encoded.fname + ' ' + data.encoded.mname + ' ' + data.encoded.lname;
                 var fac = data.encoded.facility.facilityname;
                 var requestdate = moment(data.created_at).format('MMMM Do YYYY, h:mm:ss a');
@@ -335,9 +377,9 @@
                 },
                 type: 'POST',
                 success : function(data){
-                    setTimeout(function(){
-                        window.location.reload(false);
-                    },500);
+                    // setTimeout(function(){
+                    //     window.location.reload(false);
+                    // },500);
                 },
                 error: function (data) {
                     $(".loading").hide();
@@ -528,5 +570,75 @@
                 });
             }
         });
+    });
+
+    function getDocorder(docorderid, fname, mname, lname) {
+        var url = "{{ url('/doctor-order-info') }}";
+        $.ajax({
+            async: true,
+            url: url,
+            type: 'GET',
+            data: {
+                docorderid: docorderid
+            },
+            success : function(data){
+                var val = JSON.parse(data);
+                if(!val) {
+                    Lobibox.notify('info', {
+                    title: "",
+                    msg: "Consultation doesn't have Doctor Order.",
+                    size: 'mini',
+                    rounded: true
+                });
+                } else {
+                    var labreq = val.labrequestcodes.split(',');
+                    var img = val.imagingrequestcodes.split(',');
+                    $('#labrequestcodeslab').val(labreq).change();
+                    $('#imagingrequestcodeslab').val(img).change();
+                    $("#patient_name_lab").val(fname + ' ' + mname + ' ' + lname);
+                    $("input[name=doctororder_id]").val(val.id);
+                    $('#labrequest_modal').modal('show'); 
+                }
+
+            },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            }
+        });
+
+    }
+
+    function refreshToken() {
+        var url = "{{ url('/refresh-token') }}";
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: false,
+            success : function(data){
+                var val = JSON.parse(data);
+                if(val.updated_at != last_update) {
+                    last_update = val.updated_at;
+                    zoomtoken = new Date(last_update);
+                    expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
+                    $('.countdowntoken').countdown(expirewill, function(event) {
+                        if(event.strftime('%H:%M:%S') == '00:00:00') {
+                          $(this).html('Your access token is expired.');
+                        } else {
+                            $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+                        }
+                    });
+                    clearInterval(interval);
+                }
+            }
+        });
+    }
+    $('.refTok').on('click',function () {
+        interval = setInterval(refreshToken, 5000);
     });
 </script>

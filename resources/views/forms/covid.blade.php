@@ -1,6 +1,6 @@
 <form id="covid_form" method="POST">
     {{ csrf_field() }}
-    <div class="box box-success">
+    <div class="">
         <div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Overseas Employment Address(for Overseas Filipino Workers)</h4>
         </div>  

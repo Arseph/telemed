@@ -108,6 +108,10 @@ Route::post('/prescription-delete/{id}', 'Doctor\ManageController@prescriptionDe
 Route::match(['GET','POST'],'doctor/order','Doctor\ManageController@doctorOrder');
 Route::post('/docorder-store', 'Doctor\ManageController@doctorOrderStore');
 Route::post('/docorder-delete/{id}', 'Doctor\ManageController@docorderDelete');
+Route::get('/doctor-order-info','Doctor\TeleConsultController@getDocOrder');
+Route::post('/lab-request-doctor-order','Doctor\TeleConsultController@labreqStore');
+Route::get('/refresh-token', 'Doctor\TeleConsultController@refreshToken');
+Route::get('/thank-you-page', 'Doctor\TeleConsultController@thankYouPage');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
@@ -170,3 +174,7 @@ Route::post('superadmin/feedback/response', 'FeedbackCtrl@sfeedbackResponse');
 Route::match(['get','post'] ,'doctor/issuesconcern', 'Doctor\IssueConcernCtrl@index');
 Route::get('issue/concern/{meet_id}/{issue_from}','Doctor\IssueConcernCtrl@IssueAndConcern'); 
 Route::post('issue/concern/submit','Doctor\IssueConcernCtrl@issueSubmit');
+
+//Teleconsult
+Route::get('/start-zoom-meeting','Doctor\TeleConsultController@zoomMeeting');
+Route::get('/getToken','Doctor\TeleConsultController@zoomToken');

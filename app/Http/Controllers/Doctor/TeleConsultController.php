@@ -15,6 +15,8 @@ use App\TeleCategory;
 use App\Countries;
 use App\LabRequest;
 use App\DoctorOrder;
+use App\ZoomToken;
+use Redirect;
 class TeleConsultController extends Controller
 {
 	public function __construct()
@@ -131,6 +133,7 @@ class TeleConsultController extends Controller
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
+        $zoomtoken = ZoomToken::where('user_id',$user->id)->first();
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -148,7 +151,8 @@ class TeleConsultController extends Controller
             'telecat' => $telecat,
             'labreq' => $labreq,
             'imaging' => $imaging,
-            'docorder' => $docorder
+            'docorder' => $docorder,
+            'zoomtoken'=> $zoomtoken
         ]);
     }
 
@@ -196,14 +200,32 @@ class TeleConsultController extends Controller
     }
 
     public function indexCall($id) {
+        $user = Session::get('auth');
     	$meetings = Meeting::select(
     		"meetings.*",
-    		"pat.*",
             "pat.id as PATID",
     		"meetings.id as meetID"
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
          ->where('meetings.id',$id)
         ->first();
+        $api_key = env('ZOOM_API_KEY');
+        $api_secret = env('ZOOM_API_SECRET');
+        $meeting_number = $meetings->meeting_id;
+        $password = $meetings->password;
+        $role = $meetings->doctor_id == $user->id ? 1 : 0;
+        $username = $user->fname.' '.$user->mname.' '.$user->lname;
+        //Set the timezone to UTC
+        date_default_timezone_set("UTC");
+
+        $time = time() * 1000 - 30000;//time in milliseconds (or close enough)
+        
+        $data = base64_encode($api_key . $meeting_number . $time . $role);
+        
+        $hash = hash_hmac('sha256', $data, $api_secret, true);
+        
+        $_sig = $api_key . "." . $meeting_number . "." . $time . "." . $role . "." . base64_encode($hash);
+        $signature = rtrim(strtr(base64_encode($_sig), '+/', '-_'), '=');
+
         $patient = Patient::find($meetings->PATID);
         $case_no = mt_rand(100000000, 999999999);
         $facility = Facility::orderBy('facilityname', 'asc')->get();
@@ -277,7 +299,12 @@ class TeleConsultController extends Controller
             'scrum' => $scrum,
             'oro_naso_swab' => $oro_naso_swab,
             'spe_others' => $spe_others,
-            'outcome_date_discharge' => $outcome_date_discharge
+            'outcome_date_discharge' => $outcome_date_discharge,
+            'signature'=>$signature,
+            'api_key'=>$api_key,
+            'meetnum'=>$meeting_number,
+            'passw'=>$password,
+            'username'=>$username
         ]);
     }
 
@@ -312,88 +339,41 @@ class TeleConsultController extends Controller
         $endtime = Carbon::parse($time)
                             ->addMinutes($meet->duration)
                             ->format('H:i:s');
-        $start = $date.'T'.$time.'+08:00';
-        $end = $date.'T'.$endtime.'+08:00';
-        $email = $meet->email;
+        $start = $date.'T'.$time;
+        $duration = $meet->duration;
+        $password = str_random(6);
+        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
+        $db = ZoomToken::where('user_id',$user->id)->first();
+        $arr_token = json_decode($db->provider_value);
+        $accessToken = $arr_token->access_token;
         if($action == 'Accept') {
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-              CURLOPT_URL => 'https://webexapis.com/v1/meetings',
-              CURLOPT_RETURNTRANSFER => true,
-              CURLOPT_ENCODING => '',
-              CURLOPT_MAXREDIRS => 10,
-              CURLOPT_TIMEOUT => 0,
-              CURLOPT_FOLLOWLOCATION => true,
-              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-              CURLOPT_CUSTOMREQUEST => 'POST',
-              CURLOPT_POSTFIELDS =>'{
-              "enabledAutoRecordMeeting": true,
-              "allowAnyUserToBeCoHost": false,
-              "enabledJoinBeforeHost": false,
-              "enableConnectAudioBeforeHost": false,
-              "excludePassword": false,
-              "publicMeeting": false,
-              "enableAutomaticLock": false,
-              "allowFirstUserToBeCoHost": false,
-              "allowAuthenticatedDevices": false,
-              "sendEmail": '.$meet->sendemail.',
-              "title": "'.$meet->title.'",
-              "start": "'.$start.'",
-              "end": "'.$end.'",
-              "timezone": "Asia/Manila",
-              "invitees": [
-                {
-                  "email": "'.$email.'",
-                  "displayName": "Patient",
-                  "coHost": false
-                }
-              ]
-            }',
-              CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer '.env('WEBEX_API').'',
-                'Content-Type: application/json'
-              ),
-            ));
-
-            $response = curl_exec($curl);
-            $meetres = json_decode($response,true);
-            curl_close($curl);
-            $data = array(
+            $response = $client->request('POST', '/v2/users/me/meetings', [
+                "headers" => [
+                    "Authorization" => "Bearer $accessToken"
+                ],
+                'json' => [
+                    "topic" => $meet->title,
+                    "type" => 2,
+                    "start_time" => $start,
+                    "duration" => $duration,
+                    "password" => $password
+                ],
+            ]);
+      
+            $data = json_decode($response->getBody(), true);
+            $create_data = array(
                 'user_id' => $meet->user_id,
-                'doctor_id' => $user->id,
+                'doctor_id' => $meet->doctor_id,
                 'patient_id' => $meet->patient_id,
                 'date_meeting' => $date,
                 'from_time' => $time,
                 'to_time' => $endtime,
-                'meeting_id' => $meetres['id'],
-                'meeting_number' => $meetres['meetingNumber'],
-                'title' => $meetres['title'],
-                'password' => $meetres['password'],
-                'phone_video_password' => $meetres['phoneAndVideoSystemPassword'],
-                'meeting_type' => $meetres['meetingType'],
-                'state' => $meetres['state'],
-                'timezone' => $meetres['timezone'],
-                'start' => $meetres['start'],
-                'end' => $meetres['end'],
-                'host_user_id' => $meetres['hostUserId'],
-                'host_display_name' => $meetres['hostDisplayName'],
-                'host_email' => $meetres['hostEmail'],
-                'host_key' => $meetres['hostKey'],
-                'site_url' => $meetres['siteUrl'],
-                'web_link' => $meetres['webLink'],
-                'sip_address' => $meetres['sipAddress'],
-                'dial_in_ip_address' => $meetres['dialInIpAddress'],
-                'enable_auto_record_meeting' => $meetres['enabledAutoRecordMeeting'],
-                'allow_authenticate_device' => $meetres['allowAuthenticatedDevices'],
-                'enable_join_before_host' => $meetres['enabledJoinBeforeHost'],
-                'join_before_host_meeting' => $meetres['joinBeforeHostMinutes'],
-                'enable_connect_audio_before_host' => $meetres['enableConnectAudioBeforeHost'],
-                'exclude_password' => $meetres['excludePassword'],
-                'public_meeting' => $meetres['publicMeeting'],
-                'enable_automatic_lock' => $meetres['enableAutomaticLock']
+                'meeting_id' => $data['id'],
+                'title' => $data['topic'],
+                'password' => $data['password'],
+                'web_link' => $data['join_url'],
             );
-            $create_meeting = Meeting::create($data);
-
+            $create_meeting = Meeting::create($create_data);
         }
         $meet_id = $action == 'Accept' ? $create_meeting->id : '';
         $data = array(
@@ -420,5 +400,76 @@ class TeleConsultController extends Controller
             PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
         }
         Session::put("action_made","Please wait for the confirmation of doctor.");
+    }
+
+    public function getDocOrder(Request $req) {
+        $docorder = DoctorOrder::find($req->docorderid);
+        return json_encode($docorder);
+    }
+
+    public function labreqStore(Request $req) {
+        dd($req->all());
+    }
+
+    public function zoomMeeting(Request $req) {
+        $api_key = '51JAnl6LT5eDa9b2oX9gpA';
+        $api_secret = 'oBESX7AoVyMbNbjwT3PeJe05qxW2ZOP23Yj9';
+        $meeting_number = '76688557339';
+        $password = 'p95w03';
+        $role = 1;
+        //Set the timezone to UTC
+        date_default_timezone_set("UTC");
+
+        $time = time() * 1000 - 30000;//time in milliseconds (or close enough)
+        
+        $data = base64_encode($api_key . $meeting_number . $time . $role);
+        
+        $hash = hash_hmac('sha256', $data, $api_secret, true);
+        
+        $_sig = $api_key . "." . $meeting_number . "." . $time . "." . $role . "." . base64_encode($hash);
+        
+        //return signature, url safe base64 encoded
+        $signature = rtrim(strtr(base64_encode($_sig), '+/', '-_'), '=');
+        return response()->json([
+            'signature'=>$signature,
+            'api_key'=>$api_key,
+            'meetnum'=>$meeting_number,
+            'passw'=>$password
+        ]);
+    }
+
+    public function zoomToken(Request $req) {
+        $user_id = Session::get('auth')->id;
+        $client_id = env('ZOOM_CLIENT_ID');
+        $client_secret = env('ZOOM_CLIENT_SECRET');
+        $direct_url = env('ZOOM_REDIRECT_URL');
+        $client = new \GuzzleHttp\Client(['base_uri' => 'https://zoom.us']);
+  
+        $response = $client->request('POST', '/oauth/token', [
+            "headers" => [
+                "Authorization" => "Basic ". base64_encode($client_id.':'.$client_secret)
+            ],
+            'form_params' => [
+                "grant_type" => "authorization_code",
+                "code" => $req->code,
+                "redirect_uri" => $direct_url
+            ],
+        ]);
+
+        $token = json_decode($response->getBody()->getContents(), true);
+        $data = array('user_id' => $user_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
+        $zoomtoken = ZoomToken::where('user_id',$user_id)->first() ?  ZoomToken::where('user_id',$user_id)->first()->update($data) : ZoomToken::create($data);
+        echo "Your access token Successfully Refresh. You can close this tab now.";
+    }
+
+    public function refreshToken(Request $req) {
+        $user_id = Session::get('auth')->id;
+        $zoomtoken = ZoomToken::where('user_id',$user_id)->first();
+        return json_encode($zoomtoken);
+        
+    }
+
+    public function thankYouPage(Request $req) {
+        return view('thankyou');
     }
 }

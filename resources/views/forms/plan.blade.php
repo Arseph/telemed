@@ -4,7 +4,7 @@
     }
 </style>
 <form id="plan_form" method="POST">
-	<div class="box box-success">
+	<div class="">
 		<div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Plan of Management</h4>
         </div>
