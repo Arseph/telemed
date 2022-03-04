@@ -45,7 +45,7 @@ if($searchKeyword){
                             </button>
                             <a class="btn btn-warning btn-sm btn-flat" onclick="refreshPage()"><i class="fa fa-eye"></i> View All</a>
                             @if($user->facility_id!=25)
-                                <a href="#" data-toggle="modal" class="btn btn-primary btn-sm btn-flat add_info" data-target="#users_modal">
+                                <a href="javascript:void(0)" data-toggle="modal" class="btn btn-primary btn-sm btn-flat add_info" data-target="#users_modal">
                                     <i class="fa fa-user-plus"></i> Add User
                                 </a>
                             @endif
@@ -68,7 +68,7 @@ if($searchKeyword){
                             @foreach($data as $row)
                                 <tr>
                                     <td style="width: 20%;">
-                                        <a href="#"
+                                        <a href="javascript:void(0)"
                                            data-toggle="modal"
                                            data-id= "{{ $row->id }}"
                                            class="title-info update_info"

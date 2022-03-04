@@ -36,7 +36,7 @@
         <form id="facility_form" method="POST">
             <div class="pull-right">
                 <button title="save" type="submit" class="btnSave btn btn-success hide"><i class="far fa-save"></i></button>
-                <h4 id="btnEdit" title="Edit Facility" onclick="enableView()"><a href="#"><i class="far fa-edit"></i></a></h4>
+                <h4 id="btnEdit" title="Edit Facility" onclick="enableView()"><a href="javascript:void(0)"><i class="far fa-edit"></i></a></h4>
             </div>
             <h1 class="title-info">{{ $facility->facilityname }}</h1>
         </div>

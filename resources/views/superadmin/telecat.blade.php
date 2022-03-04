@@ -43,7 +43,7 @@
                                 <td style="white-space: nowrap;">
                                     <b>
                                         <a
-                                           href="#"
+                                           href="javascript:void(0)"
                                            data-toggle="modal"
                                            data-id= "{{ $row->id }}"
                                            class="title-info update_info"

@@ -34,12 +34,14 @@
       padding: 5%;
       border-radius: 30px;
       text-align: center;
+      border-style: hidden;
     }
     .avatar {
       vertical-align: middle;
       width: 50px;
       height: 50px;
       border-radius: 50%;
+      border-style: hidden;
     }
 </style>
 <div class="container-fluid">
@@ -47,15 +49,20 @@
         <div class="box-header with-border">
             <div class="pull-right">
                 <a data-toggle="modal" class="btn btn-success btn-md" data-target="#tele_modal">
-                    <i class="far fa-calendar-plus"></i> Schedule Teleconsult
+                    <i class="far fa-calendar-plus"></i> Request Teleconsult
                 </a>
                 <a data-toggle="modal" class="btn btn-info btn-md" data-target="#myrequest_modal">
                     <i class="far fa-calendar-plus"></i> My Request
                 </a>
+                <select class="btn btn-primary btn-md" id="sel1">
+                  <option value="1">List</option>
+                  <option value="0">Calendar</option>
+                </select>
             </div>
             <h3>My Teleconsultations</h3>
         </div>
         <div class="box-body">
+          <div id="teleList">
             <ul class="nav nav-pills">
               <li class="@if($active_tab == 'upcoming')active @endif"><a data-toggle="tab" href="#upcoming">Upcoming</a></li>
               <li class="@if($active_tab == 'request')active @endif"><a data-toggle="tab" href="#request">Request @if($pending > 0)<span class="badge">{{$pending}}</span> @endif</a></li>
@@ -98,7 +105,7 @@
                                     <tr>
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
-                                            <a href="#" class="title-info update_info" onclick="getMeeting('<?php echo $row->meetID ?>', '<?php echo $join ?>')">
+                                            <a href="javascript:void(0)" class="title-info update_info" onclick="getMeeting('<?php echo $row->meetID ?>', '<?php echo $join ?>')">
                                                {{ \Carbon\Carbon::parse($row->from_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->to_time)->format('h:i A') }}
                                                 <br><b>
                                                     <small class="text-warning">
@@ -119,7 +126,7 @@
                                           <b>{{ $row->encoded->facility->facilityname }}</b>
                                         </td>
                                         <td>
-                                          <a href="#" class="btn-circle btn-primary" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
+                                          <a href="javascript:void(0)" class="btn-circle btn-primary" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
                                               <i class="fas fa-play-circle"></i> Start Consultation
                                           </a>
                                         </td>
@@ -133,11 +140,11 @@
                                           <b>{{ $row->doctor->facility->facilityname }}</b>
                                         </td>
                                         <td>
-                                          <a href="#" class="btn-circle btn-success" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
+                                          <a href="javascript:void(0)" class="btn-circle btn-success" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
                                               <i class="fas fa-play-circle"></i> Join Consultation
                                           </a>
                                         </td>
-                                        <td><button class="btn-circle btn-info"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}')">
+                                        <td><button class="btn-circle btn-info"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
                                               <i class="fas fa-file-medical"></i> Lab Request
                                           </button></td>
                                         @endif
@@ -199,7 +206,7 @@
                                     <tr onclick="infoMeeting('<?php echo $row->meetID?>','<?php echo $row->meet_id?>')">
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
-                                            <a href="#" class="title-info update_info">
+                                            <a href="javascript:void(0)" class="title-info update_info">
                                                {{ \Carbon\Carbon::parse($row->time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->time)->addMinutes($row->duration)->format('h:i A') }}
                                                 <br><b>
                                                     <small class="text-warning">
@@ -273,7 +280,7 @@
                                     <tr>
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                         <td style="width: 20%;">
-                                            <a href="#"
+                                            <a href="javascript:void(0)"
                                                data-toggle="modal"
                                                data-id= "{{ $row->id }}"
                                                class="title-info update_info"
@@ -312,12 +319,15 @@
                             </span>
                         </div>
                     @endif
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+          <div id="teleCalendar">
+            <div id='calendar'></div>
+          </div>
         </div>
-    </div>
-    
 </div>
 @include('modal.doctors.issueModal')
 @include('modal.doctors.teleconsultModal')
@@ -325,5 +335,6 @@
 @endsection
 @section('js')
     @include('doctors.scripts.teleconsult')
+    @include('others.calendar')
 @endsection
 

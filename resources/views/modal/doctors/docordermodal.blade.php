@@ -81,9 +81,22 @@
         <form id="labrequest_form" method="POST">
           {{ csrf_field() }}
           <input type="hidden" class="form-control" value="" autofocus="" name="doctororder_id">
+          <input type="hidden" class="form-control" value="" autofocus="" name="doctororder_patient_id">
           <div class="form-group">
             <label>Patient:</label>
             <input type="text" class="form-control" id="patient_name_lab" disabled>
+          </div>
+          <div class="form-group">
+            <label>Document Type:</label>
+            <select class="select2" name="doc_type" required>
+                @foreach($doc_type as $row)
+                    <option value="{{ $row->id }}">{{ $row->doc_name }}</option>
+                @endforeach
+            </select>
+          </div>
+          <div class="form-group">
+              <label>Description:</label>
+              <textarea class="form-control" name="description" rows="2"></textarea>
           </div>
           <div class="form-group">
             <label>Lab Request Codes:</label>
@@ -114,7 +127,11 @@
                 @endforeach
             </select>
           </div>
-          <br>
+          <div class="form-group">
+            <label>Files:</label>
+            <div class="list-group" id="listLabreq">
+            </div>
+          </div>
           <div class="dropzone" id="labReqFile"></div>
           
       </div>

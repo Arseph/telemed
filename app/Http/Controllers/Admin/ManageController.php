@@ -127,4 +127,39 @@ class ManageController extends Controller
         $meeting = PendingMeeting::find($req->meet_id);
         return json_encode($meeting);
     }
+
+    public function indexDoctors(Request $request) {
+        $users = User::where('level', 'doctor')->get();
+        $keyword = $request->search;
+        $data = new User();
+        if($keyword){
+            $data = $data
+                ->where(function($q) use($keyword){
+                $q->where('fname','like',"%$keyword%")
+                    ->orwhere('mname','like',"%$keyword%")
+                    ->orwhere('lname','like',"%$keyword%")
+                    ->orwhere('username','like',"%$keyword%")
+                    ->orwhere(\DB::raw('concat(fname," ",lname)'),'like',"$keyword")
+                    ->orwhere(\DB::raw('concat(lname," ",fname)'),'like',"$keyword");
+            });
+        }
+
+        if($request->facility_filter)
+            $data = $data->where("facility_id",$request->facility_filter);
+
+        $facility = Session::get('auth')->facility_id;
+        $data = $data
+                ->where("level",'doctor')
+                ->where('facility_id', $facility)
+                ->orderBy('lname','asc')
+                ->paginate(20);
+
+        return view('admin.doctors',[
+            'title' => 'List of Facility Doctors',
+            'data' => $data,
+            'facility' => $facility,
+            'search' => $keyword,
+            'users' => $users,
+        ]);
+    }
 }

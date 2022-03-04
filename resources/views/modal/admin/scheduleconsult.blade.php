@@ -114,7 +114,7 @@
   		<div class="form-group">
   			<label class="text-success">Meeting Link:</label><br>
   			<label id="meetlink"></label>
-  			<a href="#"onclick="copyToClipboard('#meetlink')"><i class="far fa-copy"></i></a>
+  			<a href="javascript:void(0)"onclick="copyToClipboard('#meetlink')"><i class="far fa-copy"></i></a>
 
   		</div>
   		<div class="form-group">

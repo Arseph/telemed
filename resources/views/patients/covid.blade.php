@@ -49,7 +49,7 @@
         <form id="covid_form" method="POST">
             <div class="pull-right">
                 <button title="save" type="submit" class="btnSave btn btn-success hide"><i class="far fa-save"></i></button>
-                <h4 id="btnEdit" title="Edit Facility" onclick="enableView()"><a href="#"><i class="far fa-edit"></i></a></h4>
+                <h4 id="btnEdit" title="Edit Facility" onclick="enableView()"><a href="javascript:void(0)"><i class="far fa-edit"></i></a></h4>
             </div>
             <h3 class="text-success">Covid-19 Screening</h3>
             <h4 class="text-primary">Patient: {{ $patient->lname }}, {{ $patient->fname }} {{ $patient->mname }}</h4>

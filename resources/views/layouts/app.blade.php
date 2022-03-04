@@ -12,15 +12,18 @@
     <title>DOH CHD XII – Tele Consultation System</title>
     <!-- <title>{{ (isset($title)) ? $title : 'Referral System'}}</title> -->
     <!-- SELECT 2 -->
+    <link href="{{ asset('public/assets/fontawesome/css/all.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/fontawesome.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/brands.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/solid.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/v5-font-face.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/v4-font-face.css') }}" rel="stylesheet">
     <link href="{{ asset('public/plugin/select2/select2.min.css') }}" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('public/assets/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('public/assets/css/bootstrap-theme.min.css') }}" rel="stylesheet">
     <!-- Ionicons -->
     <link rel="stylesheet" href="{{ asset('public/plugin/Ionicons/css/ionicons.min.css') }}">
-
-    <!-- Font awesome -->
-    <script src="https://kit.fontawesome.com/dad1cf763f.js" crossorigin="anonymous"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{{ asset('public/assets/css/ie10-viewport-bug-workaround.css') }}" rel="stylesheet">
@@ -39,6 +42,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-countdown/2.0.2/jquery.countdown.css" rel="stylesheet"/>
+    <link href="{{ asset('public/plugin/fullcalendar/main.css') }}" rel="stylesheet">
     <title>
         @yield('title','Home')
     </title>
@@ -216,43 +220,14 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
+                        <li><a href="{{ asset('/admin-doctors') }}"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
-                        <li class="dropdown-submenu">
-                            <a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#" 
-                                       data-toggle="modal"
-                                       data-target="#list_patient_modal"
-                                       onclick="seturl('clinical')" 
-                                    >Clinical History & Physical Exam</a>
-                                </li>
-                                <li><a href="#" 
-                                       data-toggle="modal"
-                                       data-target="#list_patient_modal"
-                                       onclick="seturl('covid')"
-                                    >Covid 19 Screening</a>
-                                </li>
-                                <li><a href="#"
-                                       data-toggle="modal"
-                                       data-target="#list_patient_modal"
-                                       onclick="seturl('diagnosis')"
-                                       >Diagnosis/Assessment</a>
-                                </li>
-                                <li><a href="#"
-                                       data-toggle="modal"
-                                       data-target="#list_patient_modal"
-                                       onclick="seturl('plan')"
-                                       >Plan of Management</a>
-                                </li>
-                            </ul>
-                        </li>
+                        <li><a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" data-toggle="modal" data-target="#webex_modal"><i class="fas fa-coins"></i> Webex Token</a></li>
                         <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
                     </ul>
                 </li>
@@ -264,39 +239,10 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-submenu">
-                        <a href="{{ asset('doctor/patient/list') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" 
-                                   data-toggle="modal"
-                                   data-target="#list_patient_modal"
-                                   onclick="seturl('clinical')" 
-                                >Clinical History & Physical Exam</a>
-                            </li>
-                            <li><a href="#" 
-                                   data-toggle="modal"
-                                   data-target="#list_patient_modal"
-                                   onclick="seturl('covid')"
-                                >Covid 19 Screening</a>
-                            </li>
-                            <li><a href="#"
-                                   data-toggle="modal"
-                                   data-target="#list_patient_modal"
-                                   onclick="seturl('diagnosis')"
-                                   >Diagnosis/Assessment</a>
-                            </li>
-                            <li><a href="#"
-                                   data-toggle="modal"
-                                   data-target="#list_patient_modal"
-                                   onclick="seturl('plan')"
-                                   >Plan of Management</a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
                     <li><a href="{{ asset('doctor/prescription') }}"><i class="fas fa-prescription"></i>&nbsp; Prescription</a></li>
                     <li><a href="{{ asset('doctor/order') }}"><i class="fas fa-notes-medical"></i>&nbsp; Doctor Orders</a></li>
-                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="far fa-address-card"></i> Patient</a></li>
-                        <li><a href="{{ asset('feedback/view') }}"><i class="far fa-list"></i> Feedback List</a></li>
+                        <li><a href="{{ asset('feedback/view') }}"><i class="fas fa-list"></i> Feedback List</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -308,7 +254,6 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" data-toggle="modal" data-target="#webex_modal"><i class="fas fa-coins"></i> Webex Token</a></li>
                         <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
                     </ul>
                 </li>
@@ -407,6 +352,7 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js"></script>
 <script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
+<script src="{{ asset('public/plugin/fullcalendar/main.js') }}"></script>
 @yield('js')
 @include('others.scripts.app')
 </body>

@@ -55,7 +55,7 @@
 			     </div>
 			     <div class="col-sm-3">
 			     	<label>Time:</label>
-			     	<div class="input-group clockpicker" data-placement="right" data-align="top" data-autoclose="true">
+			     	<div class="input-group clockpicker" data-placement="top" data-align="top" data-autoclose="true">
 					    <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
 					    <span class="input-group-addon">
 					        <span class="glyphicon glyphicon-time"></span>
@@ -65,11 +65,7 @@
 			     <div class="col-sm-3">
 			     	<label>Duration:</label>
 			     	<select class="form-control duration" name="duration" onchange="validateTIme()" required>
-		                <option value="5">5 Minutes</option>
-		                <option value="10">10 Minutes</option>
 		                <option value="15">15 Minutes</option>
-                    <option value="20">20 Minutes</option>
-                    <option value="25">25 Minutes</option>
                     <option value="30">30 Minutes</option>
 		            </select>
 			     </div>
@@ -136,7 +132,7 @@
             <label class="countdowntoken"></label>
             <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank">Refresh your token here</a>
 		        <button type="button" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
-		        <button type="button" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
+		        <button id="acceptBtn" type="button" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
 	      </div>
   	</form>
@@ -153,6 +149,7 @@
         <h3 class="modal-title" id="myInfoLabel"></h3>
       </div>
       <div class="modal-body">
+        <h4 id="timeConsult" class="text-success"></h4>
       	<div class="form-group">
 	     	<label>Patient:</label>
 	        <input type="text" id="patientName"class="form-control" readonly>
@@ -160,7 +157,7 @@
   		<div class="form-group">
   			<label class="text-success">Meeting Link:</label><br>
   			<label id="meetlink"></label>
-  			<a href="#"onclick="copyToClipboard('#meetlink')"><i class="far fa-copy"></i></a>
+  			<a href="javascript:void(0)"onclick="copyToClipboard('#meetlink')"><i class="far fa-copy"></i></a>
 
   		</div>
   		<div class="form-group">
@@ -203,7 +200,7 @@
                             <tr onclick="getMeeting('<?php echo $row->meet_id?>', 'yes')">
                               <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                 <td style="width: 20%;">
-                                    <a href="#" class="title-info update_info">
+                                    <a href="javascript:void(0)" class="title-info update_info">
                                        {{ \Carbon\Carbon::parse($row->time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->time)->addMinutes($row->duration)->format('h:i A') }}
                                         <br><b>
                                             <small class="text-warning">

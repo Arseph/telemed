@@ -51,6 +51,7 @@
         });
         $('.daterange').daterangepicker({
             minDate: today,
+            "drops": "up",
             "singleDatePicker": true
         });
        $('.clockpicker').clockpicker({
@@ -270,6 +271,31 @@
                 $("#issue_and_concern_body").append(data);
                 $("#message").val('').attr('placeholder','Type a message for your issue and concern regarding your referral..');
             }
+        });
+    });
+
+    $('#tele_form').on('submit',function(e){
+        e.preventDefault();
+        $('.btnSavePend').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+        $(".loading").show();
+        $('#tele_form').ajaxSubmit({
+            url:  "{{ url('/doctor-sched-pending') }}",
+            type: "GET",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error: function (data) {
+                $('.btnSavePend').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            },
         });
     });
 </script>

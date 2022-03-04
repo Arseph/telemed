@@ -82,6 +82,7 @@ Route::get('/admin-join-meeting','Admin\TeleController@joinMeeting');
 Route::get('/admin-meeting-info','Admin\TeleController@meetingInfo');
 Route::get('/join-meeting/{id}','Admin\TeleController@indexCall');
 Route::get('/get-doctors-facility','Admin\TeleController@getDoctorsFacility');
+Route::get('/admin-doctors','Admin\ManageController@indexDoctors');
 
 
 // Doctor Module
@@ -112,6 +113,7 @@ Route::get('/doctor-order-info','Doctor\TeleConsultController@getDocOrder');
 Route::post('/lab-request-doctor-order','Doctor\TeleConsultController@labreqStore');
 Route::get('/refresh-token', 'Doctor\TeleConsultController@refreshToken');
 Route::get('/thank-you-page', 'Doctor\TeleConsultController@thankYouPage');
+Route::get('/calendar-meetings', 'Doctor\TeleConsultController@calendarMeetings');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

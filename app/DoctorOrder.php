@@ -20,4 +20,7 @@ class DoctorOrder extends Model implements Auditable
     public function patient() {
         return $this->hasOne(Patient::class, 'id', 'patientid');
     }
+    public function labreq() {
+        return $this->hasMany(DocOrderLabReq::class, 'docorderid', 'id');
+    }
 }

@@ -2,9 +2,9 @@
     var patients = {!! json_encode($patients->toArray()) !!};
     var docorder = {!! json_encode($docorder->toArray()) !!};
     var currentFile = null;
-    var last_update = "{!! $zoomtoken->updated_at !!}";
-    var zoomtoken = new Date(last_update);
-    var expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
+    var last_update = "{!! $zoomtoken !!}";
+    var zoomtoken = last_update == 'none' ? '' : new Date(last_update);
+    var expirewill = last_update != 'none' ? zoomtoken.setHours(zoomtoken.getHours() + 1) : '';
     var interval;
     Dropzone.autoDiscover = false,
     $("#labReqFile").dropzone({
@@ -32,20 +32,33 @@
                 formData.append(el.name, el.value);
             });
         });
+        this.on("success", function(file, responseText) {
+            setTimeout(function(){
+                window.location.reload(false);
+            },500);
+        });
       }   
     });
     $('.countdowntoken').countdown(expirewill, function(event) {
         if(event.strftime('%H:%M:%S') == '00:00:00') {
-          $(this).html('Your access token is expired.');
+            if(last_update == 'none') {
+                $(this).html('You don\'t have access token.');
+                $('.refTok').html('Get you access token here');      
+                $('#acceptBtn').prop("disabled", true);
+            } else {
+              $(this).html('Your access token was expired.');
+              $('#acceptBtn').prop("disabled", true);
+            }
         } else {
             $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+            $('#acceptBtn').prop("disabled", false);
         }
     });
 	$(document).ready(function() {
 		var date = new Date();
 		var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         $('#consolidate_date_range').daterangepicker({
-            minDate: today
+            minDate: today,
         });
         $('#consolidate_date_range_past').daterangepicker({
             maxDate: today,
@@ -60,12 +73,15 @@
         });
         $('.daterange').daterangepicker({
             minDate: today,
+            "drops": "up",
             "singleDatePicker": true
         });
         $('#consolidate_date_range_req').daterangepicker();
        $('.clockpicker').clockpicker({
        		donetext: 'Done',
        		twelvehour: true,
+            placement: 'top',
+            align: 'left',
             afterDone: function() {
                 validateTIme();
             }
@@ -179,10 +195,13 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
+                console.log(val)
                 if(val) {
+                    var time = moment(val['date_meeting']).format('MMMM D, YYYY')+' '+moment(val['from_time'], "HH:mm:ss").format('h:mm A')+' - '+moment(val['to_time'], "HH:mm:ss").format('h:mm A');
                     var mname = val['mname'] ? val['mname'] : '';
                     $('#myrequest_modal').modal('hide');
                     $('#info_meeting_modal').modal('show'); 
+                    $('#timeConsult').html(time);
                     $('#myInfoLabel').html(val['title']);
                     $('#meetlink').html(val['web_link']);
                     $('#meetnumber').html(val['meeting_id']);
@@ -242,7 +261,6 @@
 
     $('#schedule_form').on('submit',function(e){
         e.preventDefault();
-        $('.btnSave').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
         $(".loading").show();
         $('#schedule_form').ajaxSubmit({
             url:  "{{ url('/admin-sched-pending') }}",
@@ -253,7 +271,6 @@
                 },500);
             },
             error: function (data) {
-                $('.btnSave').html('<i class="fas fa-check"></i> Save');
                 $(".loading").hide();
                 Lobibox.notify('error', {
                     title: "Schedule",
@@ -286,7 +303,6 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
-                console.log(val)
                 $("[name=doctor_id]").select2().select2('val', val.doctor_id);
                 $('[name=patient_id]').val(val.patient_id);
                 $('[name=title]').val(val.title);
@@ -377,9 +393,9 @@
                 },
                 type: 'POST',
                 success : function(data){
-                    // setTimeout(function(){
-                    //     window.location.reload(false);
-                    // },500);
+                    setTimeout(function(){
+                        window.location.reload(false);
+                    },500);
                 },
                 error: function (data) {
                     $(".loading").hide();
@@ -477,7 +493,6 @@
     });
 
     $('.btn-issue-incoming').on('click',function () {
-        console.log('issue');
         $(".issue_footer").remove();
         var meet_id = $(this).data('meet_id'); 
         var issue_from = $(this).data('issue_from');
@@ -510,7 +525,6 @@
     });
 
     function getDataDocOrder(id, fname, mname, lname, meetid, patientid) {
-        console.log(id)
         // $("#deleteBtn").removeClass("hide");
         $("#doctororder_id").val(id);
         $("#doctororder_meet_id").val(meetid);
@@ -572,7 +586,7 @@
         });
     });
 
-    function getDocorder(docorderid, fname, mname, lname) {
+    function getDocorder(docorderid, fname, mname, lname, patid) {
         var url = "{{ url('/doctor-order-info') }}";
         $.ajax({
             async: true,
@@ -582,7 +596,16 @@
                 docorderid: docorderid
             },
             success : function(data){
-                var val = JSON.parse(data);
+                var val = data.docorder;
+                var labs = data.labreq;
+                if(labs.length > 0) {
+                    var html = '';
+                    $.each( labs, function( key, value ) {
+                        var files = "{{asset('public') }}"+"/"+ value.filepath;
+                        html +='<a href="'+files+'" class="list-group-item">'+value.filename+'.'+value.extensionname+'</a>';
+                    });
+                    $('#listLabreq').html(html);
+                }
                 if(!val) {
                     Lobibox.notify('info', {
                     title: "",
@@ -597,7 +620,8 @@
                     $('#imagingrequestcodeslab').val(img).change();
                     $("#patient_name_lab").val(fname + ' ' + mname + ' ' + lname);
                     $("input[name=doctororder_id]").val(val.id);
-                    $('#labrequest_modal').modal('show'); 
+                    $("input[name=doctororder_patient_id]").val(patid);
+                    $('#labrequest_modal').modal('show');
                 }
 
             },
@@ -629,8 +653,11 @@
                     $('.countdowntoken').countdown(expirewill, function(event) {
                         if(event.strftime('%H:%M:%S') == '00:00:00') {
                           $(this).html('Your access token is expired.');
+                          $('.refTok').html('Refresh your token here');
+                          $('#acceptBtn').prop("disabled", true);
                         } else {
                             $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+                            $('#acceptBtn').prop("disabled", false);
                         }
                     });
                     clearInterval(interval);

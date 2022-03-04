@@ -12,6 +12,12 @@ use App\Facility;
 use App\PendingMeeting;
 use Carbon\Carbon;
 use App\TeleCategory;
+use App\LabRequest;
+use App\DoctorOrder;
+use App\ZoomToken;
+use App\DocOrderLabReq;
+use Redirect;
+use App\Doc_Type;
 class TeleController extends Controller
 {
 	public function __construct()
@@ -23,8 +29,7 @@ class TeleController extends Controller
     
     public function index(Request $request) {
     	$user = Session::get('auth');
-
-    	$keyword = $request->view_all ? '' : $request->date_range;
+        $keyword = $request->view_all ? '' : $request->date_range;
         $data = Meeting::select(
             "meetings.*",
             "meetings.id as meetID",
@@ -33,6 +38,7 @@ class TeleController extends Controller
             "pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
+            "pat.id as PatID",
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword){
             $date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[0]));
@@ -71,10 +77,7 @@ class TeleController extends Controller
                 $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
             });
         }
-        $data_past =  $data_past->where(function($q) use($user){
-            $q->where("meetings.doctor_id","=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id);
-            })
+        $data_past = $data_past->where("meetings.doctor_id","=", $user->id)
                 ->whereDate("meetings.date_meeting", "<", Carbon::now()->toDateString())
                 ->orderBy('meetings.date_meeting', 'desc')
                 ->paginate(20);
@@ -119,7 +122,7 @@ class TeleController extends Controller
         ->where("pending_meetings.user_id","=", $user->id)
                 ->orderBy('pending_meetings.id', 'desc')
                 ->paginate(10);
-        $facilities = Facility::orderBy('facilityname', 'asc')->get();
+        $facilities = Facility::where('id','!=', $user->facility_id)->orderBy('facilityname', 'asc')->get();
         $count_req = PendingMeeting::select(
             "pending_meetings.*",
             "pending_meetings.id as meetID",
@@ -128,6 +131,13 @@ class TeleController extends Controller
         ->where('pending_meetings.status', 'Pending')
         ->where("pending_meetings.doctor_id","=", $user->id)->count();
         $telecat = TeleCategory::orderBy('category_name', 'asc')->get();
+        $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
+        $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
+        $docorder = DoctorOrder::where('doctorid', $user->id)->get();
+        $zoomtoken = ZoomToken::where('user_id',$user->id)->first() ?
+                        ZoomToken::where('user_id',$user->id)->first()->updated_at
+                        : 'none';
+        $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
         return view('admin.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -142,7 +152,12 @@ class TeleController extends Controller
             'data_my_req' => $data_my_req,
             'active_user' => $user,
             'pending' => $count_req,
-            'telecat' => $telecat
+            'telecat' => $telecat,
+            'labreq' => $labreq,
+            'imaging' => $imaging,
+            'docorder' => $docorder,
+            'zoomtoken'=> $zoomtoken,
+            'doc_type'=> $doc_type
         ]);
     }
 
@@ -183,8 +198,10 @@ class TeleController extends Controller
     }
 
     public function getDoctorsFacility(Request $req) {
+        $user_id = Session::get('auth')->id;
         $doctors = User::where('facility_id',$req->fac_id)
                         ->where('level', 'doctor')
+                        ->where('id', '!=', $user_id)
                         ->orderBy('lname', 'asc')->get();
         return json_encode($doctors);
     }

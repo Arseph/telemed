@@ -16,7 +16,9 @@ use App\Countries;
 use App\LabRequest;
 use App\DoctorOrder;
 use App\ZoomToken;
+use App\DocOrderLabReq;
 use Redirect;
+use App\Doc_Type;
 class TeleConsultController extends Controller
 {
 	public function __construct()
@@ -121,7 +123,7 @@ class TeleConsultController extends Controller
         ->where("pending_meetings.user_id","=", $user->id)
                 ->orderBy('pending_meetings.id', 'desc')
                 ->paginate(10);
-        $facilities = Facility::orderBy('facilityname', 'asc')->get();
+        $facilities = Facility::where('id','!=', $user->facility_id)->orderBy('facilityname', 'asc')->get();
         $count_req = PendingMeeting::select(
             "pending_meetings.*",
             "pending_meetings.id as meetID",
@@ -133,7 +135,10 @@ class TeleConsultController extends Controller
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
-        $zoomtoken = ZoomToken::where('user_id',$user->id)->first();
+        $zoomtoken = ZoomToken::where('user_id',$user->id)->first() ?
+                        ZoomToken::where('user_id',$user->id)->first()->updated_at
+                        : 'none';
+        $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
         return view('doctors.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -152,7 +157,8 @@ class TeleConsultController extends Controller
             'labreq' => $labreq,
             'imaging' => $imaging,
             'docorder' => $docorder,
-            'zoomtoken'=> $zoomtoken
+            'zoomtoken'=> $zoomtoken,
+            'doc_type'=> $doc_type
         ]);
     }
 
@@ -174,7 +180,10 @@ class TeleConsultController extends Controller
     	// 					->orWhereTime('from_time', '>=', $endtime)
     	// 					->whereTime('to_time', '<=', $endtime)
     	// 					->count();
-		$meetings = Meeting::whereDate('date_meeting','=', $date)->where('doctor_id', $doctor_id)->get();
+		$meetings = Meeting::whereDate('date_meeting','=', $date)->where(function($q) use($doctor_id, $user) {
+                $q->where('doctor_id', $doctor_id)
+                ->orWhere('doctor_id', $user->id);
+                })->get();
 		$count = 1;
         if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->addMinutes('180')->format('H:i:s') && $time) {
             return 'Not valid';
@@ -343,10 +352,10 @@ class TeleConsultController extends Controller
         $duration = $meet->duration;
         $password = str_random(6);
         $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
-        $db = ZoomToken::where('user_id',$user->id)->first();
-        $arr_token = json_decode($db->provider_value);
-        $accessToken = $arr_token->access_token;
         if($action == 'Accept') {
+            $db = ZoomToken::where('user_id',$user->id)->first();
+            $arr_token = json_decode($db->provider_value);
+            $accessToken = $arr_token->access_token;
             $response = $client->request('POST', '/v2/users/me/meetings', [
                 "headers" => [
                     "Authorization" => "Bearer $accessToken"
@@ -375,7 +384,7 @@ class TeleConsultController extends Controller
             );
             $create_meeting = Meeting::create($create_data);
         }
-        $meet_id = $action == 'Accept' ? $create_meeting->id : '';
+        $meet_id = $action == 'Accept' ? $create_meeting->id : '0';
         $data = array(
             'status' => $action,
             'meet_id' => $meet_id
@@ -404,11 +413,38 @@ class TeleConsultController extends Controller
 
     public function getDocOrder(Request $req) {
         $docorder = DoctorOrder::find($req->docorderid);
-        return json_encode($docorder);
+        $labreq = $docorder ? $docorder->labreq : '';
+        return response()->json([
+            'docorder'=>$docorder,
+            'labreq'=>$labreq
+        ]);
     }
 
     public function labreqStore(Request $req) {
-        dd($req->all());
+        $user = Session::get('auth');
+        $fac_id = Session::get('auth')->facility->id;
+        $files = $req->file('file');
+        $pat_id = $req->doctororder_patient_id;
+        if($req->hasFile('file'))
+        {
+            foreach ($files as $file) {
+                $name = str_replace(' ', '', $file->getClientOriginalName());
+                $file->move(public_path('labrequest').'/'.$fac_id.'/'.$pat_id,$name);
+                $path = 'labrequest/'.$fac_id.'/'.$pat_id.'/'.$name;
+                $data = array(
+                    'docorderid' => $req->doctororder_id,
+                    'doctypeid' => $req->doc_type,
+                    'description' =>$req->description,
+                    'filepath' => $path,
+                    'filename'=> pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                    'extensionname'=>pathinfo($name, PATHINFO_EXTENSION),
+                    'uploadedby'=> $user->id
+                );
+                DocOrderLabReq::create($data);
+            }
+        }
+        Session::put("action_made","Successfully Add Lab Request.");
+
     }
 
     public function zoomMeeting(Request $req) {
@@ -471,5 +507,68 @@ class TeleConsultController extends Controller
 
     public function thankYouPage(Request $req) {
         return view('thankyou');
+    }
+
+    public function calendarMeetings(Request $req) {
+        $user = Session::get('auth');
+        $data = Meeting::select(
+            "meetings.*",
+            "meetings.id as meetID",
+            "meetings.user_id as Creator",
+            "meetings.doctor_id as RequestTo",
+            "pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
+            "pat.id as PatID",
+        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+        $data = $data->where(function($q) use($user){
+            $q->where("meetings.doctor_id","=", $user->id)
+            ->orWhere("meetings.user_id", "=", $user->id);
+            })->orderBy('meetings.date_meeting', 'asc')
+            ->get();
+        $data_req = PendingMeeting::select(
+            "pending_meetings.*",
+            "pending_meetings.id as meetID",
+            "pending_meetings.created_at as reqDate",
+            "pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
+        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id");
+        $data_req = $data_req->where("pending_meetings.doctor_id","=", $user->id)
+                ->where('status', 'Pending')
+                ->orderBy('pending_meetings.id', 'desc')
+                ->get();
+        $result = [];
+        $join = '';
+        foreach ($data as $value) {
+            if($value->RequestTo == $user->id) {
+              $join = 'no';
+            } else if($value->Creator == $user->id) {
+              $join = 'yes';
+            }
+            $values = array(
+                'id' => $value->id,
+                'title' => $value->title,
+                'start' => $value->date_meeting.'T'.$value->from_time,
+                'end' => $value->date_meeting.'T'.$value->to_time,
+                'allow' => $join
+            );
+            array_push($result, $values);
+        }
+        foreach ($data_req as $value) {
+            $time = Carbon::parse($value->time)->format('H:i:s');
+            $endtime = Carbon::parse($time)
+                    ->addMinutes($value->duration)
+                    ->format('H:i:s');
+            $values = array(
+                'id' => $value->meetID,
+                'title' => $value->title,
+                'start' => $value->datefrom.'T'.$time,
+                'end' => $value->date_meeting.'T'.$endtime,
+                'allow' => 'request'
+            );
+            array_push($result, $values);
+        }
+        return json_encode($result);
     }
 }

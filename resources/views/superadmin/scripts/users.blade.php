@@ -5,6 +5,7 @@
     var invalid;
     var Deactivate;
     var isToupdate;
+    var existUsername;
     @if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
@@ -34,7 +35,10 @@
 	        	invalid++;
 	        }
 	    });
-	    if(invalid > 0) {
+	    if(existUsername) {
+            $(".username-has-error").addClass("hide");
+            processOne = 'success';
+        } else if(invalid > 0) {
 	    	$(".username-has-error").removeClass("hide");
 		    $('.btnSave').prop('disabled', true);
 		    processOne = '';
@@ -143,15 +147,19 @@
 	    $("input[name=lname]").val(edit[0].lname);
 	    $("input[name=contact]").val(edit[0].contact);
 	    $("input[name=email]").val(edit[0].email);
-	    $("[name=facility_id]").select2().select2('val', edit[0].facility_id);
+	    if($('[name=facility_id]').is(":visible") && $('[name=level]').is(":visible")) {
+		    $("[name=facility_id]").select2().select2('val', edit[0].facility_id);
+		    $("[name=level]").select2().select2('val', edit[0].level);
+	    }
 	    $("input[name=designation]").val(edit[0].designation);
-	    $("[name=level]").select2().select2('val', edit[0].level);
 	    $("input[name=username]").val(edit[0].username);
-	    $("input[name=username]").prop('readonly', true);
+	    $('input[name=password]').attr('required',false);
+	    $('input[name=confirm]').attr('required',false);
 	    isToupdate = edit[0].doctor_id;
 	    processOne = 'success';
+	    processTwo = 'success';
 	    invalid = 0;
-	    $("input[name=username]").addClass('disAble');
+	    existUsername = edit[0].username;
 
 	}
 
@@ -163,9 +171,11 @@
 	    $("input[name=lname]").val('');
 	    $("input[name=contact]").val('');
 	    $("input[name=email]").val('');
-	    $("[name=facility_id]").select2().select2('val', '');
+	    if($('[name=facility_id]').is(":visible") && $('[name=level]').is(":visible")) {
+		    $("[name=facility_id]").select2().select2('val', '');
+		    $("[name=level]").select2().select2('val', '');
+	    }
 	    $("input[name=designation]").val('');
-	    $("[name=level]").select2().select2('val', '');
 	    $("input[name=username]").val('');
 	    $("#deactBtn").addClass("hide");
 	    $("#doctorID").addClass("hide");
@@ -173,8 +183,12 @@
 	    $('#level').empty();
 	    $("input[name=username]").prop('readonly', false);
 	    $("input[name=username]").removeClass('disAble');
+	    $('input[name=password]').attr('required',true);
+	    $('input[name=confirm]').attr('required',true);
 	    processOne = '';
+	    processTwo = '';
 	    invalid = '';
+	    existUsername = '';
 	})
 
 	$('#level').change(function() {

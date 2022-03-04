@@ -78,9 +78,7 @@ class ManageController extends Controller
     public function storeUser(Request $req) {
     	$facility = Facility::find($req->facility_id);
         $unique_id = $req->fname.' '.$req->mname.' '.$req->lname.mt_rand(1000000, 9999999);
-        $user = '';
         $data = array(
-            'doctor_id' => $req->doctor_id,
             'fname' => $req->fname,
             'mname' => $req->mname,
             'lname' => $req->lname,
@@ -91,8 +89,13 @@ class ManageController extends Controller
             'email' => $req->email,
             'designation' => $req->designation,
             'username' => $req->username,
-            'password' => bcrypt($req->password)
         );
+        if($req->password) {
+            $pass = [
+                'password' => bcrypt($req->password)
+            ];
+            array_push($pass, $data);
+        }
         if($req->user_id){
             Session::put("action_made","Successfully updated account");
             $user = User::find($req->user_id)->update($data);

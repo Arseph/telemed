@@ -52,7 +52,6 @@
                             <th>Age / DOB</th>
                             <th>Barangay</th>
                             <th>Contact</th>
-                            <th></th>
                         </tr>
                         
                         @foreach($data as $row)
@@ -82,20 +81,6 @@
                             </td>
                             <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
-                            <td class="text-center">
-                                <div class="dropdown">
-                                  <a class="dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></a>
-                                  <ul class="dropdown-menu dropdown-left-manual">
-                                    <li><a href="{{ url('/patient/clinical').'/'.$row->id }}">Clinical History & Physical Exam</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="{{ url('/patient/covid').'/'.$row->id }}">Covid 19 Screening</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="{{ url('/patient/diagnosis').'/'.$row->id }}">Diagnosis/Assessment</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="{{ url('/patient/plan').'/'.$row->id }}">Plan of Management</a></li>
-                                  </ul>
-                                </div>
-                            </td>
                         </tr>
                         @endforeach
                     </table>
