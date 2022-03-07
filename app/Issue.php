@@ -10,4 +10,9 @@ class Issue extends Model implements Auditable
 	use \OwenIt\Auditing\Auditable;
     protected $table = 'issue';
     protected $guarded = array();
+
+
+    public function meeting() {
+    	return $this->hasOne(Meeting::class, 'id', 'meet_id');
+    }
 }
