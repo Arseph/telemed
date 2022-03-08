@@ -13,11 +13,55 @@ class IssueConcernCtrl extends Controller
 {
     public function index(Request $req)
     {
-        $data = Issue::where('void',1)
+        $user = Session::get('auth');
+
+        if($req->daterange)
+        { 
+            $str = $req->daterange;
+            $temp1 = explode('-',$str);
+            $temp2 = array_slice($temp1, 0, 1);
+            $temp3 = array_slice($temp1, 1, 1);
+        }
+        else
+        { 
+            $end_date = date('m/d/Y'.' 12:59:59');
+            $start_date = date('m/d/Y'.' 12:00:00', strtotime ( '-2 month')) ;
+            $str = $start_date.' - '.$end_date;
+
+            $temp1 = explode('-',$str);
+            $temp2 = array_slice($temp1, 0, 1);
+            $temp3 = array_slice($temp1, 1, 1);
+        }
+       
+       
+        $tmp = implode(',', $temp2);
+        $startdate = date('Y-m-d'.' 12:00:00',strtotime($tmp));
+        // $startdate = date("Y-m-d", strtotime ( '-2 month' , strtotime ( $tmp ) )) ;
+
+        $tmp = implode(',', $temp3);
+        $enddate = date('Y-m-d'.' 23:59:00',strtotime($tmp));
+
+        $data = Issue::select('issue.*','meetings.*')
+        ->leftjoin('meetings','issue.meet_id','=','meetings.id')
+        ->where('meetings.doctor_id',$user->id)
+        ->orwhere('meetings.user_id',$user->id)
+        ->where('issue.void',1) 
+        ->whereBetween('issue.created_at', [$startdate, $enddate])
+        ->groupby('issue.meet_id')
         ->paginate(15);
 
+        // $data = Issue::with(['meeting' => function($q)use($user) {
+        //     $q->where("meetings.doctor_id",$user->id)
+        //     ->orWhere("meetings.user_id",$user->id)
+        //     ->orWhere("meetings.patient_id",$user->id);
+        // }])
+        // ->where('void',1) 
+        // ->groupby('meet_id')
+        // ->paginate(15);
+
         return view('doctors.issue',[
-            'data' => $data
+            'data' => $data,
+            'daterange' => $str
         ]);
     }
 
