@@ -1,4 +1,7 @@
 <form id="diag_form" method="POST">
+    <div class="pull-right">
+        <button title="save" type="submit" class="btnSaveDiag btn btn-success hide"><i class="far fa-save"></i></button>
+    </div>
 	<div class="">
 		<div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Diagnosis/Assessment</h4>
@@ -29,7 +32,7 @@
                 <div class="col-md-12 ifCovid hide">
                     <br>
                     <label>If Covid-19 Case:</label>
-                    <label class="radio-inline"><input type="radio" name="if_covid" value="1" required @if($patient->diagassess)@if($patient->diagassess->if_covid == 1)checked @endif @endif>Suspected Cases</label>
+                    <label class="radio-inline"><input type="radio" name="if_covid" value="1" @if($patient->diagassess)@if($patient->diagassess->if_covid == 1)checked @endif @endif>Suspected Cases</label>
                     <label class="radio-inline"><input type="radio" name="if_covid" value="0"  @if($patient->diagassess)@if($patient->diagassess->if_covid == 0)checked @endif @endif>Probable Case</label>
                     <label class="radio-inline"><input type="radio" name="if_covid" value="2"  @if($patient->diagassess)@if($patient->diagassess->if_covid == 2)checked @endif @endif>Confirmed Case</label>
                 </div>

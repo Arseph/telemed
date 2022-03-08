@@ -4,6 +4,9 @@
     }
 </style>
 <form id="plan_form" method="POST">
+    <div class="pull-right">
+        <button title="save" type="submit" class="btnSavePlan btn btn-success hide"><i class="far fa-save"></i></button>
+    </div>
 	<div class="">
 		<div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Plan of Management</h4>
@@ -39,7 +42,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <canvas id="signature-pad" class="signature-pad " width=340 height=100></canvas>
+                    <canvas id="signature-pad" class="signature-pad " width=618 height=100></canvas>
                     <div class="actionsignature hide text-right">
                         <button type="button" id="draw">Sign</button>
                         <button type="button" id="erase">Erase</button>

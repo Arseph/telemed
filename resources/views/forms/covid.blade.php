@@ -1,5 +1,8 @@
 <form id="covid_form" method="POST">
     {{ csrf_field() }}
+    <div class="pull-right">
+        <button title="save" type="submit" class="btnSaveCovid btn btn-success hide"><i class="far fa-save"></i></button>
+    </div>
     <div class="">
         <div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Overseas Employment Address(for Overseas Filipino Workers)</h4>
@@ -503,7 +506,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <label>Scrum</label>
-                        <button type="button" class="btnAddrowScrum btn btn-success hide">Add row</button>
+                        <button type="button" class="btnAddrowScrum btn btn-success">Add row</button>
                     </div>
                     <div id="scrumRow">
                         @if(count($scrum) > 0)
@@ -512,7 +515,7 @@
                             <div class="inputRows form-group">
                                 <input type="text" name="scrum[]" class="form-control" placeholder="___/___/____" value="{{ $s }}">
                                 <div class="input-group-btn">
-                                  <button class="btnRemoveRow btn btn-danger hide" type="button">Remove</button>
+                                  <button class="btnRemoveRow btn btn-danger" type="button">Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -524,7 +527,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <label>Oropharyngeal/Nasopharyngeal Swab</label>
-                        <button type="button" class="btnAddrowSwab btn btn-success hide">Add row</button>
+                        <button type="button" class="btnAddrowSwab btn btn-success">Add row</button>
                     </div>
                     <div id="swabRow">
                         @if(count($oro_naso_swab) > 0)
@@ -533,7 +536,7 @@
                             <div class="inputRows form-group">
                                 <input type="text" name="oro_naso_swab[]" class="form-control" placeholder="___/___/____" value="{{ $s }}">
                                 <div class="input-group-btn">
-                                  <button class="btnRemoveRow btn btn-danger hide" type="button">Remove</button>
+                                  <button class="btnRemoveRow btn btn-danger" type="button">Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -545,7 +548,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <label>Others</label>
-                        <button type="button" class="btnAddrowother btn btn-success hide">Add row</button>
+                        <button type="button" class="btnAddrowother btn btn-success">Add row</button>
                     </div>
                     <div id="otherRow">
                         @if(count($spe_others) > 0)
@@ -554,7 +557,7 @@
                             <div class="inputRows form-group">
                                 <input type="text" name="spe_others[]" class="form-control" placeholder="___/___/____" value="{{ $s }}">
                                 <div class="input-group-btn">
-                                  <button class="btnRemoveRow btn btn-danger hide" type="button">Remove</button>
+                                  <button class="btnRemoveRow btn btn-danger" type="button">Remove</button>
                                 </div>
                             </div>
                         </div>

@@ -21,6 +21,7 @@ use App\CovidScreening;
 use App\DiagnosisAssessment;
 use File;
 use App\PlanManagement;
+use App\DemoProfile;
 class PatientController extends Controller
 {
      public function __construct()
@@ -207,10 +208,8 @@ class PatientController extends Controller
        $data['date_referral'] = $date_referral;
        if($req->id) {
         ClinicalHistory::find($req->id)->update($data);
-        Session::put("action_made","Successfully Update Clinical History and Physical Exam");
        } else {
         ClinicalHistory::create($data);
-        Session::put("action_made","Successfully Created Clinical History and Physical Exam");
        }
     }
     public function covid($id) {
@@ -301,8 +300,7 @@ class PatientController extends Controller
         $data['fac_date_last_expose'] = $req->fac_date_last_expose ? date('Y-m-d', strtotime($req->fac_date_last_expose)) : null;
         $data['event_date_last_expose'] = $req->event_date_last_expose ? date('Y-m-d', strtotime($req->event_date_last_expose)) : null;
         $data['wp_date_last_expose'] = $req->wp_date_last_expose ? date('Y-m-d', strtotime($req->wp_date_last_expose)) : null;
-        $screenid = $req->screen_id;
-        $assessid = $req->assess_id;
+        $screenid = $req->id;
         unset($data['screen_id']);
         unset($data['list_name_occa']);
         if($screenid) {
@@ -340,10 +338,8 @@ class PatientController extends Controller
         unset($data['spe_othersee']);
         if($assessid) {
             CovidAssessment::find($assessid)->update($data);
-            Session::put("action_made","Successfully Update Covid-19 Screening");
         } else {
             CovidAssessment::create($data);
-            Session::put("action_made","Successfully Created Covid-19 Screening");
         }
 
     }
@@ -358,10 +354,8 @@ class PatientController extends Controller
     public function diagnosisStore(Request $req) {
        if($req->id) {
         DiagnosisAssessment::find($req->id)->update($req->all());
-        Session::put("action_made","Successfully Update Diagnosis/Assessment");
        } else {
         DiagnosisAssessment::create($req->all());
-        Session::put("action_made","Successfully Created Diagnosis/Assessment");
        }
 
     }
@@ -385,10 +379,16 @@ class PatientController extends Controller
         unset($data['signaturephy']);
         if($req->id) {
             PlanManagement::find($req->id)->update($data);
-            Session::put("action_made","Successfully Update Plan of Management");
        } else {
             PlanManagement::create($data);
-            Session::put("action_made","Successfully Created Plan of Management");
+       }
+    }
+
+    public function demographicStore(Request $req) {
+       if($req->id) {
+        DemoProfile::find($req->id)->update($req->all());
+       } else {
+        DemoProfile::create($req->all());
        }
     }
 }

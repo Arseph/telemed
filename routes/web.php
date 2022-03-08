@@ -75,13 +75,12 @@ Route::get('admin','Admin\HomeController@index');
 Route::get('/admin-facility','Admin\ManageController@AdminFacility');
 Route::post('/update-facility','Admin\ManageController@updateFacility');
 Route::match(['GET','POST'],'/admin-patient','Admin\ManageController@patientList');
-Route::match(['GET','POST'],'/admin-sched-pending','Admin\ManageController@schedTeleStore');
+
 Route::get('/admin-patient-meeting-info','Admin\ManageController@meetingInfo');
-Route::match(['GET','POST'],'/admin-teleconsult','Admin\TeleController@index');
+
 Route::get('/admin-join-meeting','Admin\TeleController@joinMeeting');
-Route::get('/admin-meeting-info','Admin\TeleController@meetingInfo');
-Route::get('/join-meeting/{id}','Admin\TeleController@indexCall');
-Route::get('/get-doctors-facility','Admin\TeleController@getDoctorsFacility');
+
+
 Route::get('/admin-doctors','Admin\ManageController@indexDoctors');
 
 
@@ -92,28 +91,19 @@ Route::match(['GET','POST'],'doctor/patient/update','Doctor\PatientController@pa
 Route::get('location/barangay/{muncity_id}','Doctor\PatientController@getBaranggays');
 Route::match(['GET','POST'],'/patient-store', 'Doctor\PatientController@storePatient');
 Route::post('/patient-delete/{id}', 'Doctor\PatientController@deletePatient');
-Route::match(['GET','POST'],'doctor/teleconsult','Doctor\TeleConsultController@index');
-Route::match(['GET','POST'],'/add-meeting', 'Doctor\TeleConsultController@storeMeeting');
-Route::get('/validate-datetime','Doctor\TeleConsultController@validateDateTime');
-Route::get('/meeting-info','Doctor\TeleConsultController@meetingInfo');
-Route::get('/start-meeting/{id}','Doctor\TeleConsultController@indexCall');
+
 Route::post('/webex-token', 'Doctor\TeleConsultController@storeToken');
 Route::post('/patient-accept/{id}', 'Doctor\PatientController@acceptPatient');
 Route::post('/patient-consult-info/{id}', 'Doctor\PatientController@patientConsultInfo');
-Route::get('/get-pending-meeting/{id}', 'Doctor\TeleConsultController@getPendingMeeting');
-Route::post('/accept-decline-meeting/{id}', 'Doctor\TeleConsultController@acceptDeclineMeeting');
-Route::match(['GET','POST'],'/doctor-sched-pending','Doctor\TeleConsultController@schedTeleStore');
+
+
+
 Route::match(['GET','POST'],'doctor/prescription','Doctor\ManageController@prescription');
 Route::post('/prescription-store', 'Doctor\ManageController@prescriptionStore');
 Route::post('/prescription-delete/{id}', 'Doctor\ManageController@prescriptionDelete');
 Route::match(['GET','POST'],'doctor/order','Doctor\ManageController@doctorOrder');
 Route::post('/docorder-store', 'Doctor\ManageController@doctorOrderStore');
 Route::post('/docorder-delete/{id}', 'Doctor\ManageController@docorderDelete');
-Route::get('/doctor-order-info','Doctor\TeleConsultController@getDocOrder');
-Route::post('/lab-request-doctor-order','Doctor\TeleConsultController@labreqStore');
-Route::get('/refresh-token', 'Doctor\TeleConsultController@refreshToken');
-Route::get('/thank-you-page', 'Doctor\TeleConsultController@thankYouPage');
-Route::get('/calendar-meetings', 'Doctor\TeleConsultController@calendarMeetings');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
@@ -127,6 +117,7 @@ Route::get('/patient/diagnosis/{id}','Patient\PatientController@diagnosis');
 Route::post('/diagnosis-store','Patient\PatientController@diagnosisStore');
 Route::get('/patient/plan/{id}','Patient\PatientController@plan');
 Route::post('/plan-store','Patient\PatientController@planStore');
+Route::post('/demographic-store','Patient\PatientController@demographicStore');
 
 //JM superadmin //Drugs/Meds
 Route::get('drugsmeds/', 'Superadmin\DrugsMedsCtrl@index'); 
@@ -179,4 +170,19 @@ Route::post('issue/concern/submit','Doctor\IssueConcernCtrl@issueSubmit');
 
 //Teleconsult
 Route::get('/start-zoom-meeting','Doctor\TeleConsultController@zoomMeeting');
-Route::get('/getToken','Doctor\TeleConsultController@zoomToken');
+Route::get('/getToken','Tele\TeleController@zoomToken');
+Route::match(['GET','POST'],'/teleconsultation','Tele\TeleController@index');
+Route::match(['GET','POST'],'/sched-pending','Tele\TeleController@schedTeleStore');
+Route::get('/join-meeting/{id}','Tele\TeleController@indexCall');
+Route::get('/start-meeting/{id}','Tele\TeleController@indexCall');
+Route::get('/validate-datetime','Tele\TeleController@validateDateTime');
+Route::get('/admin-meeting-info','Tele\TeleController@adminMeetingInfo');
+Route::get('/meeting-info','Tele\TeleController@meetingInfo');
+Route::get('/get-pending-meeting/{id}', 'Tele\TeleController@getPendingMeeting');
+Route::post('/accept-decline-meeting/{id}', 'Tele\TeleController@acceptDeclineMeeting');
+Route::get('/doctor-order-info','Tele\TeleController@getDocOrder');
+Route::post('/lab-request-doctor-order','Tele\TeleController@labreqStore');
+Route::get('/refresh-token', 'Tele\TeleController@refreshToken');
+Route::get('/thank-you-page', 'Tele\TeleController@thankYouPage');
+Route::get('/calendar-meetings', 'Tele\TeleController@calendarMeetings');
+Route::get('/get-doctors-facility','Tele\TeleController@getDoctorsFacility');

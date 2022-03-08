@@ -50,4 +50,7 @@ class Patient extends Model implements Auditable
     public function planmanage() {
         return $this->hasOne(PlanManagement::class, 'patient_id', 'id');
     }
+    public function demoprof() {
+        return $this->hasOne(DemoProfile::class, 'patient_id', 'id');
+    }
 }

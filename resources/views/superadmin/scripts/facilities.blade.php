@@ -8,7 +8,6 @@
 	$('#province').on('change', function() {
 		var id = this.value;
 		if(id) {
-			$(".loading").show();
 			$.ajax({
 	            url: "facilities/"+id+"/municipality",
 	            method: 'GET',
@@ -46,7 +45,6 @@
 	});
 	$('#municipality').on('change', function() {
 		var id = this.value;
-		$(".loading").show();
 		$.ajax({
             url: "facilities/"+id+"/barangay",
             method: 'GET',

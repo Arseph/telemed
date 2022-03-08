@@ -216,7 +216,7 @@
                 <!-- for admin -->
                 @if($user->level=='admin')
                 <li><a href="{{ asset('admin') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="{{ asset('/admin-teleconsult') }}"><i class="fas fa-video"></i>&nbsp; Teleconsultation</a></li>
+                <li><a href="{{ asset('/teleconsultation') }}"><i class="fas fa-video"></i>&nbsp; Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
@@ -235,13 +235,13 @@
                 <!-- for doctors -->
                 @if($user->level=='doctor')
                 <li><a href="{{ asset('doctor') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="{{ asset('doctor/teleconsult') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
+                <li><a href="{{ asset('/teleconsultation') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list-alt"></i>&nbsp; Management <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ asset('doctor/patient/list') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
                     <li><a href="{{ asset('doctor/prescription') }}"><i class="fas fa-prescription"></i>&nbsp; Prescription</a></li>
-                    <li><a href="{{ asset('doctor/order') }}"><i class="fas fa-notes-medical"></i>&nbsp; Doctor Orders</a></li>
+                    <!-- <li><a href="{{ asset('doctor/order') }}"><i class="fas fa-notes-medical"></i>&nbsp; Doctor Orders</a></li> -->
                         <li><a href="{{ asset('feedback/view') }}"><i class="fas fa-list"></i> Feedback List</a></li>
                     </ul>
                 </li>

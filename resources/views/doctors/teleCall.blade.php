@@ -21,7 +21,13 @@
     <link rel="stylesheet" href="{{ asset('public/plugin/Ionicons/css/ionicons.min.css') }}">
 
     <!-- Font awesome -->
-    <script src="https://kit.fontawesome.com/dad1cf763f.js" crossorigin="anonymous"></script>
+    <link href="{{ asset('public/assets/fontawesome/css/all.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/fontawesome.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/brands.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/solid.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/v5-font-face.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/assets/fontawesome/css/v4-font-face.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/plugin/select2/select2.min.css') }}" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{{ asset('public/assets/css/ie10-viewport-bug-workaround.css') }}" rel="stylesheet">
@@ -135,6 +141,90 @@
             padding: 15px;
             border-radius: 1px;
         }
+        .btnSaveClinical {
+            position: fixed;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnSaveCovid {
+            position: fixed;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnSaveDemo {
+            position: fixed;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnSaveCovid {
+            position: fixed;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnSaveDiag {
+            position: fixed;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
+        .btnSavePlan {
+            position: fixed;
+            bottom: 120px;
+            right: 18px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 1px;
+        }
         #myBtn:hover {
             background-color: #555;
         }
@@ -211,13 +301,20 @@
 <body>
 
 <button id="myBtn" title="Teleconsultation forms"><i class="fas fa-file"></i></button>
-<button type="button" class="btnDemo btn btn-success" onclick="showForm('demoDiv')"> Demographic Profille</button>
-<button type="button" class="btnClinical btn btn-success" onclick="showForm('cliDiv')"> Clinical History and Physical Examination</button>
-<button type="button" class="btnCovid btn btn-success" onclick="showForm('covDiv')"> Covid-19 Screening</button>
-<button type="button" class="btnDiagnosis btn btn-success" onclick="showForm('diagDiv')"> Diagnosis/Assessment</button>
-<button type="button" class="btnPlan btn btn-success" onclick="showForm('planDiv')">Plan of Management</button>
+<button type="button" class="btnDemo btn btn-success" onclick="showForm('demoDiv', 'btnSaveDemo')"> Demographic Profille</button>
+<button type="button" class="btnClinical btn btn-success" onclick="showForm('cliDiv', 'btnSaveClinical')"> Clinical History and Physical Examination</button>
+<button type="button" class="btnCovid btn btn-success" onclick="showForm('covDiv', 'btnSaveCovid')"> Covid-19 Screening</button>
+<button type="button" class="btnDiagnosis btn btn-success" onclick="showForm('diagDiv', 'btnSaveDiag')"> Diagnosis/Assessment</button>
+<button type="button" class="btnPlan btn btn-success" onclick="showForm('planDiv', 'btnSavePlan')">Plan of Management</button>
+<input type="hidden" name="patient_id" value="{{ $patient->id }}">
+<input type="hidden" name="demographic_id" value="@if($patient->demoprof){{ $patient->demoprof->id }} @endif">
+<input type="hidden" name="clinical_id" value="@if($patient->clinical){{ $patient->clinical->id }} @endif">
+<input type="hidden" name="covidassess_id" value="@if($patient->covidassess){{ $patient->covidassess->id }} @endif">
+<input type="hidden" name="covidscreen_id" value="@if($patient->covidscreen){{ $patient->covidscreen->id }} @endif">
+<input type="hidden" name="diagassess_id" value="@if($patient->diagassess){{ $patient->diagassess->id }} @endif">
+<input type="hidden" name="planmanage_id" value="@if($patient->planmanage){{ $patient->planmanage->id }} @endif">
 <div id="demoDiv" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('demoDiv')">&times;</a>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('demoDiv', 'btnSaveDemo')">&times;</a>
   <div class="">
         <div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Demographic Profile</h4>
@@ -244,7 +341,7 @@
     </div>
 </div>
 <div id="cliDiv" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('cliDiv')">&times;</a>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('cliDiv', 'btnSaveClinical')">&times;</a>
     <div class="">
         <div class="box-header with-border" style="background-color: #00a65a; color: white;">
             <h4 style="">Clinical History</h4>
@@ -255,15 +352,15 @@
     </div>
 </div>
 <div id="covDiv" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('covDiv')">&times;</a>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('covDiv', 'btnSaveCovid')">&times;</a>
   @include('forms.covid')
 </div>
 <div id="diagDiv" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('diagDiv')">&times;</a>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('diagDiv', 'btnSaveDiag')">&times;</a>
   @include('forms.diagnosis')
 </div>
 <div id="planDiv" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('planDiv')">&times;</a>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('planDiv', 'btnSavePlan')">&times;</a>
   @include('forms.plan')
 </div>
 
@@ -308,90 +405,7 @@
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script>
-    var activeForm = '';
-    var signature = "{!! $signature !!}";
-    var api_key = "{!! $api_key !!}";
-    var meetnum = "{!! $meetnum !!}";
-    var passw = "{!! $passw !!}";
-    var username = "{!! $username !!}"
-    function closeNav(ele) {
-        if(ele) {
-          document.getElementById(ele).style.width = "0";
-          activeForm = '';
-        }
-    }
-    $( function() {
-        $( "#demoDiv").resizable();
-        $( "#cliDiv").resizable();
-        $( "#covDiv").resizable();
-        $( "#diagDiv").resizable();
-        $( "#planDiv").resizable();
-    });
-    ZoomMtg.preLoadWasm();
-    ZoomMtg.prepareWebSDK();
-    ZoomMtg.i18n.load('en-US');
-    ZoomMtg.i18n.reload('en-US');
-    ZoomMtg.setZoomJSLib('https://source.zoom.us/2.2.0/lib', '/av'); 
-    $(document).ready(function() {
-        window.onbeforeunload = function() {
-            return "Are you sure you want to leave?";
-        }
-        var date = new Date();
-        var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        $('.daterange').daterangepicker({
-            "singleDatePicker": true
-        });
-        $(".select2").select2();
-        var leaveUrl = "{{ url('thank-you-page') }}";
-        ZoomMtg.init({
-          leaveUrl: leaveUrl,
-          success: (success) => {
-            console.log(success)
-            ZoomMtg.join({
-                signature: signature,
-                apiKey: api_key,
-                meetingNumber: meetnum,
-                userName: username,
-                passWord: passw,
-                success: (success) => {
-                    console.log(success)
-                },
-                error: (error) => {
-                    console.log(error)
-                }
-            })
-          },
-          error: (error) => {
-            console.log(error)
-          }
-        });
-    });
-    $("#myBtn").click(function(){
-        $(".btnDemo").fadeToggle();
-        $(".btnClinical").fadeToggle("slow");
-        $(".btnCovid").fadeToggle(500);
-        $(".btnDiagnosis").fadeToggle(1000);
-        $(".btnPlan").fadeToggle(1500);
-    });
-    function showForm(ele) {
-        document.getElementById(ele).style.width = "650px";
-        $("#myBtn").click();
-        closeNav(activeForm);
-        activeForm = ele;
-    }
-    $('input[type=radio][name=is_patient_accompanied]').change(function() {
-    if (this.value == 'Yes') {
-        $('#companion').removeClass('hide');
-    }
-    else if (this.value == 'No') {
-        $('#companion').addClass('hide');
-    }
-});
-
-</script>
-
+@include('others.scripts.form')
 @yield('js')
-@include('admin.scripts.patient')
 </body>
 </html>
