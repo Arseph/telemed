@@ -28,7 +28,7 @@
                     </form>
                 </div>
             </div>
-            <h1>Audit Trail</h1>
+            <h1>User Logs</h1>
         </div>
         <div class="box-body">
             @if(count($data)>0)

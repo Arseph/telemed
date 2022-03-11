@@ -14,12 +14,14 @@ var covidscreen_id = $('input[name="covidscreen_id"]').val();
 var diagassess_id = $('input[name="diagassess_id"]').val();
 var planmanage_id = $('input[name="planmanage_id"]').val();
 var case_no = $('input[name="case_no"]').val();
+const col = document.getElementsByClassName("main-layout");
 function closeNav(ele, btn) {
     if(ele && btn) {
       document.getElementById(ele).style.width = "0";
       activeForm = '';
       $("."+btn).addClass('hide');
       activebtn = '';
+      col[0].style.marginLeft = "0";
     }
 }
 $( function() {
@@ -76,6 +78,7 @@ $("#myBtn").click(function(){
 });
 function showForm(ele, btn) {
     document.getElementById(ele).style.width = "650px";
+    col[0].style.marginLeft = "650px";
     $("."+btn).removeClass('hide');
     $("#myBtn").click();
     closeNav(activeForm, activebtn);

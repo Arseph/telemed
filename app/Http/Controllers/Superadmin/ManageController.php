@@ -14,7 +14,7 @@ use App\Province;
 use App\User;
 use App\Patient;
 use App\Login;
-use App\TeleCategory;
+use App\DocCategory;
 class ManageController extends Controller
 {
     public function __construct()
@@ -76,9 +76,11 @@ class ManageController extends Controller
 
     }
     public function storeUser(Request $req) {
+        $doccat_id = $req->doc_cat_id;
     	$facility = Facility::find($req->facility_id);
         $unique_id = $req->fname.' '.$req->mname.' '.$req->lname.mt_rand(1000000, 9999999);
         $data = array(
+            'doc_cat_id'=>$doccat_id,
             'fname' => $req->fname,
             'mname' => $req->mname,
             'lname' => $req->lname,
@@ -441,36 +443,36 @@ class ManageController extends Controller
         }
 
         Session::put('keyword',$keyword);
-        $telecat = TeleCategory::all();
-        $data = TeleCategory::where('category_name',"like","%$keyword%")
+        $doccat = DocCategory::all();
+        $data = DocCategory::where('category_name',"like","%$keyword%")
             ->orderBy("category_name","asc")
             ->paginate(20);
-        return view('superadmin.telecat',[
-            'title' => 'List of Teleconsultant Category',
-            'telecat' => $telecat,
+        return view('superadmin.doctorcat',[
+            'title' => 'List of Doctor Category',
+            'doccat' => $doccat,
             'data' => $data
         ]);
     }
 
-    public function storeTelecat(Request $req) {
-        $province = Province::find($req->telecat_id);
+    public function storeDoccat(Request $req) {
+        $province = Province::find($req->doctorcat_id);
         $data = array(
             'category_name' => $req->category_name,
         );
-        if(!$req->telecat_id){
-            Session::put("action_made","Successfully added new province");
-            TeleCategory::create($data);
+        if(!$req->doctorcat_id){
+            Session::put("action_made","Successfully added new Doctor Category");
+            DocCategory::create($data);
         }
         else{
-            Session::put("action_made","Successfully updated province");
-            TeleCategory::find($req->telecat_id)->update($data);
+            Session::put("action_made","Successfully updated Doctor Category");
+            DocCategory::find($req->doctorcat_id)->update($data);
         }
     }
 
-     public function deleteTelecat($id) {
-        $tele = TeleCategory::find($id);
+     public function deleteDoccat($id) {
+        $tele = DocCategory::find($id);
         $tele->delete();
-        Session::put("delete_action","Successfully delete tele Category");
+        Session::put("delete_action","Successfully delete Doctor Category");
     }
 
 }

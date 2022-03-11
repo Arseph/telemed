@@ -33,6 +33,7 @@
 	            url: "diagnosis/"+id+"/maincat",
 	            method: 'GET',
 	            success: function(result) {
+	            	$(".loading").hide();
 	            	$('#diagcategory').empty();
 				  	if(cat) {
 				  		var option = $("<option selected='selected'></option>").val(cat).text(cat);
@@ -93,7 +94,7 @@
 	        });
 		} else {
 			$('#diagnosis_form').ajaxSubmit({
-	            url:  "{{ url('/diagnosis-store') }}",
+	            url:  "{{ url('/superadmin-diagnosis-store') }}",
 	            type: "POST",
 	            success: function(data){
 	                setTimeout(function(){

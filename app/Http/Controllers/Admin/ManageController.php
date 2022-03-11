@@ -21,6 +21,7 @@ use App\CovidScreening;
 use App\DiagnosisAssessment;
 use File;
 use App\PlanManagement;
+use App\DocCategory;
 class ManageController extends Controller
 {
 	public function __construct()
@@ -153,13 +154,14 @@ class ManageController extends Controller
                 ->where('facility_id', $facility)
                 ->orderBy('lname','asc')
                 ->paginate(20);
-
+        $doctor = DocCategory::orderBy('category_name','asc')->get();
         return view('admin.doctors',[
             'title' => 'List of Facility Doctors',
             'data' => $data,
             'facility' => $facility,
             'search' => $keyword,
             'users' => $users,
+            'doctors'=>$doctor
         ]);
     }
 }

@@ -199,7 +199,7 @@
                         <li><a href="#"><i class="fas fa-user-check"></i>&nbsp; User Approval</a></li>
                         <li><a href="#"><i class="fas fa-list-ul"></i>&nbsp; Role/Permission</a></li>
                         <li><a href="{{ asset('facilities') }}"><i class="fas fa-hospital-alt"></i>&nbsp;&nbsp;Facilities</a></li>
-                        <li><a href="{{ asset('tele-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Teleconsultation Category</a></li>
+                        <li><a href="{{ asset('doctor-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Doctor Category</a></li>
                         <li><a href="{{ asset('superadmin/feedback') }}"><i class="fas fa-list"></i>&nbsp;&nbsp;Feedback List</a></li>
                     </ul>                       
                 </li>
@@ -207,8 +207,8 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="far fa-newspaper"></i> Reports <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="far fa-file"></i>&nbsp; Monitoring Report</a></li>
-                        <li><a href="{{ asset('audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; Audit Trail</a></li>
-                        <li><a href="{{ asset('superadim/audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; Audit Trail 2</a></li>
+                        <li><a href="{{ asset('audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; User Logs</a></li>
+                        <li><a href="{{ asset('superadim/audit-trail') }}"><i class="fa-solid fa-arrows-rotate"></i>&nbsp; Audit Trail</a></li>
                         <li><a href="{{ asset('feedback') }}"><i class="fas fa-comments"></i>&nbsp; Feedback</a></li>
                     </ul>
                 </li>

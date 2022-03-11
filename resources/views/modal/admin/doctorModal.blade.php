@@ -12,6 +12,15 @@
       		<input type="hidden" name="facility_id" value="{{$facility}}">
       		<input type="hidden" value="doctor" name="level">
       		<div class="form-group">
+		    	<label>Doctor Category:</label>
+		    	<select class="select2" name="doc_cat_id" required>
+		              <option>Select Doctor Category</option>
+		              @foreach($doctors as $row)
+		                  <option value="{{ $row->id }}">{{ $row->category_name }}</option>
+		              @endforeach
+		        </select>
+		    </div>
+      		<div class="form-group">
 		        <label>First Name:</label>
 		        <input type="text" class="form-control" value="" name="fname" required="">
 		    </div>

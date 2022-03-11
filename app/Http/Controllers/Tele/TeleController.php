@@ -11,7 +11,7 @@ use App\Meeting;
 use Carbon\Carbon;
 use App\PendingMeeting;
 use App\Facility;
-use App\TeleCategory;
+use App\DocCategory;
 use App\Countries;
 use App\LabRequest;
 use App\DoctorOrder;
@@ -132,7 +132,7 @@ class TeleController extends Controller
         )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
         ->where('pending_meetings.status', 'Pending')
         ->where("pending_meetings.doctor_id","=", $user->id)->count();
-        $telecat = TeleCategory::orderBy('category_name', 'asc')->get();
+        $telecat = DocCategory::orderBy('category_name', 'asc')->get();
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
@@ -252,7 +252,7 @@ class TeleController extends Controller
             $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidassess->spe_others) : [];
             $outcome_date_discharge = $patient->covidassess->outcome_date_discharge ? date('m/d/Y', strtotime($patient->covidassess->outcome_date_discharge)) : '';
         }
-        return view('doctors.teleCall',[
+        return view('teleconsult.teleCall',[
         	'meeting' => $meetings,
             'case_no' => $case_no,
             'patient' => $patient,
@@ -282,7 +282,8 @@ class TeleController extends Controller
             'api_key'=>$api_key,
             'meetnum'=>$meeting_number,
             'passw'=>$password,
-            'username'=>$username
+            'username'=>$username,
+            'role'=> $role
         ]);
     }
 
@@ -470,7 +471,7 @@ class TeleController extends Controller
         $token = json_decode($response->getBody()->getContents(), true);
         $data = array('user_id' => $user_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
         $zoomtoken = ZoomToken::where('user_id',$user_id)->first() ?  ZoomToken::where('user_id',$user_id)->first()->update($data) : ZoomToken::create($data);
-        echo "Your access token Successfully Refresh. You can close this tab now.";
+        echo "Your access token was Successfully Refresh. You can close this tab now.";
     }
 
     public function refreshToken(Request $req) {
@@ -550,6 +551,7 @@ class TeleController extends Controller
     public function getDoctorsFacility(Request $req) {
         $user_id = Session::get('auth')->id;
         $doctors = User::where('facility_id',$req->fac_id)
+                        ->where('doc_cat_id', $req->cat_id)
                         ->where('level', 'doctor')
                         ->where('id', '!=', $user_id)
                         ->orderBy('lname', 'asc')->get();

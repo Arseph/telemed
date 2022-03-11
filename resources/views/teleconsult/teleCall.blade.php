@@ -51,8 +51,10 @@
     @yield('css')
     <style>
         #zmmtg-root {
-            display: block;
             transition: margin-left .5s;
+        }
+        .main-layout {
+          transition: margin-left .5s;
         }
         body {
             background: url('{{ asset('public/img/backdrop.png') }}'), -webkit-gradient(radial, center center, 0, center center, 460, from(#ccc), to(#ddd));

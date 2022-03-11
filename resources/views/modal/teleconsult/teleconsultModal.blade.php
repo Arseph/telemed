@@ -19,16 +19,16 @@
                  @endforeach 
             </select>
         </div>
-	     <div id="scheduleMeeting" class="hide">
-        <div class="form-group">
-            <label>Teleconsult Category:</label>
-            <select class="form-control select2" name="tele_cate_id" required>
+        <div class="form-group hide" id="catField">
+            <label>Doctor Category:</label>
+            <select class="form-control select2 selectCat" name="tele_cate_id" required>
               <option value="">Select Category ...</option>
                 @foreach($telecat as $tel)
                   <option value="{{ $tel->id }}">{{ $tel->category_name }}</option>
                  @endforeach 
             </select>
         </div>
+	     <div id="scheduleMeeting" class="hide">
     		<div class="form-group">
           <label>Doctor:</label>
           <select class="form-control select2 selectDoctor" name="doctor_id" required>
@@ -45,7 +45,7 @@
         </div>
         <hr>
 	     	<div class="form-group">
-		     	<label>Title:</label>
+		     	<label>Chief Complaint:</label>
 		        <input type="text" class="form-control" value="" name="title" required>
 		     </div>
 		     <div class="row">

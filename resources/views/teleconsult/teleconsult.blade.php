@@ -166,6 +166,9 @@
                                 <a href="#docorder_modal" class="btn btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
                                     <i class="fas fa-user-md"></i> Doctor Order
                                 </a>
+                                <a href="#attachments_modal" class="btn btn-info" data-toggle="modal" onclick="getattachment('@if($row->docorder){{$row->docorder->id}}@endif')">
+                                    <i class="fa-solid fa-paperclip"></i> Attachments
+                                </a>
                                 @elseif($row->Creator == $active_user->id)
                                 <b class="text-primary">Requested To: {{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b>
                                 <br>

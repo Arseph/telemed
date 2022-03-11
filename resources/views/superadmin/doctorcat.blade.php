@@ -24,12 +24,12 @@
                             <i class="fa fa-eye"></i> View All
                         </button>
                         <a data-toggle="modal" class="btn btn-info btn-sm btn-flat" data-target="#province_modal">
-                            <i class="fa fa-hospital-o"></i> Add Tele Category
+                            <i class="fa fa-hospital-o"></i> Add Doctor Category
                         </a>
                     </div>
                 </form>
             </div>
-            <h3>{{ $title }}</h3>
+            <h3>List of Doctor Category</h3>
         </div>
         <div class="box-body">
             @if(count($data)>0)
@@ -72,9 +72,9 @@
     </div>
 </div>
 
-    @include('modal.superadmin.telecatModal')
+    @include('modal.superadmin.doctorcatModal')
 @endsection
 @section('js')
- @include('superadmin.scripts.telecat')
+ @include('superadmin.scripts.doctorcat')
 @endsection
 

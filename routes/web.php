@@ -12,7 +12,13 @@
 */
 Route::Auth();
 Route::get('/', 'Auth\LoginController@index');
+Route::get('/register', 'Auth\LoginController@registerIndex');
 Route::post('login', 'Auth\LoginController@login');
+Route::post('register-account', 'Auth\LoginController@register');
+Route::get('/places/{id}/{type}', 'Auth\LoginController@getMunandBrgy');
+Route::get('/get-doctor/{id}/{cat_id}', 'Auth\LoginController@getDoctor');
+Route::get('/validate-email', 'Auth\LoginController@validateEmail');
+Route::get('/validate-username', 'Auth\LoginController@validateUsername');
 Route::get('/logout', function(){
     $user = \Illuminate\Support\Facades\Session::get('auth');
     \Illuminate\Support\Facades\Session::flush();
@@ -55,7 +61,7 @@ Route::post('/barangay-store', 'Superadmin\ManageController@storeBarangay');
 Route::post('/barangay-delete/{id}', 'Superadmin\ManageController@deleteBarangay');
 Route::match(['GET','POST'],'/diagnosis', 'Superadmin\DiagnosisController@indexDiagnosis');
 Route::get('/diagnosis/{id}/maincat', 'Superadmin\DiagnosisController@getSubCategory');
-Route::post('/diagnosis-store', 'Superadmin\DiagnosisController@storeDiagnosis');
+Route::post('/superadmin-diagnosis-store', 'Superadmin\DiagnosisController@storeDiagnosis');
 Route::post('/diagnosis-delete/{id}', 'Superadmin\DiagnosisController@deleteDiagnosis');
 Route::match(['GET','POST'],'/diagnosis-main-category', 'Superadmin\DiagnosisController@indexDiagMainCat');
 Route::post('/main-cat-store', 'Superadmin\DiagnosisController@storeMainCat');
@@ -65,9 +71,9 @@ Route::post('/sub-cat-store', 'Superadmin\DiagnosisController@storeSubCat');
 Route::post('/sub-cat-delete/{id}', 'Superadmin\DiagnosisController@deleteSubCat');
 Route::get('/doctor-option/{id}', 'Superadmin\ManageController@getDoctors');
 Route::get('/audit-trail', 'Superadmin\ManageController@indexAudit');
-Route::get('/tele-category', 'Superadmin\ManageController@indexTeleCat');
-Route::post('/telecat-store', 'Superadmin\ManageController@storeTelecat');
-Route::post('/telecat-delete/{id}', 'Superadmin\ManageController@deleteTelecat');
+Route::get('/doctor-category', 'Superadmin\ManageController@indexTeleCat');
+Route::post('/doctor-category-store', 'Superadmin\ManageController@storeDoccat');
+Route::post('/doctor-category-delete/{id}', 'Superadmin\ManageController@deleteDoccat');
 
 
 //Admin Module

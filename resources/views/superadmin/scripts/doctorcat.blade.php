@@ -1,5 +1,5 @@
 <script>
-	var telecat = {!! json_encode($telecat->toArray()) !!};
+	var telecat = {!! json_encode($doccat->toArray()) !!};
 	var toDelete;
 	@if(Session::get('action_made'))
         Lobibox.notify('success', {
@@ -29,10 +29,10 @@
 	$('#tele_form').on('submit',function(e){
 		e.preventDefault();
 		$(".loading").show();
-		var id = $("#telecat_id").val();
+		var id = $("#doctorcat_id").val();
 		if(toDelete) {
 			$('#tele_form').ajaxSubmit({
-	            url:  "{{ url('/telecat-delete') }}/"+id,
+	            url:  "{{ url('/doctor-category-delete') }}/"+id,
 	            type: "POST",
 	            success: function(data){
 	                setTimeout(function(){
@@ -51,7 +51,7 @@
 	        });
 		} else {
 			$('#tele_form').ajaxSubmit({
-	            url:  "{{ url('/telecat-store') }}",
+	            url:  "{{ url('/doctor-category-store') }}",
 	            type: "POST",
 	            success: function(data){
 	                setTimeout(function(){
@@ -73,7 +73,7 @@
 
 	function getData(ele) {
 		$("#myModalLabel").html('Update Tele Category');
-    	$("#telecat_id").val($(ele).data('id'));
+    	$("#doctorcat_id").val($(ele).data('id'));
     	const edit = [];
     	$.each(telecat, function(key, value) {
 	        if(value.id == $(ele).data('id')) {
@@ -87,7 +87,7 @@
 	$('#province_modal').on('hidden.bs.modal', function () {
 		$("#myModalLabel").html('Add Tele Category');
 		$("input[name=category_name]").val('');
-	    $("#telecat_id").val('');
+	    $("#doctorcat_id").val('');
 	    $("#deleteBtn").addClass("hide");
 	});
 </script>

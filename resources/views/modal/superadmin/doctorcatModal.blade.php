@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Add Tele Category</h4>
+        <h4 class="modal-title" id="myModalLabel">Doctor Category</h4>
       </div>
       <div class="modal-body">
       	<form id="tele_form" method="POST">
@@ -11,7 +11,7 @@
           <div class="text-right">
             <button id="deleteBtn" type="submit" class="btnSave btn btn-danger hide"><i class="fas fa-trash"></i> Delete</button>
           </div>
-          <input type="hidden" class="form-control" value="" autofocus="" name="telecat_id" id="telecat_id">
+          <input type="hidden" class="form-control" value="" autofocus="" name="doctorcat_id" id="doctorcat_id">
       		<div class="form-group">
               <label>Category Name:</label>
               <input type="text" class="form-control" value="" autofocus="" name="category_name" required="">

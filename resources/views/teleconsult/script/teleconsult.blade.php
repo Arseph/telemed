@@ -13,7 +13,7 @@
       parallelUploads: 10000,
       uploadMultiple: true,
       autoProcessQueue: false,
-      acceptedFiles: ".pdf,.xls,.docx,.jpg,.png",
+      acceptedFiles: ".pdf,.jpg,.png",
       url: "{{asset('/lab-request-doctor-order')}}",
       dictDefaultMessage: 'Click or drop files here.',
       init: function() {
@@ -411,28 +411,44 @@
             });
         }
     });
-
-    $( ".selectFacility" ).change(function() {
-        var id = $(this).val();
+     $( ".selectFacility" ).change(function() {
+        var id = $('.selectFacility').val();
+        if(id > 0) {
+            $('#catField').removeClass('hide');
+        }
+    });
+    $( ".selectCat" ).change(function() {
+        var id = $('.selectFacility').val();
+        var cat_id = $(this).val();
         var url = "{{ url('/get-doctors-facility') }}";
         $.ajax({
             async: true,
             url: url,
             type: 'GET',
             data: {
-                fac_id: id
+                fac_id: id,
+                cat_id: cat_id
             },
             success : function(data){
                 $('.selectDoctor').empty();
                 var val = JSON.parse(data);
-                $(".selectDoctor").append('<option selected>Select Doctor</option>').change();
-                $.each(val,function(key,value){
-                    $('.selectDoctor').append($("<option/>", {
-                       value: value.id,
-                       text: value.lname + ', ' + value.fname + ' ' + value.mname
-                    }));
-                });
-                $('#scheduleMeeting').removeClass('hide');
+                if(val.length > 0) {
+                    $(".selectDoctor").append('<option selected>Select Doctor</option>').change();
+                    $.each(val,function(key,value){
+                        $('.selectDoctor').append($("<option/>", {
+                           value: value.id,
+                           text: value.lname + ', ' + value.fname + ' ' + value.mname
+                        }));
+                    });
+                    $('#scheduleMeeting').removeClass('hide');
+                } else {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: "No doctors found in this category",
+                        size: 'normal',
+                        rounded: true
+                    });
+                }
             }
         });
     });
@@ -668,4 +684,43 @@
     $('.refTok').on('click',function () {
         interval = setInterval(refreshToken, 5000);
     });
+
+     function getattachment(docorderid) {
+        var url = "{{ url('/doctor-order-info') }}";
+        $.ajax({
+            async: true,
+            url: url,
+            type: 'GET',
+            data: {
+                docorderid: docorderid
+            },
+            success : function(data){
+                var val = data.docorder;
+                var labs = data.labreq;
+                if(labs.length > 0) {
+                    var html = '';
+                    $.each( labs, function( key, value ) {
+                        var files = "{{asset('public') }}"+"/"+ value.filepath;
+                        html +='<a href="'+files+'" class="list-group-item">'+value.filename+'.'+value.extensionname+'</a>';
+                    });
+                    $('#listAttachment').html(html);
+                }
+                else {
+                    var html = '<div class="text-center list-group-item"><p>No attachments found.</p></div>'
+                    $('#listAttachment').html(html);
+                }
+
+            },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            }
+        });
+
+    }
 </script>
