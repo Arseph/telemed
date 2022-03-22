@@ -15,6 +15,48 @@
     $('.table-responsive').on('hide.bs.dropdown', function () {
          $('.table-responsive').css( "overflow", "auto" );
     })
+    $('.id_type').change(function() {
+        switch(this.value) {
+          case 'umid':
+            $('#selectID').html('CRN:');
+            break;
+          case 'dl':
+            $('#selectID').html('License No:');
+            break;
+          case 'passport':
+            $('#selectID').html('Passport No:');
+            break;
+          case 'postal':
+            $('#selectID').html('PRN:');
+            break;
+          case 'tin':
+            $('#selectID').html('TIN No:');
+            break;
+        }
+    });
+    $( "#email" ).on('blur',function() {
+        var email = $(this).val();
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (filter.test(email)) {
+            var url = "{{ url('validate-email') }}";
+            var tmp;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    email: email
+                },
+                async: false,
+                success : function(data){
+                    if(data.length > 0 ) {
+                        $('.email-has-error').removeClass('hide');
+                    } else {
+                        $('.email-has-error').addClass('hide');
+                    }
+                }
+            });
+        }
+    });
     $(document).ready(function() {
         var date = new Date();
         var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -159,42 +201,19 @@
 		
 	});
 	function getDataFromData(ele, id) {
-		$("#myModalLabel").html('Update Patient');
-    	$("#patient_id").val($(ele).data('id'));
-    	$("#deleteBtn").removeClass("hide");
-    	const edit = [];
-    	$.each(patients, function(key, value) {
-	        if(value.id == $(ele).data('id')) {
-	        	edit.push(value);
-	        }
-	    });
-        if(edit.length > 0 ) {
-    	    $('.select_phic').val(edit[0].phic_status).change();
-            $("[name=region]").select2().select2('val', edit[0].region);
-            $("[name=province]").select2().select2('val', edit[0].province);
-    	    $("[name=muncity]").select2().select2('val', edit[0].muncity);
-    	    $("[name=brgy]").select2().select2('val', edit[0].brgy);
-    	    $("input[name=phic_id]").val(edit[0].phic_id);
-    	    $("input[name=fname]").val(edit[0].fname);
-    	    $("input[name=mname]").val(edit[0].mname);
-    	    $("input[name=lname]").val(edit[0].lname);
-    	    $("input[name=contact]").val(edit[0].contact);
-    	    $("input[name=dob]").val(edit[0].dob);
-    	    $("input[name=contact]").val(edit[0].contact);
-    	    $('.sex').val(edit[0].sex);
-    	    $('.civil_status').val(edit[0].civil_status);
-            $("[name=nationality_id]").select2().select2('val', edit[0].nationality_id);
-            $("input[name=occupation]").val(edit[0].occupation);
-    	    $("input[name=address]").val(edit[0].address);
-            $("input[name=passport_no]").val(edit[0].passport_no);
-            $("input[name=house_no]").val(edit[0].house_no);
-            $("input[name=street]").val(edit[0].street);
-            $("#email").val(edit[0].email);
-            $("#username").val(edit[0].username);
-            existUsername = edit[0].username;
-            $('input[name=password]').attr('required',false);
-        }
-        isCreate(id);
+        var idpat = $(ele).data('id');
+		var url = "{{ url('/patient-information') }}";
+        $.ajax({
+            url: url+"/"+idpat,
+            type: 'GET',
+            async: false,
+            success : function(data){
+                setTimeout(function(){
+                    $('.loading').hide();
+                    window.location.href = url+"/"+idpat;
+                },500);
+            }
+        });
 
 	}
     function isCreate(id) {

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Tele;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use App\User;
 use App\Patient;
 use App\Meeting;
@@ -124,7 +126,7 @@ class TeleController extends Controller
         ->where("pending_meetings.user_id","=", $user->id)
                 ->orderBy('pending_meetings.id', 'desc')
                 ->paginate(10);
-        $facilities = Facility::where('id','!=', $user->facility_id)->orderBy('facilityname', 'asc')->get();
+        $facilities = Facility::orderBy('facilityname', 'asc')->get();
         $count_req = PendingMeeting::select(
             "pending_meetings.*",
             "pending_meetings.id as meetID",
@@ -179,12 +181,13 @@ class TeleController extends Controller
 
     public function indexCall($id) {
         $user = Session::get('auth');
+        $decid = Crypt::decrypt($id);
     	$meetings = Meeting::select(
     		"meetings.*",
             "pat.id as PATID",
     		"meetings.id as meetID"
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
-         ->where('meetings.id',$id)
+         ->where('meetings.id',$decid)
         ->first();
         $api_key = env('ZOOM_API_KEY');
         $api_secret = env('ZOOM_API_SECRET');

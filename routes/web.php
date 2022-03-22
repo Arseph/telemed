@@ -97,6 +97,7 @@ Route::match(['GET','POST'],'doctor/patient/update','Doctor\PatientController@pa
 Route::get('location/barangay/{muncity_id}','Doctor\PatientController@getBaranggays');
 Route::match(['GET','POST'],'/patient-store', 'Doctor\PatientController@storePatient');
 Route::post('/patient-delete/{id}', 'Doctor\PatientController@deletePatient');
+Route::get('/patient-information/{id}', 'Doctor\PatientController@patientInformation');
 
 Route::post('/webex-token', 'Doctor\TeleConsultController@storeToken');
 Route::post('/patient-accept/{id}', 'Doctor\PatientController@acceptPatient');

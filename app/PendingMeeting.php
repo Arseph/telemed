@@ -21,4 +21,10 @@ class PendingMeeting extends Model implements Auditable
     public function encoded() {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+    public function telecategory() {
+        return $this->hasOne(DocCategory::class, 'id', 'tele_cate_id');
+    }
+    public function meetingone() {
+        return $this->hasOne(Meeting::class, 'id', 'meet_id');
+    }
 }

@@ -55,16 +55,17 @@
                         </tr>
                         
                         @foreach($data as $row)
-                        <tr
-                           data-toggle="modal"
-                           data-id= "{{ $row->id }}"
-                           data-target="#patient_modal" 
-                           onclick="getDataFromData(this, '<?php echo $row->account_id?>')"\
-                        >
+                        <tr>
+                            <?php
+                            $id = \Crypt::encrypt($row->id);
+                            ?>
                             <td style="white-space: nowrap;">
-                                <b class="title-info update_info">
+                                <a
+                                    class="title-info update_info"
+                                    href="{{ asset('/patient-information') }}/{{$id}}"
+                                >
                                     {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
-                                </b>
+                                </a>
                             </td>
                             <td>{{ $row->sex }}</td>
                             <td>

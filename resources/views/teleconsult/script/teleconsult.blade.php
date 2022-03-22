@@ -55,6 +55,7 @@
         }
     });
 	$(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();   
 		var date = new Date();
 		var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         $('#consolidate_date_range').daterangepicker({

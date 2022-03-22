@@ -103,6 +103,10 @@
             max-height: 280px;
             overflow-y: auto;
         }
+        .required-field:after {
+            color: red;
+            content:"*";
+        }
     </style>
 </head>
 
@@ -260,6 +264,7 @@
                 @endif
                 @if($user->level=='patient')
                 <li><a href="{{ asset('patient') }}"><i class="fa fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ asset('/teleconsultation') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
                 <li><a href="#"><i class="fas fa-notes-medical"></i> Medical Records & Attachments</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
@@ -353,6 +358,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js"></script>
 <script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
 <script src="{{ asset('public/plugin/fullcalendar/main.js') }}"></script>
+<script type="text/javascript" src="{{ asset('public/plugin/encryptor/jsencrypt.min.js') }}"></script>
 @yield('js')
 @include('others.scripts.app')
 </body>

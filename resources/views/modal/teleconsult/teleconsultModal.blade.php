@@ -34,6 +34,7 @@
           <select class="form-control select2 selectDoctor" name="doctor_id" required>
           </select>
         </div>
+        @if($active_user->level !='patient')
         <div class="form-group">
         	 <label>Patient:</label>
           <select class="form-control select2" name="patient_id" id="patient_id" required>
@@ -43,6 +44,9 @@
                @endforeach 
           </select>
         </div>
+        @else
+        <input type="hidden" name="patient_id" value="{{$active_user->patient->id}}">
+        @endif
         <hr>
 	     	<div class="form-group">
 		     	<label>Chief Complaint:</label>
@@ -129,7 +133,7 @@
 			     </div>
 			 </div>
 		      <div class="modal-footer">
-            <label class="countdowntoken"></label>
+            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
             <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank">Refresh your token here</a>
 		        <button type="button" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
 		        <button id="acceptBtn" type="button" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>

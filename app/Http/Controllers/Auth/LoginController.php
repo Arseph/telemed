@@ -43,6 +43,8 @@ class LoginController extends Controller
             ->first();
         if($login && $login->status=='deactivate') {
             return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
+        } else if($login && $login->is_accepted==0 && $login->level=='patient') {
+            return Redirect::back()->withErrors(['msg' => 'This user is not accepted by doctor, Please wait for the confirmation.']);
         }
         else if($login)
         {

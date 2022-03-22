@@ -23,9 +23,9 @@
             </select>
 	      </div>
           @endif -->
-          <div class="row">
+         <div class="row">
 		     <div class="col-sm-6">
-		     	<label>PhilHealth Status:</label>
+		     	<label class="required-field">PhilHealth Status:</label>
 		            <select class="form-control select_phic" name="phic_status" required>
 		            	<option value="None">None</option>
 		                <option value="Member">Member</option>
@@ -34,13 +34,11 @@
 		     </div>
 		     <div class="col-sm-6">
 		     	<label>PhilHealth ID:</label>
-		            <input type="text" class="form-control phicID" value="" name="phic_id" disabled>
+		        <input type="text" class="form-control phicID" value="" name="phic_id" disabled>
 		     </div>
-		 </div>
-		 <div class="row">
-		    <div class="col-sm-6">
+		     <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>First Name:</label>
+		            <label required-field>First Name:</label>
 		            <input type="text" class="form-control" value="" name="fname" required>
 		        </div>
 		    </div>
@@ -50,47 +48,57 @@
 		            <input type="text" class="form-control" value="" name="mname">
 		        </div>
 		    </div>
-		</div>
-		<div class="row">
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Last Name:</label>
+		            <label class="required-field">Last Name:</label>
 		            <input type="text" class="form-control" value="" name="lname" required>
 		        </div>
 		    </div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Contact Number:</label>
+		            <label class="required-field">Contact Number:</label>
 		            <input type="text" class="form-control" value="" name="contact" required>
 		        </div>
 		    </div>
-		</div>
-		<div class="row">
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Birth Date:</label>
+		            <label class="required-field">Birth Date:</label>
 		            <input type="date" class="form-control" value="" min="1910-05-11" max="{{ date('Y-m-d') }}" name="dob" required>
 		        </div>
 		    </div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Sex:</label>
+		            <label class="required-field">Sex:</label>
 		            <select class="form-control sex" name="sex" required>
 		                <option value="Male">Male</option>
 		                <option value="Female">Female</option>
 		            </select>
 		        </div>
 		    </div>
-		</div>
-		<div class="row">
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Civil Status:</label>
+		            <label class="required-field">Civil Status:</label>
 		            <select class="form-control civil_status" name="civil_status" required>
 		                <option value="Single">Single</option>
 		                <option value="Married">Married</option>
 		                <option value="Divorced">Divorced</option>
 		                <option value="Separated">Separated</option>
+		            </select>
+		        </div>
+		    </div>
+		    <div class="col-sm-6">
+		        <div class="form-group">
+		            <label class="required-field">Religion:</label>
+		            <select class="form-control civil_status select2" name="religion" required>
+		                <option value="AGLIP">AGLIPAY</option><option value="ALLY">ALLIANCE OF BIBLE CHRISTIAN COMMUNITIES</option><option value="ANGLI">ANGLICAN</option><option value="BAPTI">BAPTIST</option><option value="BRNAG">BORN AGAIN CHRISTIAN</option><option value="BUDDH">BUDDHISM</option><option value="CATHO">CATHOLIC</option><option value="XTIAN">CHRISTIAN</option><option value="CHOG">CHURCH OF GOD</option><option value="EVANG">EVANGELICAL</option><option value="IGNIK">IGLESIA NI CRISTO</option><option value="MUSLI">ISLAM</option><option value="JEWIT">JEHOVAHS WITNESS</option><option value="MORMO">LDS-MORMONS</option><option value="LRCM">LIFE RENEWAL CHRISTIAN MINISTRY</option><option value="LUTHR">LUTHERAN</option><option value="METOD">METHODIST</option><option value="PENTE">PENTECOSTAL</option><option value="PROTE">PROTESTANT</option><option value="SVDAY">SEVENTH DAY ADVENTIST</option><option value="UCCP">UCCP</option><option value="UNKNO">UNKNOWN</option><option value="WESLY">WESLEYAN</option>
+		            </select>
+		        </div>
+		    </div>
+		    <div class="col-sm-6">
+		        <div class="form-group">
+		            <label>Educational Attainment:</label>
+		            <select class="form-control civil_status select2" name="edu_attain">
+		                <option value=""> -- SELECT EDUCATIONAL ATTAINMENT --</option><option value="03">COLLEGE</option><option value="01">ELEMENTARY EDUCATION</option><option value="02">HIGH SCHOOL EDUCATION</option><option value="05">NO FORMAL EDUCATION</option><option selected="selected" value="06">NOT APPLICABLE</option><option value="04">POSTGRADUATE PROGRAM</option><option value="07">VOCATIONAL</option>
 		            </select>
 		        </div>
 		    </div>
@@ -102,13 +110,31 @@
 		    </div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Passport No:</label>
-		            <input type="text" class="form-control" value="" name="passport_no">
+		            <label>Monthly Income:</label>
+		            <input type="text" class="form-control" value="" name="monthly_income">
+		        </div>
+		    </div>
+		    <div class="col-sm-6">
+		    	<div class="form-group">
+		            <label>Select ID:</label>
+		            <select class="form-control id_type select21" name="id_type">
+		                <option value="umid">UMID</option>
+		                <option value="dl">DRIVER'S LICENSE</option>
+		                <option value="passport">PASSPORT ID</option>
+		                <option value="postal">POSTAL ID</option>
+		                <option value="tin">TIN ID</option>
+		            </select>
+		    	</div>
+	        </div>
+	        <div class="col-sm-6">
+		        <div class="form-group">
+                    <label id="selectID" class="required-field">CRN:</label>
+                    <input id="idVal" name="id_type_no" type="text" class="form-control">
 		        </div>
 		    </div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Nationality:</label>
+		            <label class="required-field">Nationality:</label>
 		            <select class="form-control select2" name="nationality_id" required>
 		        		<option value="{{ $nationality_def->num_code }}" selected>{{ $nationality_def->nationality }}</option>
 			              @foreach($nationality as $n)
@@ -117,7 +143,6 @@
 	                </select>
 		        </div>
 		    </div>
-		    <hr>
 		    <div class="col-sm-6">
 		        <div class="form-group">
 		            <label>House no./Lot/Bldg:</label>
@@ -132,7 +157,7 @@
 		    </div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Region:</label>
+		            <label class="required-field">Region:</label>
 		            <select class="form-control select2" name="region" id="region" required>
 		            	<option value="{{ $user->facility->region->reg_code }}" selected>{{ $user->facility->region->reg_desc }}</option>
 		        		<option value="">Select Region...</option>
@@ -143,7 +168,7 @@
 	                </select>
 		        </div>
 		    </div>
-			<div class="col-sm-6">
+		    <div class="col-sm-6">
 				<div class="form-group">
 			        <label>Province:</label>
 			        <select class="form-control select2" name="province" id="province">
@@ -154,7 +179,7 @@
 			</div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
-		            <label>Municipality:</label>
+		            <label class="required-field">Municipality:</label>
 		            <select class="form-control muncity filter_muncity select2" name="muncity" id="municipality" required>
 		        		<option value="">Select Municipal/City...</option>
 			              @foreach($municity as $m)
@@ -172,11 +197,14 @@
 			        </select>
 			    </div>
 			</div>
-		</div>
-	    <div class="has-group others_holder hide">
-	         <label>Complete Address :</label>
-	        <input type="text" name="address" class="form-control others" placeholder="Enter complete address..." />
-	    </div>
+		    <div class="col-sm-12">
+		    	<div class="has-group others_holder hide">
+			        <label class="required-field">Complete Address :</label>
+			        <input type="text" name="address" class="form-control others" placeholder="Enter complete address..." />
+			    </div>
+		    </div>
+		 </div>
+	    
 	    <hr>
 	    <div class="text-left">
         	<h4>Create account</h4>
@@ -184,14 +212,14 @@
 		  <div id="collapseAccount">
 			<div class="card card-body">
 			 <div class="form-group">
-		            <label>Email Address:</label>
+		            <label class="required-field">Email Address:</label>
 			        <input type="email" class="form-control email" id="email" name="email" value="" required>
 			        <div class="email-has-error text-bold text-danger hide">
 			            <small>Email already taken!</small>
 			        </div>
 		        </div>
 		        <div class="form-group">
-		            <label>Username: <code id="usernamesug" onclick="getUsername()"></code></label>
+		            <label class="required-field">Username: <code id="usernamesug" onclick="getUsername()"></code></label>
 			        <input type="text" class="form-control username" id="username" value="" name="username" required>
 			        <div class="username-has-error text-bold text-danger hide">
 			            <small>Username already taken!</small>
@@ -200,7 +228,7 @@
 		 		<div class="row rowPass">
 				    <div class="col-sm-12">
 				        <div class="form-group">
-				            <label>Password:</label>
+				            <label class="required-field">Password:</label>
 				            <div class="input-group">
 						        <input type="password" class="form-control pwd" value="" name="password" required>
 						        <span class="input-group-btn">

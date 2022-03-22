@@ -154,13 +154,17 @@
                                     </b>
                                 </label>
                                 <p>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</p>
+                                <p>Type of Consultation: {{$row->pendmeet->telecategory->category_name}}</p>
                                 @if($row->RequestTo == $active_user->id)
                                 <b class="text-primary">Requested By: {{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b>
                                 <br>
                                 <b>{{ $row->encoded->facility->facilityname }}</b>
                                 <br>
                                 <br>
-                                <a href="javascript:void(0)" class="btn btn-primary" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
+                                <?php
+                                $id = \Crypt::encrypt($row->meetID);
+                                ?>
+                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-primary" target="_blank">
                                     <i class="fas fa-play-circle"></i> Start Consultation
                                 </a>
                                 <a href="#docorder_modal" class="btn btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
@@ -170,12 +174,15 @@
                                     <i class="fa-solid fa-paperclip"></i> Attachments
                                 </a>
                                 @elseif($row->Creator == $active_user->id)
+                                <?php
+                                $id = \Crypt::encrypt($row->meetID);
+                                ?>
                                 <b class="text-primary">Requested To: {{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b>
                                 <br>
                                 <b>{{ $row->doctor->facility->facilityname }}</b>
                                 <br>
                                 <br>
-                                <a href="javascript:void(0)" class="btn btn-success" onclick="startMeeting('<?php echo $row->meetID?>')" target="_blank">
+                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-success" target="_blank">
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
                                 <button class="btn btn-info"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
@@ -246,7 +253,7 @@
                                     <th>Teleconsult Date & Time</th>
                                     <th>Encoded By:</th>
                                     <th>Date Requested:</th>
-                                    <th>Topic / Patient</th>
+                                    <th>Chief Complaint / Patient</th>
                                     <th>Status</th>
                                 </tr>
                                 @foreach($data_req as $row)
@@ -263,7 +270,7 @@
                                             </a>
                                         </td>
                                         <td>
-                                          <b class="text-primary">{{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b><br>
+                                          <b class="text-primary">@if($row->encoded->level=='patient')Patient: @endif{{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b><br>
                                           <b>{{ $row->encoded->facility->facilityname }}</b>
                                         </td>
                                         <td>

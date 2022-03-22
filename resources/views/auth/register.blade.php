@@ -1,4 +1,4 @@
-@extends('layouts.login')
+save@extends('layouts.login')
 
 @section('content')
 <style>
@@ -233,7 +233,7 @@
                 </div>
                 <br>
                 <div class="text-right">
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="submit" class="btn btn-success">Sign In</button>
                 </div>
                 </form>
             </div>

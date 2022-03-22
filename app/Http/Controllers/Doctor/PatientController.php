@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Doctor;
 
 use Illuminate\Support\Facades\Session;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Facility;
@@ -151,7 +153,8 @@ class PatientController extends Controller
             'lname' => $req->lname,
             'occupation' => $req->occupation,
             'nationality_id' => $req->nationality_id,
-            'passport_no' => $req->passport_no,
+            'id_type' => $req->id_type,
+            'id_type_no' => $req->id_type_no,
             'contact' => $req->contact,
             'dob' => $req->dob,
             'sex' => $req->sex,
@@ -164,7 +167,9 @@ class PatientController extends Controller
             'brgy' => $req->brgy,
             'address' => $req->address,
             'tsekap_patient' => 0,
-            'is_accepted' => 0
+            'is_accepted' => 0,
+            'religion' => $req->religion,
+            'edu_attain' => $req->edu_attain
         );
         if($req->patient_id){
             Session::put("action_made","Successfully updated Patient");
@@ -365,5 +370,23 @@ class PatientController extends Controller
     public function patientConsultInfo($id) {
         $info = Patient::find($id)->meeting;
         return json_encode($info);
+    }
+
+    public function patientInformation($id) {
+        try {
+            $decid = Crypt::decrypt($id);
+            $patient = Patient::find($decid);
+            $municity =  MunicipalCity::all();
+            $nationality_def = Countries::where('num_code', '608')->first();
+            $nationality = Countries::orderBy('nationality', 'asc')->get();
+            return view('doctors.patientinfo',[
+                'patient' => $patient,
+                'nationality_def' => $nationality_def,
+                'nationality' => $nationality,
+                'municity' => $municity
+            ]);
+        } catch(\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
