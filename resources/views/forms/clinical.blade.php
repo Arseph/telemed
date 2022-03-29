@@ -5,7 +5,6 @@
     <div class="pull-right">
         <button title="save" type="submit" class="btnSaveClinical btn btn-success hide"><i class="far fa-save"></i></button>
     </div>
-        {{ csrf_field() }}
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -56,7 +55,9 @@
             </div>
             <div class="col-md-12">
             <hr>
-                <h4>Physical Examination(Inspection)</h4>
+                <div class="box-header with-border" style="background-color: #00a65a; color: white;">
+                    <h4>Physical Examination(Inspection)</h4>
+                </div> 
                 <div class="form-group">
                     <label>Clinical Status at the Time of Consult:</label>
                     <textarea class="form-control" name="clinical_status_time_consult" rows="2" required>@if($patient->clinical) {{ $patient->clinical->clinical_status_time_consult }} @endif</textarea>
@@ -70,3 +71,4 @@
             </div>
         </div>
 </form>
+@include('forms.physicalexam')

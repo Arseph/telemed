@@ -28,4 +28,25 @@ class Meeting extends Model implements Auditable
     public function docorder() {
         return $this->hasOne(DoctorOrder::class, 'meet_id', 'id');
     }
+    public function clinical() {
+        return $this->hasOne(ClinicalHistory::class, 'meeting_id', 'id');
+    }
+    public function covidassess() {
+        return $this->hasOne(CovidAssessment::class, 'meeting_id', 'id');
+    }
+    public function covidscreen() {
+        return $this->hasOne(CovidScreening::class, 'meeting_id', 'id');
+    }
+    public function diagassess() {
+        return $this->hasOne(DiagnosisAssessment::class, 'meeting_id', 'id');
+    }
+    public function planmanage() {
+        return $this->hasOne(PlanManagement::class, 'meeting_id', 'id');
+    }
+    public function demoprof() {
+        return $this->hasOne(DemoProfile::class, 'meeting_id', 'id');
+    }
+    public function phyexam() {
+        return $this->hasOne(PhysicalExam::class, 'meeting_id', 'id');
+    }
 }

@@ -7,6 +7,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 class CovidScreening extends Model implements Auditable
 {
 	use \OwenIt\Auditing\Auditable;
-    protected $table = 'covid19_screening';
+    protected $table = 'tele_covid19_screening';
     protected $guarded = array();
 }

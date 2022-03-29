@@ -309,6 +309,7 @@
 <button type="button" class="btnDiagnosis btn btn-success" onclick="showForm('diagDiv', 'btnSaveDiag')"> Diagnosis/Assessment</button>
 <button type="button" class="btnPlan btn btn-success" onclick="showForm('planDiv', 'btnSavePlan')">Plan of Management</button>
 @endif
+<input type="hidden" name="meeting_id" value="{{ $meeting->id }}">
 <input type="hidden" name="patient_id" value="{{ $patient->id }}">
 <input type="hidden" name="demographic_id" value="@if($patient->demoprof){{ $patient->demoprof->id }} @endif">
 <input type="hidden" name="clinical_id" value="@if($patient->clinical){{ $patient->clinical->id }} @endif">
@@ -316,6 +317,7 @@
 <input type="hidden" name="covidscreen_id" value="@if($patient->covidscreen){{ $patient->covidscreen->id }} @endif">
 <input type="hidden" name="diagassess_id" value="@if($patient->diagassess){{ $patient->diagassess->id }} @endif">
 <input type="hidden" name="planmanage_id" value="@if($patient->planmanage){{ $patient->planmanage->id }} @endif">
+<input type="hidden" name="phy_id" value="@if($patient->phyexam){{ $patient->phyexam->id }} @endif">
 <div id="demoDiv" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav('demoDiv', 'btnSaveDemo')">&times;</a>
   <div class="">

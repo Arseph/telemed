@@ -359,6 +359,7 @@
 <script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
 <script src="{{ asset('public/plugin/fullcalendar/main.js') }}"></script>
 <script type="text/javascript" src="{{ asset('public/plugin/encryptor/jsencrypt.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 @yield('js')
 @include('others.scripts.app')
 </body>

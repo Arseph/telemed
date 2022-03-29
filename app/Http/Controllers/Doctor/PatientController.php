@@ -18,6 +18,8 @@ use App\Province;
 use App\Meeting;
 use Carbon\Carbon;
 use App\PendingMeeting;
+use App\LabRequest;
+use App\DoctorOrder;
 class PatientController extends Controller
 {
      public function __construct()
@@ -152,6 +154,7 @@ class PatientController extends Controller
             'mname' => $req->mname,
             'lname' => $req->lname,
             'occupation' => $req->occupation,
+            'monthly_income' => $req->monthly_income,
             'nationality_id' => $req->nationality_id,
             'id_type' => $req->id_type,
             'id_type_no' => $req->id_type_no,
@@ -374,19 +377,140 @@ class PatientController extends Controller
 
     public function patientInformation($id) {
         try {
+            $facilities = Facility::orderBy('facilityname', 'asc')->get();
             $decid = Crypt::decrypt($id);
             $patient = Patient::find($decid);
-            $municity =  MunicipalCity::all();
-            $nationality_def = Countries::where('num_code', '608')->first();
             $nationality = Countries::orderBy('nationality', 'asc')->get();
+            $municity =  MunicipalCity::all();
             return view('doctors.patientinfo',[
                 'patient' => $patient,
-                'nationality_def' => $nationality_def,
                 'nationality' => $nationality,
                 'municity' => $municity
             ]);
         } catch(\Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+    public function teleDetails(Request $req) {
+        $meetings = Meeting::select(
+            "meetings.*",
+            "meetings.id as meetID",
+            "d.case_no as caseNO",
+        )->leftJoin("tele_demographic_profile as d","d.meeting_id","=","meetings.id")
+         ->where('meetings.id',$req->meet_id)
+        ->first();
+        $patient = Meeting::find($req->meet_id);
+        $facility = Facility::orderBy('facilityname', 'asc')->get();
+        $countries = Countries::orderBy('en_short_name', 'asc')->get();
+        $date_departure = '';
+        $date_arrival_ph = '';
+        $date_contact_known_covid_case = '';
+        $acco_date_last_expose = '';
+        $food_es_date_last_expose = '';
+        $store_date_last_expose = '';
+        $fac_date_last_expose = '';
+        $event_date_last_expose = '';
+        $wp_date_last_expose = '';
+        $list_name_occasion = [];
+        $days_14_date_onset_illness = '';
+        $referral_date = '';
+        $xray_date = '';
+        $date_collected = '';
+        $date_sent_ritm = '';
+        $date_received_ritm = '';
+        $scrum = [];
+        $oro_naso_swab = [];
+        $spe_others = [];
+        $outcome_date_discharge = '';
+        if($patient->covidscreen) {
+            $date_departure = $patient->covidscreen->date_departure ? date('m/d/Y', strtotime($patient->covidscreen->date_departure)) : '';
+            $date_arrival_ph = $patient->covidscreen->date_arrival_ph ? date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph)) : '';
+            $date_contact_known_covid_case = $patient->covidscreen->date_contact_known_covid_case ? date('m/d/Y', strtotime($patient->covidscreen->date_contact_known_covid_case)) : '';
+            $acco_date_last_expose = $patient->covidscreen->acco_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->acco_date_last_expose)) : '';
+            $food_es_date_last_expose = $patient->covidscreen->food_es_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->food_es_date_last_expose)) : '';
+            $store_date_last_expose = $patient->covidscreen->store_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->store_date_last_expose)) : '';
+            $fac_date_last_expose = $patient->covidscreen->fac_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->fac_date_last_expose)) : '';
+            $event_date_last_expose = $patient->covidscreen->event_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->event_date_last_expose)) : '';
+            $wp_date_last_expose = $patient->covidscreen->wp_date_last_expose ? date('m/d/Y', strtotime($patient->covidscreen->wp_date_last_expose)) : '';
+            $list_name_occasion = $patient->covidscreen->list_name_occasion ? explode("|",$patient->covidscreen->list_name_occasion) : [];
+        }
+        if($patient->covidassess) {
+            $days_14_date_onset_illness = $patient->covidassess->days_14_date_onset_illness ? date('m/d/Y', strtotime($patient->covidassess->days_14_date_onset_illness)) : '';
+            $referral_date = $patient->covidassess->referral_date ? date('m/d/Y', strtotime($patient->covidassess->referral_date)) : '';
+            $xray_date = $patient->covidassess->xray_date ? date('m/d/Y', strtotime($patient->covidassess->xray_date)) : '';
+            $date_collected = $patient->covidassess->date_collected ? date('m/d/Y', strtotime($patient->covidassess->date_collected)) : '';
+            $date_sent_ritm = $patient->covidassess->date_sent_ritm ? date('m/d/Y', strtotime($patient->covidassess->date_sent_ritm)) : '';
+            $date_received_ritm = $patient->covidassess->date_received_ritm ? date('m/d/Y', strtotime($patient->covidassess->date_received_ritm)) : '';
+            $scrum = $patient->covidassess->scrum ? explode("|",$patient->covidassess->scrum) : [];
+            $oro_naso_swab = $patient->covidassess->oro_naso_swab ? explode("|",$patient->covidassess->oro_naso_swab) : [];
+            $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidassess->spe_others) : [];
+            $outcome_date_discharge = $patient->covidassess->outcome_date_discharge ? date('m/d/Y', strtotime($patient->covidassess->outcome_date_discharge)) : '';
+        }
+        $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
+        $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
+        $docorder = DoctorOrder::find($req->docorderid);
+        $labrequest = $docorder ? $docorder->labrequestcodes : [];
+        $imgrequest = $docorder ? $docorder->imagingrequestcodes : [];
+        switch ($req->view) {
+            case 'demographic':
+                return view('forms.demographic',[
+                    'meeting' => $meetings,
+                    'patient'=> $patient
+                ]);
+                break;
+            case 'clinical':
+                return view('forms.clinical',[
+                    'patient'=> $patient,
+                    'facility' => $facility
+                ]);
+                break;
+            case 'covid':
+                return view('forms.'.$req->view,[
+                    'patient'=> $patient,
+                    'countries' =>$countries,
+                    'date_departure' => $date_departure,
+                    'date_arrival_ph' => $date_arrival_ph,
+                    'date_contact_known_covid_case' => $date_contact_known_covid_case,
+                    'acco_date_last_expose' => $acco_date_last_expose,
+                    'food_es_date_last_expose' => $food_es_date_last_expose,
+                    'store_date_last_expose' => $store_date_last_expose,
+                    'fac_date_last_expose' => $fac_date_last_expose,
+                    'event_date_last_expose' => $event_date_last_expose,
+                    'wp_date_last_expose' => $wp_date_last_expose,
+                    'list_name_occasion' => $list_name_occasion,
+                    'days_14_date_onset_illness' => $days_14_date_onset_illness,
+                    'referral_date' => $referral_date,
+                    'xray_date' => $xray_date,
+                    'date_collected' => $date_collected,
+                    'date_sent_ritm' => $date_sent_ritm,
+                    'date_received_ritm' => $date_received_ritm,
+                    'scrum' => $scrum,
+                    'oro_naso_swab' => $oro_naso_swab,
+                    'spe_others' => $spe_others,
+                    'outcome_date_discharge' => $outcome_date_discharge
+                ]);
+                break;
+            case 'diagnosis':
+                return view('forms.'.$req->view,[
+                    'patient'=> $patient
+                ]);
+                break;
+            case 'plan':
+                return view('forms.'.$req->view,[
+                    'patient'=> $patient
+                ]);
+                break;
+            case 'docorder':
+                return view('doctors.tabs.docorder',[
+                    'patient'=> $patient,
+                    'labreq' => $labreq,
+                    'imaging' => $imaging,
+                    'labrequest' => $labrequest,
+                    'imgrequest' => $imgrequest,
+                    'docorder' => $docorder
+                ]);
+                break;
         }
     }
 }

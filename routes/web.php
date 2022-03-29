@@ -102,7 +102,7 @@ Route::get('/patient-information/{id}', 'Doctor\PatientController@patientInforma
 Route::post('/webex-token', 'Doctor\TeleConsultController@storeToken');
 Route::post('/patient-accept/{id}', 'Doctor\PatientController@acceptPatient');
 Route::post('/patient-consult-info/{id}', 'Doctor\PatientController@patientConsultInfo');
-
+Route::get('/tele-details','Doctor\PatientController@teleDetails');
 
 
 Route::match(['GET','POST'],'doctor/prescription','Doctor\ManageController@prescription');
@@ -125,6 +125,7 @@ Route::post('/diagnosis-store','Patient\PatientController@diagnosisStore');
 Route::get('/patient/plan/{id}','Patient\PatientController@plan');
 Route::post('/plan-store','Patient\PatientController@planStore');
 Route::post('/demographic-store','Patient\PatientController@demographicStore');
+Route::post('/physical-exam-store','Patient\PatientController@phyExamStore');
 
 //JM superadmin //Drugs/Meds
 Route::get('drugsmeds/', 'Superadmin\DrugsMedsCtrl@index'); 

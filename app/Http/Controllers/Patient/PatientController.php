@@ -22,6 +22,7 @@ use App\DiagnosisAssessment;
 use File;
 use App\PlanManagement;
 use App\DemoProfile;
+use App\PhysicalExam;
 class PatientController extends Controller
 {
      public function __construct()
@@ -389,6 +390,13 @@ class PatientController extends Controller
         DemoProfile::find($req->id)->update($req->all());
        } else {
         DemoProfile::create($req->all());
+       }
+    }
+    public function phyExamStore(Request $req) {
+       if($req->id) {
+        PhysicalExam::find($req->id)->update($req->all());
+       } else {
+        PhysicalExam::create($req->all());
        }
     }
 }

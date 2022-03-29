@@ -35,24 +35,6 @@ class Patient extends Model implements Auditable
     public function meeting() {
         return $this->hasOne(PendingMeeting::class, 'patient_id', 'id');
     }
-    public function clinical() {
-        return $this->hasOne(ClinicalHistory::class, 'patient_id', 'id');
-    }
-    public function covidassess() {
-        return $this->hasOne(CovidAssessment::class, 'patient_id', 'id');
-    }
-    public function covidscreen() {
-        return $this->hasOne(CovidScreening::class, 'patient_id', 'id');
-    }
-    public function diagassess() {
-        return $this->hasOne(DiagnosisAssessment::class, 'patient_id', 'id');
-    }
-    public function planmanage() {
-        return $this->hasOne(PlanManagement::class, 'patient_id', 'id');
-    }
-    public function demoprof() {
-        return $this->hasOne(DemoProfile::class, 'patient_id', 'id');
-    }
     public function allmeetings() {
         return $this->hasMany(Meeting::class, 'patient_id', 'id');
     }

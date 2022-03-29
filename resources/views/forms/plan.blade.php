@@ -13,7 +13,7 @@
         </div>
         <div class="box-body">
         	<input type="hidden" name="patient_id" value="{{ $patient->id }}">
-            <input type="hidden" name="signaturephy" value="@if($patient->planmanage){{ $patient->planmanage->signature }} @endif">
+            <input type="hidden" name="signaturephy" value="@if($patient->planmanage){{ asset('public/signatures/'.$patient->planmanage->signature) }} @endif">
             <input type="hidden" name="id" value="@if($patient->planmanage){{ $patient->planmanage->id }} @endif">
                 {{ csrf_field() }}
             <div class="row">

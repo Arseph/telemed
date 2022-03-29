@@ -21,7 +21,7 @@ use App\ZoomToken;
 use App\DocOrderLabReq;
 use Redirect;
 use App\Doc_Type;
-
+use App\MunicipalCity;
 class TeleController extends Controller
 {
     public function __construct()
@@ -206,9 +206,9 @@ class TeleController extends Controller
         
         $_sig = $api_key . "." . $meeting_number . "." . $time . "." . $role . "." . base64_encode($hash);
         $signature = rtrim(strtr(base64_encode($_sig), '+/', '-_'), '=');
-
-        $patient = Patient::find($meetings->PATID);
-        $case_no = mt_rand(100000000, 999999999);
+        $nationality = Countries::orderBy('nationality', 'asc')->get();
+        $patient = Meeting::find($decid);
+        $case_no = $patient->demoprof ? $patient->demoprof->case_no : mt_rand(100000000, 999999999);
         $facility = Facility::orderBy('facilityname', 'asc')->get();
         $countries = Countries::orderBy('en_short_name', 'asc')->get();
         $date_departure = '';
@@ -231,6 +231,13 @@ class TeleController extends Controller
         $oro_naso_swab = [];
         $spe_others = [];
         $outcome_date_discharge = '';
+        $conjunctiva = [];
+        $neck = '';
+        $breast = '';
+        $thorax = '';
+        $abdomen = '';
+        $genitals = '';
+        $extremities = '';
         if($patient->covidscreen) {
             $date_departure = $patient->covidscreen->date_departure ? date('m/d/Y', strtotime($patient->covidscreen->date_departure)) : '';
             $date_arrival_ph = $patient->covidscreen->date_arrival_ph ? date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph)) : '';
@@ -255,7 +262,19 @@ class TeleController extends Controller
             $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidassess->spe_others) : [];
             $outcome_date_discharge = $patient->covidassess->outcome_date_discharge ? date('m/d/Y', strtotime($patient->covidassess->outcome_date_discharge)) : '';
         }
+        if($patient->phyexam) {
+            $conjunctiva = $patient->phyexam->conjunctiva;
+            $neck = $patient->phyexam->neck;
+            $breast = $patient->phyexam->breast;
+            $thorax = $patient->phyexam->thorax;
+            $abdomen = $patient->phyexam->abdomen;
+            $genitals = $patient->phyexam->genitals;
+            $extremities = $patient->phyexam->extremities;
+        }
+        $municity =  MunicipalCity::all();
         return view('teleconsult.teleCall',[
+            'nationality' => $nationality,
+            'municity' => $municity,
         	'meeting' => $meetings,
             'case_no' => $case_no,
             'patient' => $patient,
@@ -286,7 +305,14 @@ class TeleController extends Controller
             'meetnum'=>$meeting_number,
             'passw'=>$password,
             'username'=>$username,
-            'role'=> $role
+            'role'=> $role,
+            'conjunctiva' => $conjunctiva,
+            'neck' => $neck,
+            'breast' => $breast,
+            'thorax' => $thorax,
+            'abdomen' => $abdomen,
+            'genitals' => $genitals,
+            'extremities' => $extremities
         ]);
     }
 
@@ -345,7 +371,9 @@ class TeleController extends Controller
     		"meetings.*",
     		"pat.*",
     		"meetings.id as meetID",
+            "d.case_no as caseNO"
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
+        ->leftJoin("tele_demographic_profile as d","d.meeting_id","=","meetings.id")
          ->where('meetings.id',$req->meet_id)
         ->first();
 

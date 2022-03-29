@@ -6,6 +6,7 @@ var api_key = "{!! $api_key !!}";
 var meetnum = "{!! $meetnum !!}";
 var passw = "{!! $passw !!}";
 var username = "{!! $username !!}";
+var meeting_id = $('input[name="meeting_id"]').val();
 var patient_id = $('input[name="patient_id"]').val();
 var demographic_id = $('input[name="demographic_id"]').val();
 var clinical_id = $('input[name="clinical_id"]').val();
@@ -13,6 +14,7 @@ var covidassess_id = $('input[name="covidassess_id"]').val();
 var covidscreen_id = $('input[name="covidscreen_id"]').val();
 var diagassess_id = $('input[name="diagassess_id"]').val();
 var planmanage_id = $('input[name="planmanage_id"]').val();
+var phy_id = $('input[name="phy_id"]').val();
 var case_no = $('input[name="case_no"]').val();
 const col = document.getElementsByClassName("main-layout");
 function closeNav(ele, btn) {
@@ -21,7 +23,9 @@ function closeNav(ele, btn) {
       activeForm = '';
       $("."+btn).addClass('hide');
       activebtn = '';
-      col[0].style.marginLeft = "0";
+      if(col.length > 0) {
+        col[0].style.marginLeft = "0";
+      }
     }
 }
 $( function() {
@@ -78,7 +82,24 @@ $("#myBtn").click(function(){
 });
 function showForm(ele, btn) {
     document.getElementById(ele).style.width = "650px";
-    col[0].style.marginLeft = "650px";
+    if(col.length > 0) {
+        col[0].style.marginLeft = "650px";
+    }if(ele == 'cliDiv') {
+        var conjunctiva = '{!! $conjunctiva !!}';
+        var neck = '{!! $neck !!}';
+        var breast = '{!! $breast !!}';
+        var thorax = '{!! $thorax !!}';
+        var abdomen = '{!! $abdomen !!}';
+        var genitals = '{!! $genitals !!}';
+        var extremities = '{!! $extremities !!}';
+        $("#conjunctiva").val(conjunctiva.split(',')).trigger('change');
+        $("#neck").val(neck.split(',')).trigger('change');
+        $("#breast").val(breast.split(',')).trigger('change');
+        $("#thorax").val(thorax.split(',')).trigger('change');
+        $("#abdomen").val(abdomen.split(',')).trigger('change');
+        $("#genitals").val(genitals.split(',')).trigger('change');
+        $("#extremities").val(extremities.split(',')).trigger('change');
+    }
     $("."+btn).removeClass('hide');
     $("#myBtn").click();
     closeNav(activeForm, activebtn);
@@ -158,14 +179,15 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 			url:  "{{ url('/demographic-store') }}",
             type: "POST",
             data: {
-            	patient_id: patient_id,
+                meeting_id: meeting_id,
+            	meeting_id: meeting_id,
             	id: demographic_id,
             	case_no: case_no
             },
             success: function(data){
                 Lobibox.notify('success', {
 	                title: "",
-	                msg: "Successfully save clinical history and physical examination",
+	                msg: "Successfully save Demographic profile",
 	                size: 'normal',
 	                rounded: true
 	            });
@@ -189,16 +211,11 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 			url:  "{{ url('/clinical-store') }}",
             type: "POST",
             data: {
-            	patient_id: patient_id,
+            	meeting_id: meeting_id,
             	id: clinical_id
             },
             success: function(data){
-                Lobibox.notify('success', {
-	                title: "",
-	                msg: "Successfully save clinical history and physical examination",
-	                size: 'normal',
-	                rounded: true
-	            });
+                $( "#physical_form" ).submit();
             },
             error: function (data) {
             	$(".loading").hide();
@@ -212,6 +229,56 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 		});
 
 	});
+    $('#physical_form').on('submit',function(e){
+        e.preventDefault();
+        var conjunctiva = $("#conjunctiva")
+              .map(function(){return $(this).val();}).get().join(',');
+        var neck = $("#neck")
+              .map(function(){return $(this).val();}).get().join(',');
+        var breast = $("#breast")
+              .map(function(){return $(this).val();}).get().join(',');
+        var thorax = $("#thorax")
+              .map(function(){return $(this).val();}).get().join(',');
+        var abdomen = $("#abdomen")
+              .map(function(){return $(this).val();}).get().join(',');
+        var genitals = $("#genitals")
+              .map(function(){return $(this).val();}).get().join(',');
+        var extremities = $("#extremities")
+              .map(function(){return $(this).val();}).get().join(',');
+        $('#physical_form').ajaxSubmit({
+            url:  "{{ url('/physical-exam-store') }}",
+            type: "POST",
+            data: {
+                meeting_id: meeting_id,
+                id: phy_id,
+                conjunctiva: conjunctiva,
+                neck: neck,
+                breast: breast,
+                thorax: thorax,
+                abdomen: abdomen,
+                genitals: genitals,
+                extremities: extremities
+            },
+            success: function(data){
+                Lobibox.notify('success', {
+                    title: "",
+                    msg: "Successfully save clinical history and physical examination",
+                    size: 'normal',
+                    rounded: true
+                });
+            },
+            error: function (data) {
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'normal',
+                    rounded: true
+                });
+            },
+        });
+
+    });
 	$('#covid_form').on('submit',function(e){
 		e.preventDefault();
 		var values = $("input[name='list_name_occasion[]']")
@@ -228,7 +295,7 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
             type: "POST",
             data: {
             	list_name_occa: values ? values : '',
-            	patient_id: patient_id,
+            	meeting_id: meeting_id,
             	id: covidscreen_id 
             },
             success: function(data){
@@ -236,7 +303,7 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 					url:  "{{ url('/assess-store') }}",
 		            type: "POST",
 		            data: {
-		            	patient_id: patient_id,
+		            	meeting_id: meeting_id,
 		            	scrumee: scrum,
 		            	oro_naso_swabee: oro_naso_swab ? oro_naso_swab : '',
 		            	spe_othersee: spe_others ? spe_others : ''

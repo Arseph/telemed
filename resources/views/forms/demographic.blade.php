@@ -13,7 +13,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label>Date and Time of Teleconsultation:</label>
-            <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($meeting->date_meeting)->format('M d, Y') }} {{ \Carbon\Carbon::parse($meeting->from_time)->format('h:i A') }}" name="dateandtime" disabled>
+            <input type="text" class="form-control" value="@if($meeting){{ \Carbon\Carbon::parse($meeting->date_meeting)->format('M d, Y') }} {{ \Carbon\Carbon::parse($meeting->from_time)->format('h:i A') }}@endif" name="dateandtime" disabled>
         </div>
     </div>
 </div>
@@ -39,7 +39,7 @@
           <input type="radio" name="prior_tele_proper" value="1" required @if($patient->demoprof)@if($patient->demoprof->prior_tele_proper == 1)checked @endif @endif>Yes
         </label>
         <label class="radio-inline">
-          <input type="radio" name="prior_tele_proper" value="0" @if($patient->demoprof)@if($patient->demoprof->prior_tele_proper == 1)checked @endif @endif>No
+          <input type="radio" name="prior_tele_proper" value="0" @if($patient->demoprof)@if($patient->demoprof->prior_tele_proper == 0)checked @endif @endif>No
         </label>
     </div>
 </div>
@@ -50,7 +50,7 @@
           <input type="radio" name="is_patient_accompanied" value="1" required @if($patient->demoprof)@if($patient->demoprof->is_patient_accompanied == 1)checked @endif @endif>Yes
         </label>
         <label class="radio-inline">
-          <input type="radio" name="is_patient_accompanied" value="0" @if($patient->demoprof)@if($patient->demoprof->is_patient_accompanied == 1)checked @endif @endif>No
+          <input type="radio" name="is_patient_accompanied" value="0" @if($patient->demoprof)@if($patient->demoprof->is_patient_accompanied == 0)checked @endif @endif>No
         </label>
     </div>
 </div>
