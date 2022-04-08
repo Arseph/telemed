@@ -71,7 +71,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnDiagnosis {
             display: none;
@@ -85,7 +85,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnCovid {
             display: none;
@@ -99,7 +99,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnClinical {
             display: none;
@@ -113,7 +113,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnDemo {
             display: none;
@@ -127,7 +127,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         #myBtn {
             position: fixed;
@@ -141,7 +141,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnSaveClinical {
             position: fixed;
@@ -155,7 +155,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnSaveCovid {
             position: fixed;
@@ -169,7 +169,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnSaveDemo {
             position: fixed;
@@ -183,7 +183,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnSaveCovid {
             position: fixed;
@@ -197,7 +197,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnSaveDiag {
             position: fixed;
@@ -211,7 +211,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         .btnSavePlan {
             position: fixed;
@@ -225,7 +225,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 1px;
+            border-radius: 50%;
         }
         #myBtn:hover {
             background-color: #555;
@@ -303,11 +303,11 @@
 <body>
 @if($role > 0)
 <button id="myBtn" title="Teleconsultation forms"><i class="fas fa-file"></i></button>
-<button type="button" class="btnDemo btn btn-success" onclick="showForm('demoDiv', 'btnSaveDemo')"> Demographic Profille</button>
-<button type="button" class="btnClinical btn btn-success" onclick="showForm('cliDiv', 'btnSaveClinical')"> Clinical History and Physical Examination</button>
-<button type="button" class="btnCovid btn btn-success" onclick="showForm('covDiv', 'btnSaveCovid')"> Covid-19 Screening</button>
-<button type="button" class="btnDiagnosis btn btn-success" onclick="showForm('diagDiv', 'btnSaveDiag')"> Diagnosis/Assessment</button>
-<button type="button" class="btnPlan btn btn-success" onclick="showForm('planDiv', 'btnSavePlan')">Plan of Management</button>
+<button type="button" data-toggle="tooltip" data-placement="left" title="Demographic Profile" class="btnDemo btn btn-primary" onclick="showForm('demoDiv', 'btnSaveDemo')"><i class="fa-solid fa-address-card"></i></button>
+<button type="button" data-toggle="tooltip" data-placement="left" title="Clinical History and Physical Examination"  class="btnClinical btn btn-primary" onclick="showForm('cliDiv', 'btnSaveClinical')"><i class="fa-solid fa-book-medical"></i></button>
+<button type="button" data-toggle="tooltip" data-placement="left" title="Covid-19 Screening" class="btnCovid btn btn-primary" onclick="showForm('covDiv', 'btnSaveCovid')"><i class="fa-solid fa-virus"></i></button>
+<button type="button"data-toggle="tooltip" data-placement="left" title="Diagnosis/Assessment" class="btnDiagnosis btn btn-primary" onclick="showForm('diagDiv', 'btnSaveDiag')"><i class="fa-solid fa-person-dots-from-line"></i></button>
+<button type="button" data-toggle="tooltip" data-placement="left" title="Plan of Management" class="btnPlan btn btn-primary" onclick="showForm('planDiv', 'btnSavePlan')"><i class="fa-solid fa-file-medical"></i></button>
 @endif
 <input type="hidden" name="meeting_id" value="{{ $meeting->id }}">
 <input type="hidden" name="patient_id" value="{{ $patient->id }}">

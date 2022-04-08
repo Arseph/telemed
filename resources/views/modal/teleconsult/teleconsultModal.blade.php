@@ -59,12 +59,12 @@
 			     </div>
 			     <div class="col-sm-3">
 			     	<label>Time:</label>
-			     	<div class="input-group clockpicker" data-placement="top" data-align="top" data-autoclose="true">
-					    <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
-					    <span class="input-group-addon">
-					        <span class="glyphicon glyphicon-time"></span>
-					    </span>
-					</div>
+  			     	<div class="input-group clockpicker" data-placement="top" data-align="top" data-autoclose="true">
+  					    <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
+  					    <span class="input-group-addon">
+  					        <span class="glyphicon glyphicon-time"></span>
+  					    </span>
+  					</div>
 			     </div>
 			     <div class="col-sm-3">
 			     	<label>Duration:</label>

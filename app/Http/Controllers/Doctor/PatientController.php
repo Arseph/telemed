@@ -20,6 +20,8 @@ use Carbon\Carbon;
 use App\PendingMeeting;
 use App\LabRequest;
 use App\DoctorOrder;
+use App\Diagnosis;
+use App\MedicalHistory;
 class PatientController extends Controller
 {
      public function __construct()
@@ -382,10 +384,12 @@ class PatientController extends Controller
             $patient = Patient::find($decid);
             $nationality = Countries::orderBy('nationality', 'asc')->get();
             $municity =  MunicipalCity::all();
+            $diagnosis = Diagnosis::orderBy('diagcode', 'asc')->paginate(5);
             return view('doctors.patientinfo',[
                 'patient' => $patient,
                 'nationality' => $nationality,
-                'municity' => $municity
+                'municity' => $municity,
+                'diagnosis' => $diagnosis
             ]);
         } catch(\Exception $e) {
             return $e->getMessage();
@@ -513,4 +517,24 @@ class PatientController extends Controller
                 break;
         }
     }
+
+    public function medHisStore(Request $req) {
+        if(!$req->id) {
+            MedicalHistory::create($req->all());
+            Session::put("action_made","Successfully created medical history");
+        } else {
+            MedicalHistory::find($req->id)->update($req->all());
+            Session::put("action_made","Successfully updated medical history");
+        }
+    }
+
+    public function medHisData(Request $req) {
+        $medhis = MedicalHistory::find($req->id);
+        $diagnosis = $medhis->icd;
+        return response()->json([
+            'medhis'=>$medhis,
+            'diag'=>$diagnosis
+        ]);
+    }
+
 }

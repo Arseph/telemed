@@ -135,7 +135,7 @@
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
-                    @if($user->level != 'superadmin')
+                    @if($user->level != 'superadmin' && $user->level != 'patient')
                     <span class="title-info">Facility:</span> <span class="title-desc">{{ $user->facility->facilityname }}</span>
                     @endif
                 </div>

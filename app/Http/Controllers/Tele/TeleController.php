@@ -208,7 +208,7 @@ class TeleController extends Controller
         $signature = rtrim(strtr(base64_encode($_sig), '+/', '-_'), '=');
         $nationality = Countries::orderBy('nationality', 'asc')->get();
         $patient = Meeting::find($decid);
-        $case_no = $patient->demoprof ? $patient->demoprof->case_no : mt_rand(100000000, 999999999);
+        $case_no = $patient->demoprof ? $patient->demoprof->case_no : sprintf('%09d', $patient->id);
         $facility = Facility::orderBy('facilityname', 'asc')->get();
         $countries = Countries::orderBy('en_short_name', 'asc')->get();
         $date_departure = '';
@@ -231,7 +231,7 @@ class TeleController extends Controller
         $oro_naso_swab = [];
         $spe_others = [];
         $outcome_date_discharge = '';
-        $conjunctiva = [];
+        $conjunctiva = '';
         $neck = '';
         $breast = '';
         $thorax = '';

@@ -43,7 +43,7 @@
     <div class="col-sm-6">
         <div class="form-group">
             <label class="reqField">Birth Date:</label>
-            <input type="date" class="form-control" value="@if($patient->patient){{$patient->patient->dob}} @else {{$patient->dob}} @endif" min="1910-05-11" max="{{ date('Y-m-d') }}" name="dob" required>
+            <input type="date" class="form-control" value="@if($patient->patient){{$patient->patient->dob}}@else{{$patient->dob}}@endif" min="1910-05-11" max="{{ date('Y-m-d') }}" name="dob" required>
         </div>
     </div>
     <div class="col-sm-6">

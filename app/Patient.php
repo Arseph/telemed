@@ -162,4 +162,8 @@ class Patient extends Model implements Auditable
                 break;
         }
     }
+
+    public function medhistory() {
+        return $this->hasMany(MedicalHistory::class, 'patient_id', 'id');
+    }
 }

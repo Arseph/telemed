@@ -196,7 +196,8 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
-                console.log(val)
+                var today = moment(new Date());
+                let diff = today.diff(moment(val['date_meeting']), 'days');
                 if(val) {
                     var time = moment(val['date_meeting']).format('MMMM D, YYYY')+' '+moment(val['from_time'], "HH:mm:ss").format('h:mm A')+' - '+moment(val['to_time'], "HH:mm:ss").format('h:mm A');
                     var mname = val['mname'] ? val['mname'] : '';
@@ -210,9 +211,14 @@
                     $('#meetPass').html(val['password']);
                     $('#meetKey').html(val['host_key']);
                     $('.btnMeeting').val(val['meetID']);
-                    if(join == 'no') {
+                    if(diff >= 0) {
+                         $('.btnMeeting').prop('disabled', true);
+                         $('.btnMeeting').html('Consultation complete');
+                    } else if(join == 'no') {
+                        $('.btnMeeting').prop('disabled', false);;
                         $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Start Consultation');
                     } else {
+                         $('.btnMeeting').prop('disabled', false);;
                         $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Join Consultation');
                     }
                 }

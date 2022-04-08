@@ -41,6 +41,7 @@ ZoomMtg.i18n.load('en-US');
 ZoomMtg.i18n.reload('en-US');
 ZoomMtg.setZoomJSLib('https://source.zoom.us/2.2.0/lib', '/av'); 
 $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip(); 
     window.onbeforeunload = function() {
         return "Are you sure you want to leave?";
     }

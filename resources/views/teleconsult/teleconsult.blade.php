@@ -164,7 +164,7 @@
                                 <?php
                                 $id = \Crypt::encrypt($row->meetID);
                                 ?>
-                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-primary">
+                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-primary" target="_blank">
                                     <i class="fas fa-play-circle"></i> Start Consultation
                                 </a>
                                 <a href="#docorder_modal" class="btn btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
@@ -182,7 +182,7 @@
                                 <b>{{ $row->doctor->facility->facilityname }}</b>
                                 <br>
                                 <br>
-                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-success">
+                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-success" target="_blank">
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
                                 <button class="btn btn-info"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
@@ -271,7 +271,7 @@
                                         </td>
                                         <td>
                                           <b class="text-primary">@if($row->encoded->level=='patient')Patient: @endif{{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b><br>
-                                          <b>{{ $row->encoded->facility->facilityname }}</b>
+                                          <b>@if($row->encoded->level!='patient'){{ $row->encoded->facility->facilityname }} @endif</b>
                                         </td>
                                         <td>
                                           <b class="text-warning"> {{ \Carbon\Carbon::parse($row->reqDate)->format('l, h:i A F d, Y') }}</b>

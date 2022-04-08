@@ -111,6 +111,8 @@ Route::post('/prescription-delete/{id}', 'Doctor\ManageController@prescriptionDe
 Route::match(['GET','POST'],'doctor/order','Doctor\ManageController@doctorOrder');
 Route::post('/docorder-store', 'Doctor\ManageController@doctorOrderStore');
 Route::post('/docorder-delete/{id}', 'Doctor\ManageController@docorderDelete');
+Route::post('/medical-history-store', 'Doctor\PatientController@medHisStore');
+Route::get('/medical-history-info','Doctor\PatientController@medHisData');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');
