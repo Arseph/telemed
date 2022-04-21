@@ -1,3 +1,15 @@
+<?php
+    $user = Session::get('auth');
+    $t = '';
+    $dept_desc = '';
+    if($user->level=='doctor')
+    {
+        $t='Dr.';
+    }else if($user->level=='patient'){
+        $dept_desc = ' / Patient';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,6 +119,31 @@
             color: red;
             content:"*";
         }
+        #notificationBar {
+            width: 450px;
+            height: 400px;
+            overflow: auto;
+            overflow-x: hidden;
+        }
+        .chip {
+          display: inline-block;
+          padding: 0 25px;
+          height: 40px;
+          font-size: 12px;
+          line-height: 40px;
+          border-radius: 25px;
+          background-color: #f1f1f1;
+          cursor: pointer;
+          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        }
+        .chip:hover {
+            background: #999;
+            color: white;
+        }
+        .actColor {
+            background: #e08e0b;
+            color: white
+        }
     </style>
 </head>
 
@@ -119,17 +156,6 @@
         <div>
             <div class="col-md-6">
                 <div class="pull-left">
-                    <?php
-                    $user = Session::get('auth');
-                    $t = '';
-                    $dept_desc = '';
-                    if($user->level=='doctor')
-                    {
-                        $t='Dr.';
-                    }else if($user->level=='patient'){
-                        $dept_desc = ' / Patient';
-                    }
-                    ?>
                     <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
                 </div>
             </div>
@@ -286,6 +312,48 @@
                 @endif
                 <li><a href="{{ asset('logout') }}"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
             </ul>
+            @if($user->level=='doctor')
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b>Notification</b> <span class="badge" id="totalReq"></span></a>
+                  <ul id="notificationBar" class="dropdown-menu notify-drop" onclick="event.stopPropagation()">
+                    <div class="notify-drop-title">
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <div id="chipCon" class="chip actColor">
+                                  Consultation(<b id="totReqTel"></b>)
+                                </div>
+                                <div id="chipPat" class="chip">
+                                  Patient(<b id="totReqPat"></b>)
+                                </div>
+                                <div id="chipReq" class="chip">
+                                  Requested(<b id="totRequest"></b>)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="drop-content">
+                        <div id="contentCon" class="row" style="margin: 10px;">
+                        </div>
+                        <div id="contentPat" class="row hide" style="margin: 10px;">
+                            <div class="col-md-12">
+                            <hr>
+                                    N
+                            <hr>
+                            </div>
+                        </div>
+                        <div id="contentReq" class="row hide" style="margin: 10px;">
+                            <div class="col-md-12">
+                            <hr>
+                                    Notification
+                            <hr>
+                            </div>
+                        </div>
+                    </div>
+                  </ul>
+                </li>
+            </ul>
+            @endif
         </div><!--/.nav-collapse -->
     </div>
 </nav>
@@ -354,12 +422,11 @@
 <!-- TABLE-HEADER-FIXED -->
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js"></script>
 <script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
 <script src="{{ asset('public/plugin/fullcalendar/main.js') }}"></script>
-<script type="text/javascript" src="{{ asset('public/plugin/encryptor/jsencrypt.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 @yield('js')
 @include('others.scripts.app')
 </body>

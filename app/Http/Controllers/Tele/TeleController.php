@@ -22,6 +22,7 @@ use App\DocOrderLabReq;
 use Redirect;
 use App\Doc_Type;
 use App\MunicipalCity;
+use App\Events\ReqTele;
 class TeleController extends Controller
 {
     public function __construct()
@@ -125,7 +126,7 @@ class TeleController extends Controller
         )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id")
         ->where("pending_meetings.user_id","=", $user->id)
                 ->orderBy('pending_meetings.id', 'desc')
-                ->paginate(10);
+                ->paginate(5);
         $facilities = Facility::orderBy('facilityname', 'asc')->get();
         $count_req = PendingMeeting::select(
             "pending_meetings.*",
@@ -174,8 +175,9 @@ class TeleController extends Controller
         if($req->meeting_id) {
             PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id', 'date_from'));
         } else {
-            PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
+            $data = PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
         }
+        event(new ReqTele($data));
         Session::put("action_made","Please wait for the confirmation of doctor.");
     }
 
@@ -587,5 +589,13 @@ class TeleController extends Controller
                         ->where('id', '!=', $user_id)
                         ->orderBy('lname', 'asc')->get();
         return json_encode($doctors);
+    }
+
+    public function teleconsultDetails($id) {
+        $decid = Crypt::decrypt($id);
+        $meeting = Meeting::find($decid);
+        return view('teleconsult.teledetails',[
+            'meeting' => $meeting
+        ]);
     }
 }

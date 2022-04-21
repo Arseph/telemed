@@ -31,15 +31,15 @@
     </div>
     <div class="form-group">
         <label>Alert Description:</label>
-        <textarea class="form-control" name="alertdescription" rows="2">{{$docorder->alertdescription}}</textarea>
+        <textarea class="form-control" name="alertdescription" rows="2">@if($docorder){{$docorder->alertdescription}}@endif</textarea>
     </div>
     <div class="form-group">
         <label>Treatment Plan:</label>
-        <textarea class="form-control" name="treatmentplan" rows="2">{{$docorder->treatmentplan}}</textarea>
+        <textarea class="form-control" name="treatmentplan" rows="2">@if($docorder){{$docorder->treatmentplan}}@endif</textarea>
     </div>
     <div class="form-group">
         <label>Remarks:</label>
-        <textarea class="form-control" name="remarks" rows="3">{{$docorder->remarks}}</textarea>
+        <textarea class="form-control" name="remarks" rows="3">@if($docorder){{$docorder->remarks}}@endif</textarea>
     </div>
 </form>
 

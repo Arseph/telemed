@@ -55,4 +55,10 @@ class User extends Authenticatable implements Auditable
     public function patient() {
         return $this->hasOne(Patient::class, 'account_id', 'id');
     }
+    public function reqpatient() {
+        return $this->hasMany(Patient::class, 'doctor_id', 'id');
+    }
+    public function pendmeet() {
+        return $this->hasMany(PendingMeeting::class, 'doctor_id', 'id');
+    }
 }

@@ -64,18 +64,8 @@ class PatientController extends Controller
                
             })
             ->orderby('patients.lname','asc')
+            ->where('patients.is_accepted', 1)
             ->paginate(30);
-
-        $requested = Patient::select(
-            "patients.*",
-            "bar.brg_name as barangay",
-            "user.email as email",
-            "user.username as username",
-        ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
-        ->leftJoin("users as user","user.id","=","patients.account_id")
-        ->where('patients.doctor_id', $user->id)
-        ->where('patients.is_accepted', 0)
-        ->get();
 
         $patients = Patient::select(
             "patients.*",
@@ -91,7 +81,6 @@ class PatientController extends Controller
         $nationality_def = Countries::where('num_code', '608')->first();
         return view('doctors.patient',[
             'data' => $data,
-            'requested' => $requested,
             'municity' => $municity,
             'patients' => $patients,
             'users' => $users,
@@ -137,6 +126,7 @@ class PatientController extends Controller
 
     public function storePatient(Request $req) {
         $user = Session::get('auth');
+        $accept = $req->is_accepted ? $req->is_accepted : 0;
         $doctor_id = $req->doctor_id ? $req->doctor_id : $user->id;
         $province = Facility::select(
             "facilities.*",
@@ -172,7 +162,7 @@ class PatientController extends Controller
             'brgy' => $req->brgy,
             'address' => $req->address,
             'tsekap_patient' => 0,
-            'is_accepted' => 0,
+            'is_accepted' => $accept,
             'religion' => $req->religion,
             'edu_attain' => $req->edu_attain
         );
@@ -506,6 +496,7 @@ class PatientController extends Controller
                 ]);
                 break;
             case 'docorder':
+            if($docorder) {
                 return view('doctors.tabs.docorder',[
                     'patient'=> $patient,
                     'labreq' => $labreq,
@@ -515,6 +506,9 @@ class PatientController extends Controller
                     'docorder' => $docorder
                 ]);
                 break;
+            } else {
+                return 'No doctor\'s order found.' ;
+            }
         }
     }
 

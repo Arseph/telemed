@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalMeetingLabel">Schedule Teleconsultation</h4>
+        <h4 class="modal-title" id="myModalMeetingLabel">Request Teleconsultation</h4>
       </div>
       <div class="modal-body" id="meetingInfo">
       	<form id="tele_form" method="POST">
@@ -188,7 +188,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title" id="myModalMeetingLabel">My Request</h4>
       </div>
-      <div class="modal-body" id="meetingInfo">
+      <div class="modal-body" id="myReqInfo">
       	@if(count($data_my_req)>0)
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
@@ -237,8 +237,8 @@
                             </tr>
                         @endforeach
                     </table>
-                    <div class="pagination">
-                        {{ $data->links() }}
+                    <div class="pagination" id="pageMyReq">
+                        {{ $data_my_req->links() }}
                     </div>
                 </div>
             @else

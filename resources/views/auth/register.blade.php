@@ -1,4 +1,4 @@
-save@extends('layouts.login')
+@extends('layouts.login')
 
 @section('content')
 <style>

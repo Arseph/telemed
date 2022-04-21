@@ -4,12 +4,11 @@
   <li><a data-toggle="tab" href="#covid" onclick="telDetail('','covid', 'covidTab')">Covid-19 Screening</a></li>
   <li><a data-toggle="tab" href="#diag" onclick="telDetail('','diagnosis', 'diagTab')">Diagnosis/Assessment</a></li>
   <li><a data-toggle="tab" href="#plan" onclick="telDetail('','plan', 'planTab')">Plan of Management</a></li>
-  <li><a data-toggle="tab" href="#docorder" onclick="telDetail('','docorder', 'docTab');">Doctor Order</a></li>
 </ul>
 
 <div class="tab-content">
   <div id="demo" class="tab-pane fade in active">
-    <h3>Case no: <b id="caseNO"></b></h3>
+    <h3><b id="caseNO"></b></h3>
     <br>
     <div id="patientTab" class="disAble"></div>
   </div>

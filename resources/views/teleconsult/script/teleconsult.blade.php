@@ -463,7 +463,7 @@
     $('#tele_form').on('submit',function(e){
         e.preventDefault();
         $('.btnSavePend').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
-        $(".loading").show();
+        // $(".loading").show();
         $('#tele_form').ajaxSubmit({
             url:  "{{ url('/sched-pending') }}",
             type: "GET",
@@ -692,7 +692,7 @@
         interval = setInterval(refreshToken, 5000);
     });
 
-     function getattachment(docorderid) {
+    function getattachment(docorderid) {
         var url = "{{ url('/doctor-order-info') }}";
         $.ajax({
             async: true,
@@ -730,4 +730,102 @@
         });
 
     }
+    var meeting_id;
+    var docorderid;
+    var backtb;
+    var started;
+    function telDetail(id, view, tab, docid, details, backtab) {
+        backtb = backtab ? backtab : backtb;
+        $(".btnBack").attr("href", backtb);
+        $(".btnBack").removeClass('hide');
+        info = details ? JSON.parse(details) : info;
+        $('#chiefCom').html('Chief Complaint: ' + info['title']);
+        $('#chiefDate').html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
+        $('#chiefTime').html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
+        $('#chiefType').html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
+        docorderid = docid ? docid : docorderid;
+        var url = "{{ url('/tele-details') }}";
+        view = view ? view : 'demographic';
+        tab = tab ? tab : 'patientTab';
+        meeting_id = id ? id : meeting_id;
+        var urlmet = "{{ url('/meeting-info') }}";
+        $('#'+tab).html('loading...');
+        $.ajax({
+            async: true,
+            url: urlmet,
+            type: 'GET',
+            data: {
+                meet_id: meeting_id,
+            },
+            success : function(data){
+                var val = JSON.parse(data);
+                started = val['caseNO'];
+                if(val) {
+                    var time = moment(val['date_meeting']).format('MMMM D, YYYY')+' '+moment(val['from_time'], "HH:mm:ss").format('h:mm A')+' - '+moment(val['to_time'], "HH:mm:ss").format('h:mm A');
+                    $('#caseNO').html(val['caseNO'] ? 'Case no: '+ val['caseNO'] : '');
+                    $('input[name="dateandtime"]').val(time);
+                }
+            },
+            error: function (data) {
+                $('#'+tab).html('Something went wrong...');
+            },
+        });
+        $.ajax({
+            async: true,
+            url: url,
+            type: 'GET',
+            data: {
+                meet_id: meeting_id,
+                view: view,
+                docorderid: docorderid
+            },
+            success : function(data){
+                if(started) {
+                    setTimeout(function(){
+                        $('#'+tab).html(data);
+                        make_base(document.getElementById('signature-pad'));
+                        $('#companion').removeClass('hide');
+                        $( '.btnAddrow' ).addClass('hide');
+                        $( '.btnAddrowScrum' ).addClass('hide');
+                        $( '.btnAddrowSwab' ).addClass('hide');
+                        $( '.btnAddrowother' ).addClass('hide');
+                        $('.ifCovid').removeClass('hide');
+                        $( '.btnRemoveRow' ).addClass('hide');
+                        $(".select2").select2();
+                        if(tab == 'docTab') {
+                            getDocorder();
+                        }
+                    },500);
+                } else {
+                    $('#'+tab).html('Consultation has not yet started.');
+                }
+            }
+        });
+    }
+    function make_base(is)
+    {
+        if(is) {
+          var signa = $('input[name="signaturephy"]').val();
+          var canvas = document.getElementById('signature-pad');
+          context = document.getElementById('signature-pad') ? canvas.getContext('2d') : '';
+          base_image = new Image();
+          base_image.src = signa;
+          base_image.onload = function(){
+            context.drawImage(base_image, 0, 0);
+          }
+        }
+    }
+    $('.btnBack').click(function(){
+        $(this).addClass('hide');
+    });
+
+    function myreqPaging() {
+        $('#pageMyReq .pagination a').on('click', function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            $('#myReqInfo').load(url + ' div#myReqInfo', null, myreqPaging); // re-run on complete
+        });
+    }
+    myreqPaging();
+
 </script>

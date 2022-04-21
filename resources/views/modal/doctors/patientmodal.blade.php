@@ -11,7 +11,8 @@
           <div class="text-right">
             <button id="deleteBtn" type="button" class="btnSave btn btn-danger hide"><i class="fas fa-trash"></i> Delete</button>
           </div>
-          <input type="hidden" class="form-control" value="" autofocus="" name="patient_id" id="patient_id">
+          <input type="hidden" name="patient_id" id="patient_id">
+          <input type="hidden" value="1" name="is_accepted">
          <!--  @if($user->level == 'admin')
           <div class="form-group">
             <label>Doctor:</label>
@@ -322,83 +323,3 @@
     </div>
   </div>
 </div>
-
-@if($user->level == 'doctor')
-<div class="modal fade" id="request_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Request</h4>
-      </div>
-      <div class="modal-body">
-      	@if(count($requested)>0)
-	        <div class="table-responsive">
-	            <table class="table table-striped table-hover">
-	                <tr class="bg-black">
-	                    <th>Name</th>
-	                    <th>Gender</th>
-	                    <th>Age / DOB</th>
-	                    <th>Barangay</th>
-	                    <th>Contact</th>
-	                    <th></th>
-	                    <th class="text-center">Action</th>
-	                </tr>
-	                
-	                @foreach($requested as $row)
-	                <tr>
-	                    <td style="white-space: nowrap;">
-	                        <b>
-	                            <a
-	                               href="javascript:void(0)"
-	                               data-toggle="modal"
-	                               data-id= "{{ $row->id }}"
-	                               class="title-info update_info"
-	                               data-target="#patient_modal" 
-	                               onclick="getDataFromData(this, '<?php echo $row->account_id?>')" 
-	                            >
-	                                {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
-	                            </a>
-	                        </b>
-	                    </td>
-	                    <td>{{ $row->sex }}</td>
-	                    <td>
-	                        @if($row->dob)
-	                        <b><?php echo
-	                            \Carbon\Carbon::parse($row->dob)->format('F d, Y');
-	                            ?></b><br>
-	                        <small class="text-success">
-	                            <?php echo
-	                            \Carbon\Carbon::parse($row->dob)->diff(\Carbon\Carbon::now())->format('%y years and %m months old');
-	                            ?>
-	                        </small>
-	                        @endif
-	                    </td>
-	                    <td>{{ $row->barangay }}</td>
-	                    <td>{{ $row->contact }}</td>
-	                    <td class="text-center">@if($row->is_accepted == 0)
-	                        <span class="badge bg-red"><span>Not Accepted</span></span>
-	                        @else
-	                        <span class="badge bg-red"><span>Accepted</span></span>
-	                        @endif
-	                    </td>
-	                    <td class="text-center">
-	                        <a class="btn btn-info btn-sm btn-flat" onclick="meetingInfo('<?php echo $row->id?>')"><i class="far fa-clock"></i>&nbsp;Schedule</a>
-	                    </td>
-	                </tr>
-	                @endforeach
-	            </table>
-	            
-	        </div>
-	    @else
-	        <div class="alert alert-warning">
-	            <span class="text-warning">
-	                <i class="fa fa-warning"></i> No Request found!
-	            </span>
-	        </div>
-	    @endif
-      </div>
-    </div>
-  </div>
-</div>
-@endif

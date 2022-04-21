@@ -41,6 +41,7 @@ Route::get('/logout', function(){
     }
     return redirect('/');
 });
+Route::get('/fetch-notification', 'Doctor\HomeController@fetchNotif');
 // SuperSuperadmin Module
 Route::get('superadmin','Superadmin\HomeController@index');
 Route::get('/users', 'Superadmin\ManageController@indexUser');
@@ -196,3 +197,9 @@ Route::get('/refresh-token', 'Tele\TeleController@refreshToken');
 Route::get('/thank-you-page', 'Tele\TeleController@thankYouPage');
 Route::get('/calendar-meetings', 'Tele\TeleController@calendarMeetings');
 Route::get('/get-doctors-facility','Tele\TeleController@getDoctorsFacility');
+Route::get('/teleconsultation/details/{id}','Tele\TeleController@teleconsultDetails');
+
+Route::get('test', function () {
+    event(new App\Events\ReqTele($user));
+    return "Event has been sent!";
+});

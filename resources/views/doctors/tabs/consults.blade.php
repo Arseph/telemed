@@ -16,7 +16,7 @@
                   <td>{{$row->pendmeet->telecategory->category_name}}</td>
                   <td>{{$row->title}}</td>
                   <td>{{$row->doctor->lname}}, {{$row->doctor->fname}} {{$row->doctor->mname}}</td>
-                  <td><a data-toggle="tab" href="#tabsTelDet" onclick="telDetail('<?php echo $row->id; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>')">Details</a></td>
+                  <td><a data-toggle="tab" href="#tabsTelDet" onclick="telDetail('<?php echo $row->id; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}')">Details</a></td>
                 </tr>
             @endforeach
         </table>

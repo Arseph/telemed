@@ -63,6 +63,9 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #555; 
     }
+    .disAble {
+        pointer-events:none;
+    }
 </style>
 <div class="container-fluid">
     <div class="box box-success">
@@ -90,6 +93,11 @@
               @endif
               <li class="@if($active_tab == 'completed')active @endif"><a data-toggle="tab" href="#completed">Completed</a></li>
             </ul>
+            <div class="pull-right">
+              <a class="btnBack btn hide" data-toggle="tab">
+                  <i class="fas fa-chevron-circle-left"></i> Back to consultation
+              </a>
+            </div>
 
             <div class="tab-content">
               <div id="upcoming" class="tab-pane fade in @if($active_tab == 'upcoming')active @endif">
@@ -143,7 +151,7 @@
                             <div class="tab-content">
                               <?php $ctr1 = 0;  ?>
                               @foreach($data as $row)
-                              <div id="tabs{{$row->id}}" class="tab-pane fade @if($ctr1 == 0)in active @endif">
+                              <div id="tabs{{$row->id}}" class="tab-pane fade in @if($ctr1 == 0)active @endif">
                                 <h3>{{ $row->title }}</h3>
                                 <label class="title-info update_info">Date:
                                       {{ \Carbon\Carbon::parse($row->date_meeting)->format('l, F d, Y') }}
@@ -158,20 +166,16 @@
                                 @if($row->RequestTo == $active_user->id)
                                 <b class="text-primary">Requested By: {{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b>
                                 <br>
+                                @if($row->encoded->level!='patient')
                                 <b>{{ $row->encoded->facility->facilityname }}</b>
                                 <br>
+                                @endif
                                 <br>
                                 <?php
                                 $id = \Crypt::encrypt($row->meetID);
                                 ?>
                                 <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-primary" target="_blank">
                                     <i class="fas fa-play-circle"></i> Start Consultation
-                                </a>
-                                <a href="#docorder_modal" class="btn btn-warning" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
-                                    <i class="fas fa-user-md"></i> Doctor Order
-                                </a>
-                                <a href="#attachments_modal" class="btn btn-info" data-toggle="modal" onclick="getattachment('@if($row->docorder){{$row->docorder->id}}@endif')">
-                                    <i class="fa-solid fa-paperclip"></i> Attachments
                                 </a>
                                 @elseif($row->Creator == $active_user->id)
                                 <?php
@@ -182,13 +186,13 @@
                                 <b>{{ $row->doctor->facility->facilityname }}</b>
                                 <br>
                                 <br>
-                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-success" target="_blank">
+                                <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success" target="_blank">
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
-                                <button class="btn btn-info"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
-                                    <i class="fas fa-file-medical"></i> Lab Request
-                                </button>
                                 @endif
+                                <a class="btn btn-info" data-toggle="tab" href="#tabsTelDet" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '#tabs{{$row->id}}')">
+                                    <i class="fa-solid fa-circle-info"></i> More Details
+                                </a>
                                 <br>
                                 <br>
                                 <p>Teleconsult link:</p>
@@ -202,6 +206,33 @@
                                 <br>
                                 <p>Password:</p>
                                 <label>{{$row->password}}</label>
+                              </div>
+                              <div id="tabsTelDet" class="tab-pane fade in">
+                                  <div class="pull-right">
+                                    @if($row->RequestTo == $active_user->id)
+                                    <a href="#docorder_modal" class="btn btn-warning btn-sm" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
+                                        <i class="fas fa-user-md"></i> Doctor Order
+                                    </a>
+                                    <a href="#attachments_modal" class="btn btn-info btn-sm" data-toggle="modal" onclick="getattachment('@if($row->docorder){{$row->docorder->id}}@endif')">
+                                        <i class="fas fa-vials"></i> Lab Results/Attachments
+                                    </a>
+                                    @elseif($row->Creator == $active_user->id)
+                                    <button class="btn btn-info btn-sm"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
+                                        <i class="fas fa-file-medical"></i> Lab Request
+                                    </button>
+                                    @endif
+                                  </div>
+                                  <h5>Teleconsultation Details</h5>
+                                  <div>
+                                    <h5 id="chiefCom" class="title-info update_info"></h5>
+                                    <b><small id="chiefDate"></small></b>
+                                    <br><b>
+                                        <small id="chiefTime"></small>
+                                    </b>
+                                    <p id="chiefType"></p>
+                                    <br>
+                                  </div>
+                                  @include('doctors.tabs.details')
                               </div>
                               <?php $ctr1++; ?>
                               @endforeach
