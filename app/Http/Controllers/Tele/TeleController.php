@@ -167,15 +167,13 @@ class TeleController extends Controller
     }
 
     public function schedTeleStore(Request $req) {
-        $date = date('Y-m-d', strtotime($req->date_from));
         $req->request->add([
-            'status' => 'Pending',
-            'datefrom' => $date
+            'status' => 'Pending'
         ]);
         if($req->meeting_id) {
-            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id', 'date_from'));
+            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id'));
         } else {
-            $data = PendingMeeting::create($req->except('meeting_id', 'facility_id', 'date_from'));
+            $data = PendingMeeting::create($req->except('meeting_id', 'facility_id'));
         }
         event(new ReqTele($data));
         Session::put("action_made","Please wait for the confirmation of doctor.");
@@ -326,19 +324,15 @@ class TeleController extends Controller
     	$endtime = Carbon::parse($time)
 		            ->addMinutes($req->duration)
 		            ->format('H:i:s');
-    	// $meetings = Meeting::whereDate('date_meeting','=', $date)
-    	// 					->whereTime('from_time', '<=', $time)
-    	// 					->whereTime('to_time', '>=', $time)
-    	// 					->orWhereTime('from_time', '<=', $endtime)
-    	// 					->whereTime('to_time', '>=', $endtime)
-    	// 					->orWhereTime('from_time', '>=', $time)
-    	// 					->whereTime('to_time', '<=', $time)
-    	// 					->orWhereTime('from_time', '>=', $endtime)
-    	// 					->whereTime('to_time', '<=', $endtime)
-    	// 					->count();
 		$meetings = Meeting::whereDate('date_meeting','=', $date)->where(function($q) use($doctor_id, $user) {
                 $q->where('doctor_id', $doctor_id)
                 ->orWhere('doctor_id', $user->id);
+                })->whereHas('doctor', function ($query) use($user) {
+                    return $query->orwhere('facility_id',$user->facility_id);
+                })->get();
+        $othermeetings = Meeting::whereDate('date_meeting','=', $date)
+                ->whereHas('doctor', function ($query) use($user) {
+                    return $query->orwhere('facility_id',$user->facility_id);
                 })->get();
 		$count = 1;
         if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->addMinutes('180')->format('H:i:s') && $time) {
@@ -350,6 +344,12 @@ class TeleController extends Controller
 				return $meet->count();
 			}
 		}
+        foreach ($othermeetings as $meet) {
+            if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
+                
+                return $meet->count();
+            }
+        }
     }
 
     public function adminMeetingInfo(Request $req) {
@@ -393,13 +393,13 @@ class TeleController extends Controller
         $user = Session::get('auth');
         $meet = PendingMeeting::find($id);
         $action = $req->action;
-        $date = date('Y-m-d', strtotime($meet->datefrom));
-        $time = date('H:i:s', strtotime($meet->time));
+        $date = date('Y-m-d', strtotime($req->date_from));
+        $time = date('H:i:s', strtotime($req->time));
         $endtime = Carbon::parse($time)
-                            ->addMinutes($meet->duration)
+                            ->addMinutes($req->duration)
                             ->format('H:i:s');
         $start = $date.'T'.$time;
-        $duration = $meet->duration;
+        $duration = $req->duration;
         $password = str_random(6);
         $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
         if($action == 'Accept') {
@@ -434,7 +434,7 @@ class TeleController extends Controller
             );
             $create_meeting = Meeting::create($create_data);
         }
-        $meet_id = $action == 'Accept' ? $create_meeting->id : '0';
+        $meet_id = $action == 'Accept' ? $create_meeting->id : null;
         $data = array(
             'status' => $action,
             'meet_id' => $meet_id
@@ -529,24 +529,18 @@ class TeleController extends Controller
             "pat.fname as patFname",
             "pat.mname as patMname",
             "pat.id as PatID",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+            "users.facility_id as facid"
+        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id")
+        ->leftJoin("users as users", "meetings.doctor_id", "=", "users.id")
+        ->leftJoin("users as use", "meetings.user_id", "=", "users.id");
         $data = $data->where(function($q) use($user){
             $q->where("meetings.doctor_id","=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id);
+            ->orWhere("meetings.user_id", "=", $user->id)
+            ->orWhere("meetings.user_id", "=", $user->id)
+            ->orWhere("users.facility_id", "=", $user->facility_id)
+            ->orWhere("use.facility_id", "=", $user->facility_id);
             })->orderBy('meetings.date_meeting', 'asc')
             ->get();
-        $data_req = PendingMeeting::select(
-            "pending_meetings.*",
-            "pending_meetings.id as meetID",
-            "pending_meetings.created_at as reqDate",
-            "pat.lname as patLname",
-            "pat.fname as patFname",
-            "pat.mname as patMname",
-        )->leftJoin("patients as pat", "pending_meetings.patient_id", "=", "pat.id");
-        $data_req = $data_req->where("pending_meetings.doctor_id","=", $user->id)
-                ->where('status', 'Pending')
-                ->orderBy('pending_meetings.id', 'desc')
-                ->get();
         $result = [];
         $join = '';
         foreach ($data as $value) {
@@ -561,20 +555,6 @@ class TeleController extends Controller
                 'start' => $value->date_meeting.'T'.$value->from_time,
                 'end' => $value->date_meeting.'T'.$value->to_time,
                 'allow' => $join
-            );
-            array_push($result, $values);
-        }
-        foreach ($data_req as $value) {
-            $time = Carbon::parse($value->time)->format('H:i:s');
-            $endtime = Carbon::parse($time)
-                    ->addMinutes($value->duration)
-                    ->format('H:i:s');
-            $values = array(
-                'id' => $value->meetID,
-                'title' => $value->title,
-                'start' => $value->datefrom.'T'.$time,
-                'end' => $value->date_meeting.'T'.$endtime,
-                'allow' => 'request'
             );
             array_push($result, $values);
         }
@@ -597,5 +577,42 @@ class TeleController extends Controller
         return view('teleconsult.teledetails',[
             'meeting' => $meeting
         ]);
+    }
+
+    public function mycalendarMeetings(Request $req) {
+        $user = Session::get('auth');
+        $data = Meeting::select(
+            "meetings.*",
+            "meetings.id as meetID",
+            "meetings.user_id as Creator",
+            "meetings.doctor_id as RequestTo",
+            "pat.lname as patLname",
+            "pat.fname as patFname",
+            "pat.mname as patMname",
+            "pat.id as PatID",
+        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+        $data = $data->where(function($q) use($user){
+            $q->where("meetings.doctor_id","=", $user->id)
+            ->orWhere("meetings.user_id", "=", $user->id);
+            })->orderBy('meetings.date_meeting', 'asc')
+            ->get();
+        $result = [];
+        $join = '';
+        foreach ($data as $value) {
+            if($value->RequestTo == $user->id) {
+              $join = 'no';
+            } else if($value->Creator == $user->id) {
+              $join = 'yes';
+            }
+            $values = array(
+                'id' => $value->id,
+                'title' => $value->title,
+                'start' => $value->date_meeting.'T'.$value->from_time,
+                'end' => $value->date_meeting.'T'.$value->to_time,
+                'allow' => $join
+            );
+            array_push($result, $values);
+        }
+        return json_encode($result);
     }
 }

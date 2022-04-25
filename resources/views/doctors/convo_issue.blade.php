@@ -15,6 +15,7 @@
                 <!-- /.direct-chat-text -->
             </div>
         @endforeach
+        @else <p>dadasdasdsa</p>
     @endif
 </div>
 

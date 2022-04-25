@@ -84,7 +84,6 @@
                             '</code>"<p style="color: red;">'+data['reqmeet'][i]['datereq']+'</p>'+
                             '</div>';
                       $("#contentCon").append(html);
-                      console.log(data['reqmeet'][i]['id']);
                     });
                 },
                 error : function(data){

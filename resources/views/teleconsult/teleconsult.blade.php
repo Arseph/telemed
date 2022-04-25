@@ -387,7 +387,7 @@
                                         <td>
                                         <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
                                           <br>
-                                          <a href="#IssueAndConcern" data-issue_from ='{{$row->encoded->facility->id}}' data-meet_id ='{{$row->meetID}}' data-toggle="modal" class="btn-circle btn-danger btn-issue-referred">
+                                          <a href="#IssueAndConcern" data-issue_from ='{{$row->encoded->facility->id}}' data-meet_id ='{{$row->meetID}}' data-toggle="modal" class="btn btn-danger btn-issue-referred">
                                               <i class="fas fa-exclamation-triangle"></i> Issues & concern
                                           </a>
                                         </td>
@@ -411,7 +411,7 @@
             </div>
           </div>
           <div id="teleCalendar">
-            <div id='calendar'></div>
+            <div id='my-calendar'></div>
           </div>
         </div>
 </div>

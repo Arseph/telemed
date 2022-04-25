@@ -48,34 +48,10 @@
         <input type="hidden" name="patient_id" value="{{$active_user->patient->id}}">
         @endif
         <hr>
-	     	<div class="form-group">
-		     	<label>Chief Complaint:</label>
-		        <input type="text" class="form-control" value="" name="title" required>
-		     </div>
-		     <div class="row">
-			     <div class="col-sm-6">
-			     	<label>Date of teleconsultation:</label>
-			     	<input type="text" value="" name="date_from" class="form-control daterange" placeholder="Select Date" required/>
-			     </div>
-			     <div class="col-sm-3">
-			     	<label>Time:</label>
-  			     	<div class="input-group clockpicker" data-placement="top" data-align="top" data-autoclose="true">
-  					    <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
-  					    <span class="input-group-addon">
-  					        <span class="glyphicon glyphicon-time"></span>
-  					    </span>
-  					</div>
-			     </div>
-			     <div class="col-sm-3">
-			     	<label>Duration:</label>
-			     	<select class="form-control duration" name="duration" onchange="validateTIme()" required>
-		                <option value="15">15 Minutes</option>
-                    <option value="30">30 Minutes</option>
-		            </select>
-			     </div>
-			 </div>
-       <br>
-       <br>
+  	     	<div class="form-group">
+  		     	<label>Chief Complaint:</label>
+  		        <input type="text" class="form-control" value="" name="title" required>
+  		    </div>
 		      <div class="modal-footer">
 		        <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
 		        <button id="saveBtn" type="submit" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
@@ -95,10 +71,9 @@
         <h4 class="modal-title" id="myModalMeetingLabel">Request Teleconsultation</h4>
       </div>
       <div class="modal-body" id="meetingInfo">
-      	<form id="schedule_form" method="POST">
+      	<form id="accept_decline_form" method="POST">
       		{{ csrf_field() }}
-    		<input type="hidden" name="req_meeting_id">
-    		<input type="hidden" name="req_user_id" value>
+    		<input type="hidden" id="req_meeting_id">
       	<div class="row">
       		<div class="col-lg-8">
       			<label>Encoded by: <label class="text-muted" id="txtEncoded"></label></label><br>
@@ -112,31 +87,44 @@
 	     <div id="scheduleMeeting">
         <div class="form-group">
         	 <label>Patient:</label>
-	         <input type="text" class="form-control" value="" name="req_patient" readonly>
+	         <input type="text" class="form-control" value="" id="req_patient" readonly>
         </div>
 	     	<div class="form-group">
-		     	<label>Title:</label>
-		        <input type="text" class="form-control" value="" name="req_title" readonly>
+		     	<label>Chief Complaint:</label>
+		        <input type="text" class="form-control" value="" id="req_title" readonly>
 		     </div>
-		     <div class="row">
-			     <div class="col-sm-6">
-			     	<label>Date of teleconsultation:</label>
-			     	<input type="text" name="req_date" class="form-control"  readonly/>
-			     </div>
-			     <div class="col-sm-3">
-			     	<label>Time:</label>
-				    <input type="text" class="form-control" name="req_time" readonly>
-			     </div>
-			     <div class="col-sm-3">
-			     	<label>Duration:</label>
-				     <input type="text" class="form-control" name="req_duration" readonly>
-			     </div>
-			 </div>
+		     
+         <div class="row">
+           <div class="col-sm-6">
+            <label>Date of teleconsultation:</label>
+            <input type="text" value="" name="date_from" class="form-control daterange" placeholder="Select Date" required/>
+           </div>
+           <div class="col-sm-3">
+            <label>Duration:</label>
+            <select class="form-control duration" name="duration" onchange="validateTIme()" required>
+                    <option value="15">15 Minutes</option>
+                    <option value="30">30 Minutes</option>
+                </select>
+           </div>
+           <div class="col-sm-3">
+            <label>Time:</label>
+              <div class="input-group clockpicker" data-placement="top" data-align="top" data-autoclose="true">
+                <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+           </div>
+           <div class="col-sm-12">
+             <a data-target="#calendar_meetings_modal" data-toggle="modal" id="showCalendar" 
+       href="#calendar_meetings_modal">Show Facility Calendar</a>
+           </div>
+          </div>
 		      <div class="modal-footer">
             <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
             <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank">Refresh your token here</a>
-		        <button type="button" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
-		        <button id="acceptBtn" type="button" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
+		        <button type="submit" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
+		        <button type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
 	      </div>
   	</form>
@@ -252,6 +240,20 @@
 		        <button type="button" class="btn btn-default" data-dismiss="modal">Okay</button>
 		     </div>
 	      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="calendar_meetings_modal" role="dialog" aria-labelledby="calendar_meetings_modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalMeetingLabel">Facility Calendar</h4>
+      </div>
+      <div class="modal-body" id="calendarInfo">
+        <div id='fac-calendar'></div>
       </div>
     </div>
   </div>

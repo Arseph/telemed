@@ -226,7 +226,6 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ asset('/users') }}"><i class="fas fa-users"></i>&nbsp; Users</a></li>
-                        <li><a href="#"><i class="fas fa-user-check"></i>&nbsp; User Approval</a></li>
                         <li><a href="#"><i class="fas fa-list-ul"></i>&nbsp; Role/Permission</a></li>
                         <li><a href="{{ asset('facilities') }}"><i class="fas fa-hospital-alt"></i>&nbsp;&nbsp;Facilities</a></li>
                         <li><a href="{{ asset('doctor-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Doctor Category</a></li>
@@ -246,13 +245,11 @@
                 <!-- for admin -->
                 @if($user->level=='admin')
                 <li><a href="{{ asset('admin') }}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a href="{{ asset('/teleconsultation') }}"><i class="fas fa-video"></i>&nbsp; Teleconsultation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ asset('/admin-doctors') }}"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
-                        <li><a href="{{ asset('/admin-patient') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

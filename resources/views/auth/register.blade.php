@@ -41,6 +41,10 @@
     .hide {
         display: none;
     }
+    .required-field:after {
+        color: red;
+        content:"*";
+    }
 </style>
 <div class="content">
   <div class="container">
@@ -70,7 +74,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <label>Facility:</label>
-                        <select class="form-control select2 selectFacility" name="facility_id" required>
+                        <select class="required-field form-control select2 selectFacility" name="facility_id" required>
                             <option value="">Select Facility ...</option>
                               @foreach($facilities as $fac)
                                 <option value="{{ $fac->id }}">{{ $fac->facilityname }}</option>
@@ -79,7 +83,7 @@
                     </div>
                     <div class="col-sm-12">
                         <label>Doctor Category:</label>
-                        <select class="form-control select2 selectCat" name="doc_cat_id" required>
+                        <select class="required-field form-control select2 selectCat" name="doc_cat_id" required>
                             <option value="">Select Doctor Category ...</option>
                               @foreach($doccat as $doc)
                                 <option value="{{ $doc->id }}">{{ $doc->category_name }}</option>
@@ -88,7 +92,7 @@
                     </div>
                     <div class="select-doctor col-sm-12">
                         <label>Doctor:</label>
-                        <select class="form-control select2 selectDoctor" name="doctor_id" required>
+                        <select class="required-field form-control select2 selectDoctor" name="doctor_id" required>
                         </select>
                     </div>
                     <div class="col-sm-12"><hr></div>
@@ -105,7 +109,7 @@
                         <input type="text" class="form-control phicID" value="" name="phic_id" disabled>
                     </div>
                     <div class="col-sm-6">
-                        <label>First Name:</label>
+                        <label class="required-field">First Name:</label>
                         <input type="text" class="form-control" value="" name="fname" required>
                     </div>
                     <div class="col-sm-6">
@@ -113,26 +117,26 @@
                         <input type="text" class="form-control" value="" name="mname">
                     </div>
                     <div class="col-sm-6">
-                        <label>Last Name:</label>
+                        <label class="required-field">Last Name:</label>
                         <input type="text" class="form-control" value="" name="lname" required>
                     </div>
                     <div class="col-sm-6">
-                        <label>Contact Number:</label>
+                        <label class="required-field">Contact Number:</label>
                         <input type="text" class="form-control" value="" name="contact" required>
                     </div>
                     <div class="col-sm-6">
-                        <label>Birth Date:</label>
+                        <label class="required-field">Birth Date:</label>
                         <input type="date" class="form-control" value="" min="1910-05-11" max="{{ date('Y-m-d') }}" name="dob" required>
                     </div>
                     <div class="col-sm-6">
-                        <label>Sex:</label>
+                        <label class="required-field">Sex:</label>
                         <select class="form-control sex select21" name="sex" required>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
                     </div>
                     <div class="col-sm-6">
-                        <label>Civil Status:</label>
+                        <label class="required-field">Civil Status:</label>
                         <select class="form-control civil_status select21" name="civil_status" required>
                             <option value="Single">Single</option>
                             <option value="Married">Married</option>
@@ -145,8 +149,8 @@
                         <input type="text" class="form-control" value="" name="occupation">
                     </div>
                     <div class="col-sm-6">
-                        <label>Select ID:</label>
-                        <select class="form-control passport_no select21" name="passport_no" required>
+                        <label class="required-field">Select ID:</label>
+                        <select class="form-control passport_no select21" name="id_type" required>
                             <option value="umid">UMID</option>
                             <option value="dl">DRIVER'S LICENSE</option>
                             <option value="passport">PASSPORT ID</option>
@@ -155,11 +159,11 @@
                         </select>
                     </div>
                     <div class="col-sm-6">
-                        <label id="selectID">CRN:</label>
-                        <input id="idVal" type="text" class="form-control" required>
+                        <label id="selectID" class="required-field">CRN:</label>
+                        <input id="idVal" name="id_type_no" type="text" class="form-control" required>
                     </div>
                     <div class="col-sm-6">
-                        <label>Nationality:</label>
+                        <label class="required-field">Nationality:</label>
                         <select class="form-control select2" name="nationality_id" required>
                             <option value="{{ $nationality_def->num_code }}" selected>{{ $nationality_def->nationality }}</option>
                               @foreach($nationality as $n)
@@ -176,15 +180,15 @@
                         <input type="text" class="form-control" value="" name="street">
                     </div>
                     <div class="col-sm-6">
-                        <label>Region:</label>
+                        <label class="required-field">Region:</label>
                         <select class="form-control select21" name="region" id="region" required>
                             <option value="{{ $region->id }}" selected>{{ $region->reg_desc }}</option>
                             <option value="">Select Region...</option>
                         </select>
                     </div>
                     <div class="col-sm-6">
-                        <label>Province:</label>
-                        <select class="form-control select21" name="province" id="province">
+                        <label class="required-field">Province:</label>
+                        <select class="form-control select21" name="province" id="province" required>
                             <option value="" selected>Select Province...</option>
                             @foreach($province as $prov)
                             <option value="{{ $prov->prov_psgc }}">{{ $prov->prov_name }}</option>
@@ -192,7 +196,7 @@
                         </select>
                     </div>
                     <div class="col-sm-6">
-                        <label>Municipality:</label>
+                        <label class="required-field">Municipality:</label>
                         <select class="form-control muncity filter_muncity select2" name="muncity" id="municipality" required>
                             <option value="">Select Municipal/City...</option>
                         </select>
@@ -213,21 +217,21 @@
                     </div>
                     <div class="col-sm-12">
                         <hr>
-                        <label>Email Address:</label>
+                        <label class="required-field">Email Address:</label>
                         <input type="email" class="form-control email" id="email" name="email" value="" required>
                         <div class="email-has-error text-bold text-danger hide">
                             <small>Email already taken!</small>
                         </div>
                     </div>
                     <div class="col-sm-12">
-                        <label>Username:</label>
+                        <label class="required-field">Username:</label>
                         <input type="text" class="form-control username" id="username" value="" name="username" pattern=".{8,}" required>
                         <div class="username-has-error text-bold text-danger hide">
                             <small>Username already taken!</small>
                         </div>
                     </div>
                     <div class="col-sm-12">
-                        <label>Password:</label>
+                        <label class="required-field">Password:</label>
                         <input type="password" class="form-control pwd" name="password" pattern=".{8,}" required>
                     </div>
                 </div>

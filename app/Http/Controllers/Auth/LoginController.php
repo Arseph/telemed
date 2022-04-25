@@ -167,7 +167,8 @@ class LoginController extends Controller
             'lname' => $req->lname,
             'occupation' => $req->occupation,
             'nationality_id' => $req->nationality_id,
-            'passport_no' => $req->passport_no,
+            'id_type' => $req->id_type,
+            'id_type_no' => $req->id_type_no,
             'contact' => $req->contact,
             'dob' => $req->dob,
             'sex' => $req->sex,
@@ -207,7 +208,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        Session::put("action_made","Please wait for the confirmation of doctor.");
+        Session::put("action_made","Please wait for the confirmation of facility.");
             
     }
 

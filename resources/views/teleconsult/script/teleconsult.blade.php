@@ -196,6 +196,7 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
+                console.log(val)
                 var today = moment(new Date());
                 let diff = today.diff(moment(val['date_meeting']), 'days');
                 if(val) {
@@ -355,15 +356,12 @@
                 var encoded = data.encoded.fname + ' ' + data.encoded.mname + ' ' + data.encoded.lname;
                 var fac = data.encoded.facility.facilityname;
                 var requestdate = moment(data.created_at).format('MMMM Do YYYY, h:mm:ss a');
-                $('[name=req_meeting_id]').val(data.id);
+                $('#req_meeting_id').val(data.id);
                 $('#txtEncoded').html(encoded);
                 $('#req_fac').html('Facility: ' + fac);
                 $('#txtreqDate').html(requestdate);
-                $('[name=req_patient]').val(patient);
-                $('[name=req_title]').val(data.title);
-                $('[name=req_date]').val(moment(data.datefrom).format('MMMM D, YYYY'));
-                $('[name=req_time]').val(data.time);
-                $('[name=req_duration]').val(data.duration + ' Minutes');
+                $('#req_patient').val(patient);
+                $('#req_title').val(data.title);
                 if(meet_id > 0) {
                     getMeeting(meet_id, 'no');
                 } else {
@@ -372,53 +370,39 @@
             }
         });
     }
-
+    var action;
     $( ".btnSave" ).click(function() {
-        var url = "{{ url('/accept-decline-meeting') }}";
-        var action = $(this).attr("value");
-        var id = $('[name=req_meeting_id]').val();
-        var dateNow = new Date();
-        var dateReq = new Date($('[name=req_date]').val());
-        if(dateNow > dateReq) {
-            Lobibox.notify('error', {
-                title: "Schedule",
-                msg: "Date of Teleconsultation is not valid anymore.",
-                size: 'mini',
-                rounded: true
-            });
-        } else {
-            $(this).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
-            $(".loading").show();
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                async: false,
-                url: url+"/"+id,
-                data: {
-                    action: action 
-                },
-                type: 'POST',
-                success : function(data){
-                    setTimeout(function(){
-                        window.location.reload(false);
-                    },500);
-                },
-                error: function (data) {
-                    $(".loading").hide();
-                    var ht = action == 'Accept' ? '<i class="fas fa-check"></i> Accept' : '<i class="fas fa-times"></i> Decline';
-                    $(this).html(ht);
-                    Lobibox.notify('error', {
-                        title: "Schedule",
-                        msg: "Something went wrong, Please try again.",
-                        size: 'normal',
-                        rounded: true
-                    });
-                },
-            });
-        }
+        action = $(this).attr("value");
     });
-     $( ".selectFacility" ).change(function() {
+    $('#accept_decline_form').on('submit',function(e){
+        var url = "{{ url('/accept-decline-meeting') }}";
+        var id = $('#req_meeting_id').val();
+        e.preventDefault();
+        $(".loading").show();
+        $('#accept_decline_form').ajaxSubmit({
+            url:  url+"/"+id,
+            type: "POST",
+            data: {
+                action: action
+            },
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error: function (data) {
+                $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            },
+        });
+    });
+    $( ".selectFacility" ).change(function() {
         var id = $('.selectFacility').val();
         if(id > 0) {
             $('#catField').removeClass('hide');

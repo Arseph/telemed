@@ -196,6 +196,7 @@ Route::post('/lab-request-doctor-order','Tele\TeleController@labreqStore');
 Route::get('/refresh-token', 'Tele\TeleController@refreshToken');
 Route::get('/thank-you-page', 'Tele\TeleController@thankYouPage');
 Route::get('/calendar-meetings', 'Tele\TeleController@calendarMeetings');
+Route::get('/my-calendar-meetings', 'Tele\TeleController@mycalendarMeetings');
 Route::get('/get-doctors-facility','Tele\TeleController@getDoctorsFacility');
 Route::get('/teleconsultation/details/{id}','Tele\TeleController@teleconsultDetails');
 
