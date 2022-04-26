@@ -131,6 +131,7 @@
                     <div class="col-sm-6">
                         <label class="required-field">Sex:</label>
                         <select class="form-control sex select21" name="sex" required>
+                            <option selected>--SELECT GENDER--</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
@@ -138,10 +139,24 @@
                     <div class="col-sm-6">
                         <label class="required-field">Civil Status:</label>
                         <select class="form-control civil_status select21" name="civil_status" required>
+                            <option selected>--SELECT CIVIL STATUS--</option>
                             <option value="Single">Single</option>
                             <option value="Married">Married</option>
                             <option value="Divorced">Divorced</option>
                             <option value="Separated">Separated</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="required-field">Religion:</label>
+                        <select class="form-control civil_status select2" name="religion" required>
+                            <option selected>--SELECT RELIGION--</option>
+                            <option value="AGLIP">AGLIPAY</option><option value="ALLY">ALLIANCE OF BIBLE CHRISTIAN COMMUNITIES</option><option value="ANGLI">ANGLICAN</option><option value="BAPTI">BAPTIST</option><option value="BRNAG">BORN AGAIN CHRISTIAN</option><option value="BUDDH">BUDDHISM</option><option value="CATHO">CATHOLIC</option><option value="XTIAN">CHRISTIAN</option><option value="CHOG">CHURCH OF GOD</option><option value="EVANG">EVANGELICAL</option><option value="IGNIK">IGLESIA NI CRISTO</option><option value="MUSLI">ISLAM</option><option value="JEWIT">JEHOVAHS WITNESS</option><option value="MORMO">LDS-MORMONS</option><option value="LRCM">LIFE RENEWAL CHRISTIAN MINISTRY</option><option value="LUTHR">LUTHERAN</option><option value="METOD">METHODIST</option><option value="PENTE">PENTECOSTAL</option><option value="PROTE">PROTESTANT</option><option value="SVDAY">SEVENTH DAY ADVENTIST</option><option value="UCCP">UCCP</option><option value="UNKNO">UNKNOWN</option><option value="WESLY">WESLEYAN</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Educational Attainment:</label>
+                        <select class="form-control civil_status select2" name="edu_attain">
+                            <option value=""> -- SELECT EDUCATIONAL ATTAINMENT --</option><option value="03">COLLEGE</option><option value="01">ELEMENTARY EDUCATION</option><option value="02">HIGH SCHOOL EDUCATION</option><option value="05">NO FORMAL EDUCATION</option><option value="06">NOT APPLICABLE</option><option value="04">POSTGRADUATE PROGRAM</option><option value="07">VOCATIONAL</option>
                         </select>
                     </div>
                     <div class="col-sm-6">
@@ -151,6 +166,7 @@
                     <div class="col-sm-6">
                         <label class="required-field">Select ID:</label>
                         <select class="form-control passport_no select21" name="id_type" required>
+                            <option selected>--SELECT ID--</option>
                             <option value="umid">UMID</option>
                             <option value="dl">DRIVER'S LICENSE</option>
                             <option value="passport">PASSPORT ID</option>

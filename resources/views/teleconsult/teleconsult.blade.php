@@ -190,7 +190,7 @@
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
                                 @endif
-                                <a class="btn btn-info" data-toggle="tab" href="#tabsTelDet" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '#tabs{{$row->id}}')">
+                                <a class="btn btn-info" data-toggle="tab" href="#tabsTelDet{{$row->meetID}}" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '#tabs{{$row->id}}')">
                                     <i class="fa-solid fa-circle-info"></i> More Details
                                 </a>
                                 <br>
@@ -207,7 +207,7 @@
                                 <p>Password:</p>
                                 <label>{{$row->password}}</label>
                               </div>
-                              <div id="tabsTelDet" class="tab-pane fade in">
+                              <div id="tabsTelDet{{$row->meetID}}" class="tab-pane fade in">
                                   <div class="pull-right">
                                     @if($row->RequestTo == $active_user->id)
                                     <a href="#docorder_modal" class="btn btn-warning btn-sm" data-toggle="modal" onclick="getDataDocOrder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{ $row->meetID }}', '{{$row->PatID}}')">
@@ -224,15 +224,49 @@
                                   </div>
                                   <h5>Teleconsultation Details</h5>
                                   <div>
-                                    <h5 id="chiefCom" class="title-info update_info"></h5>
-                                    <b><small id="chiefDate"></small></b>
+                                    <h5 id="chiefCom{{$row->meetID}}" class="title-info update_info"></h5>
+                                    <b><small id="chiefDate{{$row->meetID}}"></small></b>
                                     <br><b>
-                                        <small id="chiefTime"></small>
+                                        <small id="chiefTime{{$row->meetID}}"></small>
                                     </b>
-                                    <p id="chiefType"></p>
+                                    <p id="chiefType{{$row->meetID}}"></p>
                                     <br>
                                   </div>
-                                  @include('doctors.tabs.details')
+                                  <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#demo{{$row->meetID}}" onclick="telDetail('','demographic', 'patientTab{{$row->meetID}}')">Demographic Profile</a></li>
+                                    <li><a data-toggle="tab" href="#clinic{{$row->meetID}}" onclick="telDetail('','clinical', 'clinicTab{{$row->meetID}}')">Clinical History and Physical Examination</a></li>
+                                    <li><a data-toggle="tab" href="#covid{{$row->meetID}}" onclick="telDetail('','covid', 'covidTab{{$row->meetID}}')">Covid-19 Screening</a></li>
+                                    <li><a data-toggle="tab" href="#diag{{$row->meetID}}" onclick="telDetail('','diagnosis', 'diagTab{{$row->meetID}}')">Diagnosis/Assessment</a></li>
+                                    <li><a data-toggle="tab" href="#plan{{$row->meetID}}" onclick="telDetail('','plan', 'planTab{{$row->meetID}}')">Plan of Management</a></li>
+                                  </ul>
+
+                                  <div class="tab-content">
+                                    <div id="demo{{$row->meetID}}" class="tab-pane fade in active">
+                                      <h3><b id="caseNO{{$row->meetID}}"></b></h3>
+                                      <br>
+                                      <div id="patientTab{{$row->meetID}}" class="disAble"></div>
+                                    </div>
+                                    <div id="clinic{{$row->meetID}}" class="tab-pane fade">
+                                      <br>
+                                      <div id="clinicTab{{$row->meetID}}" class="disAble"></div>
+                                    </div>
+                                    <div id="covid{{$row->meetID}}" class="tab-pane fade">
+                                      <br>
+                                      <div id="covidTab{{$row->meetID}}" class="disAble"></div>
+                                    </div>
+                                    <div id="diag{{$row->meetID}}" class="tab-pane fade">
+                                      <br>
+                                      <div id="diagTab{{$row->meetID}}" class="disAble"></div>
+                                    </div>
+                                    <div id="plan{{$row->meetID}}" class="tab-pane fade">
+                                      <br>
+                                      <div id="planTab{{$row->meetID}}" class="disAble"></div>
+                                    </div>
+                                    <div id="docorder{{$row->meetID}}" class="tab-pane fade">
+                                      <br>
+                                      <div id="docTab{{$row->meetID}}" class="disAble"></div>
+                                    </div>
+                                  </div>
                               </div>
                               <?php $ctr1++; ?>
                               @endforeach

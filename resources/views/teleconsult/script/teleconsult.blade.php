@@ -723,17 +723,17 @@
         $(".btnBack").attr("href", backtb);
         $(".btnBack").removeClass('hide');
         info = details ? JSON.parse(details) : info;
-        $('#chiefCom').html('Chief Complaint: ' + info['title']);
-        $('#chiefDate').html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
-        $('#chiefTime').html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
-        $('#chiefType').html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
+        $('#chiefCom'+id).html('Chief Complaint: ' + info['title']);
+        $('#chiefDate'+id).html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
+        $('#chiefTime'+id).html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
+        $('#chiefType'+id).html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
         docorderid = docid ? docid : docorderid;
         var url = "{{ url('/tele-details') }}";
         view = view ? view : 'demographic';
         tab = tab ? tab : 'patientTab';
         meeting_id = id ? id : meeting_id;
         var urlmet = "{{ url('/meeting-info') }}";
-        $('#'+tab).html('loading...');
+        $('#'+tab+id).html('loading...');
         $.ajax({
             async: true,
             url: urlmet,
@@ -746,12 +746,12 @@
                 started = val['caseNO'];
                 if(val) {
                     var time = moment(val['date_meeting']).format('MMMM D, YYYY')+' '+moment(val['from_time'], "HH:mm:ss").format('h:mm A')+' - '+moment(val['to_time'], "HH:mm:ss").format('h:mm A');
-                    $('#caseNO').html(val['caseNO'] ? 'Case no: '+ val['caseNO'] : '');
+                    $('#caseNO'+id).html(val['caseNO'] ? 'Case no: '+ val['caseNO'] : '');
                     $('input[name="dateandtime"]').val(time);
                 }
             },
             error: function (data) {
-                $('#'+tab).html('Something went wrong...');
+                $('#'+tab+id).html('Something went wrong...');
             },
         });
         $.ajax({
@@ -766,7 +766,7 @@
             success : function(data){
                 if(started) {
                     setTimeout(function(){
-                        $('#'+tab).html(data);
+                        $('#'+tab+id).html(data);
                         make_base(document.getElementById('signature-pad'));
                         $('#companion').removeClass('hide');
                         $( '.btnAddrow' ).addClass('hide');
@@ -781,7 +781,7 @@
                         }
                     },500);
                 } else {
-                    $('#'+tab).html('Consultation has not yet started.');
+                    $('#'+tab+id).html('Consultation has not yet started.');
                 }
             }
         });

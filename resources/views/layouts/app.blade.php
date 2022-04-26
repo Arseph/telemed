@@ -312,7 +312,7 @@
             @if($user->level=='doctor')
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><b>Notification</b> <span class="badge" id="totalReq"></span></a>
+                  <a title="Notification" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i> <span class="badge" id="totalReq"></span></a>
                   <ul id="notificationBar" class="dropdown-menu notify-drop" onclick="event.stopPropagation()">
                     <div class="notify-drop-title">
                         <div class="row text-center">
@@ -333,11 +333,6 @@
                         <div id="contentCon" class="row" style="margin: 10px;">
                         </div>
                         <div id="contentPat" class="row hide" style="margin: 10px;">
-                            <div class="col-md-12">
-                            <hr>
-                                    N
-                            <hr>
-                            </div>
                         </div>
                         <div id="contentReq" class="row hide" style="margin: 10px;">
                             <div class="col-md-12">
@@ -357,6 +352,7 @@
 <div id="app">
     <main class="py-4">
         @include('modal.others.layoutModal')
+        @include('modal.others.notifModal')
         @yield('content')
         <div class="loading"></div>
     </main>
@@ -426,5 +422,6 @@
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 @yield('js')
 @include('others.scripts.app')
+@include('others.scripts.notifscrpt')
 </body>
 </html>

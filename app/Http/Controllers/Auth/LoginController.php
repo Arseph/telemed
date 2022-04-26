@@ -20,6 +20,7 @@ use App\MunicipalCity;
 use App\Province;
 use App\Patient;
 use App\DocCategory;
+use App\Events\ReqPatient;
 class LoginController extends Controller
 {
     public function showLoginForm()
@@ -44,7 +45,7 @@ class LoginController extends Controller
         if($login && $login->status=='deactivate') {
             return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
         } else if($login && $login->is_accepted==0 && $login->level=='patient') {
-            return Redirect::back()->withErrors(['msg' => 'This user is not accepted by doctor, Please wait for the confirmation.']);
+            return Redirect::back()->withErrors(['msg' => 'This user is not accepted by facility, Please wait for the confirmation.']);
         }
         else if($login)
         {
@@ -208,6 +209,7 @@ class LoginController extends Controller
                 ]);
             }
         }
+        event(new ReqPatient($patient, $account));
         Session::put("action_made","Please wait for the confirmation of facility.");
             
     }

@@ -15,11 +15,12 @@ class ReqPatient implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $data;
+    public $account;
 
-    public function __construct($data)
+    public function __construct($data, $account)
     {
-        dd($data);
          $this->data = $data;
+         $this->account = $account;
     }
     public function broadcastOn()
     {
