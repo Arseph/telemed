@@ -1,4 +1,26 @@
 <script>
+    @if(Session::get('action_made'))
+        Lobibox.notify('success', {
+            title: "",
+            msg: "<?php echo Session::get('action_made'); ?>",
+            size: 'mini',
+            rounded: true
+        });
+        <?php
+            Session::put("action_made",false);
+        ?>
+    @endif
+    @if(Session::get('delete_action'))
+        Lobibox.notify('error', {
+            title: "",
+            msg: "<?php echo Session::get('delete_action'); ?>",
+            size: 'mini',
+            rounded: true
+        });
+        <?php
+            Session::put("delete_action",false);
+        ?>
+    @endif
 	var patient_selected;
 	var pusher = new Pusher('456a1ac12f0bec491f4c', {
       cluster: '{{env("PUSHER_APP_CLUSTER")}}'
@@ -28,7 +50,6 @@
     });
     var reqpat = pusher.subscribe('request-patient');
     reqpat.bind('request-patient-event', function(data) {
-      console.log(data['account']['id']);
       var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
       var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
             '<hr>'+
@@ -56,7 +77,6 @@
                 type: 'GET',
                 async: false,
                 success: function(data){
-                    console.log(data)
                     $('#totalReq').html(data['totalreq']);
                     $('#totReqTel').html(data['totalmeet']);
                     $('#totReqPat').html(data['totalpat']);
@@ -113,7 +133,27 @@
         }
     });
     function goNotifTel(id) {
-        console.log(id)
+        var url = "{{ url('/get-pending-meeting') }}";
+        $.ajax({
+            async: false,
+            url: url+"/"+id,
+            type: 'GET',
+            success : function(data){
+                var mname = data.mname ? data.mname : '';
+                var patient = data.patient.fname + ' ' + mname + ' ' + data.patient.lname;
+                var encoded = data.encoded.fname + ' ' + data.encoded.mname + ' ' + data.encoded.lname;
+                var fac = data.encoded.facility.facilityname;
+                var requestdate = moment(data.created_at).format('MMMM Do YYYY, h:mm:ss a');
+                $('#notif_meeting_id').val(data.id);
+                $('#notiftxtEncoded').html(encoded);
+                $('#notif_fac').html('Facility: ' + fac);
+                $('#notifreqDate').html(requestdate);
+                $('#notif_patient').val(patient);
+                $('#notif_title').val(data.title);
+                $('#notif_tele_request_modal').modal('show');
+               
+            }
+        });
     }
     function goNotifPat(id) {
     	patient_selected = id;
@@ -151,4 +191,168 @@
             }
         });
     });
+    var active = "{{Session::get('auth')->level}}";
+    if(active == 'doctor') {
+        var last_update = "<?php 
+            $token = \App\ZoomToken::where('facility_id',$user->facility_id)->first() ?
+                                \App\ZoomToken::where('facility_id',$user->facility_id)->first()->updated_at
+                                : 'none';
+            echo $token;
+            ?>";
+        var zoomtoken = last_update == 'none' ? '' : new Date(last_update);
+        var expirewill = last_update != 'none' ? zoomtoken.setHours(zoomtoken.getHours() + 1) : '';
+        $('.countdowntoken').countdown(expirewill, function(event) {
+            if(event.strftime('%H:%M:%S') == '00:00:00') {
+                if(last_update == 'none') {
+                    $(this).html('Facility don\'t have access token.');
+                } else {
+                  $(this).html('Access token was expired. Please contact administrator.');
+                    $('#notifacceptBtn').prop("disabled", true);
+                }
+            } else {
+                $(this).html('Zoom Token validation left: '+ event.strftime('%M:%S'));
+                $('#notifacceptBtn').prop("disabled", false);
+            }
+        });
+        function refreshToken() {
+            var url = "{{ url('/refresh-token') }}";
+            $.ajax({
+                url: url,
+                type: 'GET',
+                async: false,
+                success : function(data){
+                    var val = JSON.parse(data);
+                    if(val.updated_at != last_update) {
+                        last_update = val.updated_at;
+                        zoomtoken = new Date(last_update);
+                        expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
+                        $('.countdowntoken').countdown(expirewill, function(event) {
+                            if(event.strftime('%H:%M:%S') == '00:00:00') {
+                              $(this).html('Your access token is expired.');
+                              $('.refTok').html('Refresh your token here');
+                              $('#notifacceptBtn').prop("disabled", true);
+                            } else {
+                                $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+                                $('#notifacceptBtn').prop("disabled", false);
+                            }
+                        });
+                        clearInterval(interval);
+                    }
+                }
+            });
+        }
+        $('.refTok').on('click',function () {
+            interval = setInterval(refreshToken, 5000);
+        });
+    }
+    var notifcalendarFac = document.getElementById('notif-fac-calendar');
+    var notiffaccalendar = new FullCalendar.Calendar(notifcalendarFac, {
+      headerToolbar: {
+        left: 'prev,next',
+        center: 'title',
+        right: 'dayGridMonth'
+      },
+      initialDate: moment(new Date).format(),
+      navLinks: true,
+      editable: true,
+      dayMaxEvents: true,
+      events: {
+        url: "{{ url('/calendar-meetings') }}",
+        failure: function() {
+          alert('error getting teleconsultations')
+        }
+      },
+    });
+    $('#notif_calendar_meetings_modal').on('shown.bs.modal', function () {
+        notiffaccalendar.render();
+    });
+    $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+      notifvalidateTIme();
+    });
+    var date = new Date();
+    var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    $('.daterange').daterangepicker({
+        minDate: today,
+        "drops": "up",
+        "singleDatePicker": true
+    });
+    function notifvalidateTIme() {
+        var url = "{{ url('/validate-datetime') }}";
+        var date = $("input[name=date_from]").val();
+        var time = $("input[name=time]").val();
+        var doctor_id = $("select[name=doctor_id] option:checked").val();
+        var duration = $("select[name=duration] option:checked").val();
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: false,
+            data: {
+                date: date,
+                time: time,
+                duration: duration,
+                doctor_id: doctor_id
+            },
+            success : function(data){
+                if(data == 'Not valid') {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: "Please set a schedule before 3 hours of Teleconsultation",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    $("input[name=time]").val('');
+                }
+                else if(data > 0) {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: "Schedule is not available!",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    $("input[name=time]").val('');
+                }
+            }
+        });
+    }
+    var action;
+    $( ".btnSave" ).click(function() {
+        action = $(this).attr("value");
+    });
+    $('#notif_accept_decline_form').on('submit',function(e){
+        var url = "{{ url('/accept-decline-meeting') }}";
+        var id = $('#notif_meeting_id').val();
+        e.preventDefault();
+        $(".loading").show();
+        $('#notif_accept_decline_form').ajaxSubmit({
+            url:  url+"/"+id,
+            type: "POST",
+            data: {
+                action: action
+            },
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error: function (data) {
+                $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            },
+        });
+    });
+    $('.clockpicker').clockpicker({
+        donetext: 'Done',
+        twelvehour: true,
+        placement: 'top',
+        align: 'left',
+        afterDone: function() {
+            notifvalidateTIme();
+        }
+   });
 </script>

@@ -42,15 +42,15 @@
     $('.countdowntoken').countdown(expirewill, function(event) {
         if(event.strftime('%H:%M:%S') == '00:00:00') {
             if(last_update == 'none') {
-                $(this).html('You don\'t have access token.');
-                $('.refTok').html('Get you access token here');      
+                $(this).html('Facility don\'t have access token.');
+                $('.refTok').html('Please Contact Administrator');      
                 $('#acceptBtn').prop("disabled", true);
             } else {
-              $(this).html('Your access token was expired.');
+              $(this).html('Access token was expired. Please contact administrator ');
               $('#acceptBtn').prop("disabled", true);
             }
         } else {
-            $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+            $(this).html('Access token will expire in '+ event.strftime('%H:%M:%S'));
             $('#acceptBtn').prop("disabled", false);
         }
     });
@@ -196,7 +196,6 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
-                console.log(val)
                 var today = moment(new Date());
                 let diff = today.diff(moment(val['date_meeting']), 'days');
                 if(val) {
@@ -644,37 +643,6 @@
         });
 
     }
-
-    function refreshToken() {
-        var url = "{{ url('/refresh-token') }}";
-        $.ajax({
-            url: url,
-            type: 'GET',
-            async: false,
-            success : function(data){
-                var val = JSON.parse(data);
-                if(val.updated_at != last_update) {
-                    last_update = val.updated_at;
-                    zoomtoken = new Date(last_update);
-                    expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
-                    $('.countdowntoken').countdown(expirewill, function(event) {
-                        if(event.strftime('%H:%M:%S') == '00:00:00') {
-                          $(this).html('Your access token is expired.');
-                          $('.refTok').html('Refresh your token here');
-                          $('#acceptBtn').prop("disabled", true);
-                        } else {
-                            $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
-                            $('#acceptBtn').prop("disabled", false);
-                        }
-                    });
-                    clearInterval(interval);
-                }
-            }
-        });
-    }
-    $('.refTok').on('click',function () {
-        interval = setInterval(refreshToken, 5000);
-    });
 
     function getattachment(docorderid) {
         var url = "{{ url('/doctor-order-info') }}";

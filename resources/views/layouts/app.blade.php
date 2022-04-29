@@ -144,6 +144,29 @@
             background: #e08e0b;
             color: white
         }
+        .disAble {
+            pointer-events: none;
+        }
+        /* width */
+        ::-webkit-scrollbar {
+          width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+          background: #eee; 
+        }
+         
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+          background: #ccc; 
+          border-radius: 10px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+          background: #555; 
+        }
     </style>
 </head>
 
@@ -256,6 +279,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
+                        <li><a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank"><label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. Click to Refresh Token" class="fa-solid fa-circle-question"></i></a></li>
                     </ul>
                 </li>
                 @endif

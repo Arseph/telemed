@@ -43,26 +43,6 @@
       border-radius: 50%;
       border-style: hidden;
     }
-    /* width */
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    /* Track */
-    ::-webkit-scrollbar-track {
-      background: #52BCDC; 
-    }
-     
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-      background: #337AB7; 
-      border-radius: 10px;
-    }
-
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-      background: #555; 
-    }
     .disAble {
         pointer-events:none;
     }

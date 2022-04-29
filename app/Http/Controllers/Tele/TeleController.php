@@ -139,8 +139,8 @@ class TeleController extends Controller
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
-        $zoomtoken = ZoomToken::where('user_id',$user->id)->first() ?
-                        ZoomToken::where('user_id',$user->id)->first()->updated_at
+        $zoomtoken = ZoomToken::where('facility_id',$user->facility_id)->first() ?
+                        ZoomToken::where('facility_id',$user->facility_id)->first()->updated_at
                         : 'none';
         $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
         return view('teleconsult.teleconsult',[
@@ -327,12 +327,10 @@ class TeleController extends Controller
 		$meetings = Meeting::whereDate('date_meeting','=', $date)->where(function($q) use($doctor_id, $user) {
                 $q->where('doctor_id', $doctor_id)
                 ->orWhere('doctor_id', $user->id);
-                })->whereHas('doctor', function ($query) use($user) {
-                    return $query->orwhere('facility_id',$user->facility_id);
                 })->get();
         $othermeetings = Meeting::whereDate('date_meeting','=', $date)
                 ->whereHas('doctor', function ($query) use($user) {
-                    return $query->orwhere('facility_id',$user->facility_id);
+                    return $query->where('facility_id',$user->facility_id);
                 })->get();
 		$count = 1;
         if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->addMinutes('180')->format('H:i:s') && $time) {
@@ -340,7 +338,6 @@ class TeleController extends Controller
         }
 		foreach ($meetings as $meet) {
 			if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
-				
 				return $meet->count();
 			}
 		}
@@ -400,10 +397,10 @@ class TeleController extends Controller
                             ->format('H:i:s');
         $start = $date.'T'.$time;
         $duration = $req->duration;
-        $password = str_random(6);
+        $password = 'doh'.str_random(3);
         $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
         if($action == 'Accept') {
-            $db = ZoomToken::where('user_id',$user->id)->first();
+            $db = ZoomToken::where('facility_id',$user->facility_id)->first();
             $arr_token = json_decode($db->provider_value);
             $accessToken = $arr_token->access_token;
             $response = $client->request('POST', '/v2/users/me/meetings', [
@@ -484,7 +481,7 @@ class TeleController extends Controller
     }
 
     public function zoomToken(Request $req) {
-        $user_id = Session::get('auth')->id;
+        $facility_id = Session::get('auth')->facility_id;
         $client_id = env('ZOOM_CLIENT_ID');
         $client_secret = env('ZOOM_CLIENT_SECRET');
         $direct_url = env('ZOOM_REDIRECT_URL');
@@ -502,14 +499,14 @@ class TeleController extends Controller
         ]);
 
         $token = json_decode($response->getBody()->getContents(), true);
-        $data = array('user_id' => $user_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
-        $zoomtoken = ZoomToken::where('user_id',$user_id)->first() ?  ZoomToken::where('user_id',$user_id)->first()->update($data) : ZoomToken::create($data);
+        $data = array('facility_id' => $facility_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
+        $zoomtoken = ZoomToken::where('facility_id',$facility_id)->first() ?  ZoomToken::where('facility_id',$facility_id)->first()->update($data) : ZoomToken::create($data);
         echo "Your access token was Successfully Refresh. You can close this tab now.";
     }
 
     public function refreshToken(Request $req) {
-        $user_id = Session::get('auth')->id;
-        $zoomtoken = ZoomToken::where('user_id',$user_id)->first();
+        $facility_id = Session::get('auth')->facility_id;
+        $zoomtoken = ZoomToken::where('facility_id',$facility_id)->first();
         return json_encode($zoomtoken);
         
     }

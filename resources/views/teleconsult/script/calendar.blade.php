@@ -27,7 +27,7 @@
     });
     var faccalendar = new FullCalendar.Calendar(calendarFac, {
       headerToolbar: {
-        left: 'prev,next today',
+        left: 'prev,next',
         center: 'title',
         right: 'dayGridMonth'
       },

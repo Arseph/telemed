@@ -108,7 +108,7 @@
            </div>
            <div class="col-sm-3">
             <label>Time:</label>
-              <div class="input-group clockpicker" data-placement="top" data-align="top" data-autoclose="true">
+              <div class="input-group clockpicker" data-placement="top" data-align="top">
                 <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-time"></span>
@@ -121,10 +121,10 @@
            </div>
           </div>
 		      <div class="modal-footer">
-            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
-            <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank">Refresh your token here</a>
+            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. If token expired, Please contact your administrator" class="fa-solid fa-circle-question"></i>&nbsp;
+            <a class="refTok"></a>
 		        <button type="submit" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
-		        <button type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
+		        <button id="acceptBtn" type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
 	      </div>
   	</form>
