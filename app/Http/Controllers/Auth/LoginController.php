@@ -214,8 +214,8 @@ class LoginController extends Controller
             
     }
 
-    public function getDoctor($id, $cat_id) {
-        $doctors = User::where('facility_id', $id)->where('level', 'doctor')->where('doc_cat_id',$cat_id)->orderBy('lname', 'asc')->get();
+    public function getDoctor($id) {
+        $doctors = User::where('facility_id', $id)->where('level', 'doctor')->orderBy('lname', 'asc')->get();
         return response()->json(['doctors'=>$doctors]);
     }
 

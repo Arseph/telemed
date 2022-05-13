@@ -124,3 +124,39 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="request_info_meeting_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="reqmyInfoLabel"></h3>
+      </div>
+      <div class="modal-body">
+        <h4 id="reqtimeConsult" class="text-success"></h4>
+        <div class="form-group">
+        <label>Patient:</label>
+          <input type="text" id="reqpatientName"class="form-control" readonly>
+       </div>
+      <div class="form-group">
+        <label class="text-success">Meeting Link:</label><br>
+        <label id="reqmeetlink"></label>
+        <a href="javascript:void(0)"onclick="reqcopyToClipboard('#reqmeetlink')"><i class="far fa-copy"></i></a>
+
+      </div>
+      <div class="form-group">
+        <label class="text-success">Meeting Number:</label><br>
+        <label id="reqmeetnumber"></label>
+
+      </div>
+      <div class="form-group">
+        <label class="text-success">Password:</label><br>
+        <label id="reqmeetPass"></label>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btnMeeting btn btn-primary"><i class="fas fa-play-circle"></i> Start Consultation</button>
+      </div>
+    </div>
+  </div>
+</div>

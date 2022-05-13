@@ -23,6 +23,7 @@ use Redirect;
 use App\Doc_Type;
 use App\MunicipalCity;
 use App\Events\ReqTele;
+use App\Events\AcDecReq;
 class TeleController extends Controller
 {
     public function __construct()
@@ -82,8 +83,10 @@ class TeleController extends Controller
                 $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
             });
         }
-        $data_past = $data_past->where("meetings.doctor_id","=", $user->id)
-        		->whereDate("meetings.date_meeting", "<", Carbon::now()->toDateString())
+        $data_past = $data_past->where(function($q) use($user){
+            $q->where("meetings.doctor_id","=", $user->id)
+            ->orWhere("meetings.user_id", "=", $user->id);
+            })->whereDate("meetings.date_meeting", "<", Carbon::now()->toDateString())
         		->orderBy('meetings.date_meeting', 'desc')
         		->paginate(20);
 
@@ -388,6 +391,7 @@ class TeleController extends Controller
 
     public function acceptDeclineMeeting($id, Request $req) {
         $user = Session::get('auth');
+        $userfac = $user->facility->facilityname;
         $meet = PendingMeeting::find($id);
         $action = $req->action;
         $date = date('Y-m-d', strtotime($req->date_from));
@@ -397,6 +401,7 @@ class TeleController extends Controller
                             ->format('H:i:s');
         $start = $date.'T'.$time;
         $duration = $req->duration;
+        $patient = $meet->patient->lname.', '.$meet->patient->fname.' '.$meet->patient->mname;
         $password = 'doh'.str_random(3);
         $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
         if($action == 'Accept') {
@@ -438,8 +443,10 @@ class TeleController extends Controller
         );
         $meet->update($data); 
         if($action == 'Accept') {
+            event(new AcDecReq($user, $create_meeting, $action, $userfac));
             Session::put("action_made","Successfully Accept Teleconsultation.");
         } else {
+            event(new AcDecReq($user, $meet, $action, $userfac));
             Session::put("delete_action","Successfully Declined Teleconsultation.");
         }
     }

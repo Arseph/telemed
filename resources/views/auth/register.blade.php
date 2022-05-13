@@ -81,15 +81,6 @@
                              @endforeach 
                         </select>
                     </div>
-                    <div class="col-sm-12">
-                        <label>Doctor Category:</label>
-                        <select class="required-field form-control select2 selectCat" name="doc_cat_id" required>
-                            <option value="">Select Doctor Category ...</option>
-                              @foreach($doccat as $doc)
-                                <option value="{{ $doc->id }}">{{ $doc->category_name }}</option>
-                             @endforeach 
-                        </select>
-                    </div>
                     <div class="select-doctor col-sm-12">
                         <label>Doctor:</label>
                         <select class="required-field form-control select2 selectDoctor" name="doctor_id" required>
@@ -397,10 +388,9 @@
         });
         return tmp;
     }
-    $('.selectCat').on('change',function(){
-        var facility_id = $('.selectFacility').val();
-        var cat_id = $(this).val();
-        var doc = getDoctor(facility_id, cat_id);
+    $('.selectFacility').on('change',function(){
+        var facility_id = $(this).val();
+        var doc = getDoctor(facility_id);
         if(doc.doctors.length > 0) {
             $('.select-doctor').removeClass('hide');
             $('.selectDoctor').empty()
@@ -415,9 +405,10 @@
                 }));
             });
         } else {
+            $('.selectDoctor').empty();
             Lobibox.notify('error', {
                 title: "",
-                msg: "No doctors found in this category.",
+                msg: "No doctors found.",
                 size: 'mini',
                 rounded: true
             });
@@ -425,12 +416,12 @@
 
 
     });
-    function getDoctor(id, cat_id)
+    function getDoctor(id)
     {
         var url = "{{ url('get-doctor') }}";
         var tmp;
         $.ajax({
-            url: url+"/"+id+"/"+cat_id,
+            url: url+"/"+id,
             type: 'GET',
             async: false,
             success : function(data){

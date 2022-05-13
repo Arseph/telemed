@@ -43,30 +43,54 @@
         Lobibox.notify('success', {
             title: "Teleconsultation Request",
             msg: "From: " + data['facility'],
-            size: 'mini',
+            size: 'large',
             rounded: true
         });
     }
     });
     var reqpat = pusher.subscribe('request-patient');
     reqpat.bind('request-patient-event', function(data) {
-      var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
-      var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
+      if(activeid == data['data']['doctor_id']) {
+          var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
+          var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
+                '<hr>'+
+                '<b>New Patient: "'+name+'"</b>' +
+                '<p style="color: red;">'+data['data']['created_at']+'</p>'+
+                '</div>';
+          var total = parseInt($('#totalReq').html(), 10) + 1;
+          var totalreq = parseInt($('#totReqPat').html(), 10) + 1;
+          $('#totalReq').html(total);
+            $('#totReqPat').html(totalreq);
+          $("#contentPat").prepend(html);
+          Lobibox.notify('success', {
+                title: "New Patient",
+                msg: name,
+                size: 'large',
+                rounded: true
+            });
+      }
+    });
+    var requestedtele = pusher.subscribe('requested-tele');
+    requestedtele.bind('requested-tele-event', function(data) {
+        if(activeid == data['data']['user_id']) {
+          var docname = data['user']['lname'] + ', '+ data['user']['fname']+' '+data['user']['mname'];
+          var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goRequested('+data['data']['id']+', '+data['data']['user_id']+')">'+
             '<hr>'+
-            '<b>New Patient: "'+name+'"</b>' +
-            '<p style="color: red;">'+data['data']['created_at']+'</p>'+
+            '<b>('+data['fac']+')<br>'+ docname +'</b>' + ' Accepted your teleconsultation: "<code>' + data['data']['title']+
+            '</code>"<p style="color: red;">'+data['data']['created_at']+'</p>'+
             '</div>';
-      var total = parseInt($('#totalReq').html(), 10) + 1;
-      var totalreq = parseInt($('#totReqPat').html(), 10) + 1;
-      $('#totalReq').html(total);
-        $('#totReqPat').html(totalreq);
-      $("#contentPat").prepend(html);
-      Lobibox.notify('success', {
-            title: "New Patient",
-            msg: name,
-            size: 'mini',
-            rounded: true
-        });
+          var total = parseInt($('#totRequest').html(), 10) + 1;
+          var totalacc = parseInt($('#totalReq').html(), 10) + 1;
+            $('#totalReq').html(total);
+            $('#totRequest').html('('+totalacc+')');
+          $("#contentReq").prepend(html);
+          Lobibox.notify('success', {
+                title: "New accepted teleconsultation from " + docname,
+                msg: data['data']['title'],
+                size: 'large',
+                rounded: true
+            });
+        }
     });
     $(document).ready(function() {
         $(".select2").select2();
@@ -98,6 +122,15 @@
                         '<p style="color: red;">'+data['reqpatient'][i]['created_at']+'</p>'+
                         '</div>';
                       $("#contentPat").append(html);
+                    });
+                    $(data['requested']).each(function(i) {
+                        var docname = data['requested'][i]['doctor']['lname'] + ', '+ data['requested'][i]['doctor']['fname']+' '+data['requested'][i]['doctor']['mname'];
+                        var html = '<div class="col-md-12" style="cursor: pointer;" onclick="goRequested('+data['requested'][i]['id']+', '+data['requested'][i]['user_id']+')">'+
+                            '<hr>'+
+                            '<b>('+data['requested'][i]['doctor']['facility']['facilityname']+')<br>'+ docname +'</b>' + ' Accepted your teleconsultation: "<code>' + data['requested'][i]['title']+
+                            '</code>"<p style="color: red;">'+data['requested'][i]['created_at']+'</p>'+
+                            '</div>';
+                        $("#contentReq").append(html);
                     });
                 },
                 error : function(data){
@@ -354,5 +387,46 @@
         afterDone: function() {
             notifvalidateTIme();
         }
-   });
+    });
+
+    function goRequested(id, user_id) {
+        var urlmet = "{{ url('/meeting-info') }}";
+        $.ajax({
+            async: true,
+            url: urlmet,
+            type: 'GET',
+            data: {
+                meet_id: id
+            },
+            success : function(data){
+                var val = JSON.parse(data);
+                var today = moment(new Date());
+                let diff = today.diff(moment(val['date_meeting']), 'days');
+                if(val) {
+                    var time = moment(val['date_meeting']).format('MMMM D, YYYY')+' '+moment(val['from_time'], "HH:mm:ss").format('h:mm A')+' - '+moment(val['to_time'], "HH:mm:ss").format('h:mm A');
+                    var mname = val['mname'] ? val['mname'] : ''
+                    $('#reqtimeConsult').html(time);
+                    $('#reqmyInfoLabel').html(val['title']);
+                    $('#reqmeetlink').html(val['web_link']);
+                    $('#reqmeetnumber').html(val['meeting_id']);
+                    $('#reqpatientName').val(val['lname']+", "+val['fname']+" "+mname);
+                    $('#reqmeetPass').html(val['password']);
+                    $('#reqmeetKey').html(val['host_key']);
+                    $('.btnMeeting').val(val['meetID']);
+                    $('#request_info_meeting_modal').modal('show'); 
+                    if(diff >= 0) {
+                         $('.btnMeeting').prop('disabled', true);
+                         $('.btnMeeting').html('Consultation complete');
+                    } else if(user_id == activeid) {
+                        $('.btnMeeting').prop('disabled', false);
+                        $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Join Consultation');
+                    } else {
+                        $('.btnMeeting').prop('disabled', false);
+                        $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Start Consultation');
+                    }
+                }
+            }
+        });
+    }
+
 </script>

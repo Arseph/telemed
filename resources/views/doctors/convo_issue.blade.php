@@ -15,7 +15,7 @@
                 <!-- /.direct-chat-text -->
             </div>
         @endforeach
-        @else <p>dadasdasdsa</p>
+        @else <p>No data found.</p>
     @endif
 </div>
 

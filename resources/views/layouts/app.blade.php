@@ -65,7 +65,7 @@
             background: url('{{ asset('public/img/backdrop.png') }}'), -webkit-gradient(radial, center center, 0, center center, 460, from(#ccc), to(#ddd));
         }
         .loading {
-            background: rgba(255, 255, 255, 0.6) url('{{ asset('public/img/load.gif')}}') no-repeat center;
+            background: rgba(255, 255, 255, 0.6) url('{{ asset('public/img/spin.gif')}}') no-repeat center;
             position:fixed;
             width:100%;
             height:100%;
@@ -194,7 +194,7 @@
     </div>
     <div class="header" style="background-color:#59ab91;padding:10px;">
         <div class="container">
-            <img src="{{ asset('public/img/referral_banner4.png') }}" class="img-responsive" />
+            <img src="{{ asset('public/img/header.png') }}" class="img-responsive" />
         </div>
     </div>
     <div class="container-fluid" >
@@ -348,7 +348,7 @@
                                   Patient(<b id="totReqPat"></b>)
                                 </div>
                                 <div id="chipReq" class="chip">
-                                  Requested(<b id="totRequest"></b>)
+                                  Accepted<b id="totRequest"></b>
                                 </div>
                             </div>
                         </div>
@@ -359,11 +359,6 @@
                         <div id="contentPat" class="row hide" style="margin: 10px;">
                         </div>
                         <div id="contentReq" class="row hide" style="margin: 10px;">
-                            <div class="col-md-12">
-                            <hr>
-                                    Notification
-                            <hr>
-                            </div>
                         </div>
                     </div>
                   </ul>

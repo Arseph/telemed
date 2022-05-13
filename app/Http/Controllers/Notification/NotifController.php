@@ -9,6 +9,7 @@ use App\PendingMeeting;
 use App\Patient;
 use App\Countries;
 use App\MunicipalCity;
+use App\Meeting;
 class NotifController extends Controller
 {
     public function __construct()
@@ -40,7 +41,8 @@ class NotifController extends Controller
         ->orderBy('id','desc')
         ->get();
         $reqpatient = Patient::with('account')->where('doctor_id', $user->id)
-        ->where('is_accepted', 0)->get();
+        ->where('is_accepted', 0)->orderBy('id','desc')->get();
+        $requested = Meeting::with('doctor.facility')->where('user_id', $user->id)->orderBy('id', 'desc')->get();
         $totalmeet = count($reqmeet);
         $totalpat = count($reqpatient);
         $totalreq = $totalmeet + $totalpat;
@@ -48,8 +50,9 @@ class NotifController extends Controller
             'reqmeet'=>$reqmeet,
             'reqpatient'=>$reqpatient,
             'totalmeet'=>$totalmeet,
+            'requested'=>$requested,
             'totalpat'=>$totalpat,
-            'totalreq'=>$totalreq > 0 ? $totalreq : ''
+            'totalreq'=>$totalreq > 0 ? $totalreq : '',
         ]);
     }
 

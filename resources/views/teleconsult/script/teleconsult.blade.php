@@ -203,7 +203,7 @@
                     var mname = val['mname'] ? val['mname'] : '';
                     $('#myrequest_modal').modal('hide');
                     $('#info_meeting_modal').modal('show'); 
-                    $('#timeConsult').html(time);
+                    $('#timeConsult').html('Date & Time: ' +time);
                     $('#myInfoLabel').html(val['title']);
                     $('#meetlink').html(val['web_link']);
                     $('#meetnumber').html(val['meeting_id']);
@@ -385,9 +385,9 @@
                 action: action
             },
             success: function(data){
-                setTimeout(function(){
-                    window.location.reload(false);
-                },500);
+                // setTimeout(function(){
+                //     window.location.reload(false);
+                // },500);
             },
             error: function (data) {
                 $('.btnSave').html('<i class="fas fa-check"></i> Save');
