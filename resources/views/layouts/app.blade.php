@@ -312,7 +312,7 @@
                 @if($user->level=='patient')
                 <li><a href="{{ asset('patient') }}"><i class="fa fa-home"></i> Dashboard</a></li>
                 <li><a href="{{ asset('/teleconsultation') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
-                <li><a href="#"><i class="fas fa-notes-medical"></i> Medical Records & Attachments</a></li>
+                <li><a href="#"><i class="fas fa-notes-medical"></i> Profile</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
@@ -383,28 +383,6 @@
         <p class="pull-right">All Rights Reserved {{ date("Y") }} | Version 1.0</p>
     </div>
 </footer>
-<div class="modal fade" id="webex_modal" role="dialog" aria-labelledby="webex_modal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="webex_form" method="POST">
-        {{ csrf_field() }}
-        <small>Get your personal access webex token </small><a href="https://developer.webex.com/docs/getting-started" target="_blank">here</a><br>
-        <div class="form-group">
-            <label>Your Personal Access Token:</label>
-            <input type="password" class="form-control" value="" name="webextoken" placeholder="Paste here..." required>
-        </div>
-        <small style="color: red;">Note: Please change your webex token every 12 hours.</small>
-      <div class="modal-footer">
-        <button type="submit" class="btnSaveWebex btn btn-success"><i class="fas fa-check"></i> Save</button>
-    </form>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->

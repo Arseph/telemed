@@ -180,7 +180,6 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 			url:  "{{ url('/demographic-store') }}",
             type: "POST",
             data: {
-                meeting_id: meeting_id,
             	meeting_id: meeting_id,
             	id: demographic_id,
             	case_no: case_no
@@ -539,4 +538,32 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 	$('.btnSaveall').on('click',function(e){
 		alert('yehey')
 	});
+
+    $('#allPres').on('click',function(e){
+        $('#trans_prescription').modal('show');
+    });
+
+    function addPres(str) {
+        var exist;
+        var arr = $('#allPres').html() ? $('#allPres').html().split(', ') : [];
+        $.each(arr, function( index, value ) {
+          if(str == value) {
+            exist = true
+          }
+        });
+        if(exist) {
+            Lobibox.notify('error', {
+                title: "",
+                msg: "Prescription already exist.",
+                size: 'normal',
+                rounded: true
+            });
+        } else {
+            arr.push(str)
+            $('#allPres').html(arr.join(', '));
+            $('#trans_prescription').modal('hide');
+        }
+    }
+
+    
 </script>

@@ -24,6 +24,7 @@ use App\Doc_Type;
 use App\MunicipalCity;
 use App\Events\ReqTele;
 use App\Events\AcDecReq;
+use App\Prescription;
 class TeleController extends Controller
 {
     public function __construct()
@@ -275,6 +276,7 @@ class TeleController extends Controller
             $extremities = $patient->phyexam->extremities;
         }
         $municity =  MunicipalCity::all();
+        $prescription = Prescription::orderBy('presc_code', 'asc')->paginate(10);
         return view('teleconsult.teleCall',[
             'nationality' => $nationality,
             'municity' => $municity,
@@ -315,7 +317,8 @@ class TeleController extends Controller
             'thorax' => $thorax,
             'abdomen' => $abdomen,
             'genitals' => $genitals,
-            'extremities' => $extremities
+            'extremities' => $extremities,
+            'prescription' => $prescription
         ]);
     }
 

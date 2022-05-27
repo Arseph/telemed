@@ -141,7 +141,7 @@
             color: white;
             cursor: pointer;
             padding: 15px;
-            border-radius: 50%;
+            border-radius: 10px;
         }
         .btnSaveClinical {
             position: fixed;
@@ -368,6 +368,59 @@
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav('planDiv', 'btnSavePlan')">&times;</a>
   @include('forms.plan')
 </div>
+<div class="modal fade" id="trans_prescription" role="dialog" aria-labelledby="trans_prescription" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Prescriptions</h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <tr class="bg-black">
+                    <th>Prescription Code</th>
+                    <th>Medicine Type</th>
+                    <th>Drug Code</th>
+                    <th>Frequency</th>
+                    <th>Dose Regimen</th>
+                    <th>Quantity</th>
+                </tr>
+                @foreach($prescription as $row)
+                    <tr>
+                        <td style="white-space: nowrap;">
+                            <b class="text-warning" style="cursor: pointer;" onclick="addPres('{{ $row->presc_code }}')">
+                                <a>
+                                    {{ $row->presc_code }}
+                                </a>
+                            </b>
+                        </td>
+                        <td>
+                            <b>{{ $row->type_med() }}</b>
+                        </td>
+                        <td>
+                            <b>{{ $row->drugmed->drugcode }}</b>
+                        </td>
+                        <td>
+                            <b>{{ $row->freq() }}</b>
+                        </td>
+                        <td>
+                            <b>{{ $row->dose_reg() }}</b>
+                        </td>
+                         <td>
+                            <b>{{ $row->total_qty }}</b>
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+            <div class="text-center">
+                {{ $prescription->links() }}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- For either view: import Web Meeting SDK JS dependencies -->
 <script src="https://source.zoom.us/2.2.0/lib/vendor/react.min.js"></script>
@@ -411,6 +464,11 @@
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 @include('others.scripts.form')
+<script>
+    $("#wc-loading").click(function(){
+        alert('hahays');
+    });
+</script>
 @yield('js')
 </body>
 </html>

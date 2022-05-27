@@ -23,6 +23,7 @@ use File;
 use App\PlanManagement;
 use App\DemoProfile;
 use App\PhysicalExam;
+use App\Meeting;
 class PatientController extends Controller
 {
      public function __construct()
@@ -304,6 +305,7 @@ class PatientController extends Controller
         $screenid = $req->id;
         unset($data['screen_id']);
         unset($data['list_name_occa']);
+        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
         if($screenid) {
             CovidScreening::find($screenid)->update($data);
         } else {
@@ -337,6 +339,7 @@ class PatientController extends Controller
         unset($data['scrumee']);
         unset($data['oro_naso_swabee']);
         unset($data['spe_othersee']);
+        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
         if($assessid) {
             CovidAssessment::find($assessid)->update($data);
         } else {
@@ -353,6 +356,7 @@ class PatientController extends Controller
     }
 
     public function diagnosisStore(Request $req) {
+        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
        if($req->id) {
         DiagnosisAssessment::find($req->id)->update($req->all());
        } else {
@@ -368,6 +372,7 @@ class PatientController extends Controller
     }
 
     public function planStore(Request $req) {
+        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
         $signature = $req->signaturephy ? public_path('signatures').'/'.$req->signaturephy : '';
         $unlink = $signature ? File::delete($signature) : '';
         $sign = $req->signature;
@@ -386,6 +391,7 @@ class PatientController extends Controller
     }
 
     public function demographicStore(Request $req) {
+       Meeting::find($req->meeting_id)->update(["is_started" => 1]);
        if($req->id) {
         DemoProfile::find($req->id)->update($req->all());
        } else {
@@ -393,6 +399,7 @@ class PatientController extends Controller
        }
     }
     public function phyExamStore(Request $req) {
+        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
        if($req->id) {
         PhysicalExam::find($req->id)->update($req->all());
        } else {

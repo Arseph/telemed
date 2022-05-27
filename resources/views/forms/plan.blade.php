@@ -26,7 +26,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label>Prescription:</label>
-                        <textarea class="form-control" name="prescription" rows="2" required>@if($patient->planmanage) {{ $patient->planmanage->prescription }} @endif</textarea>
+                        <textarea id="allPres" class="form-control" name="prescription" rows="2" readonly required style="cursor: pointer;">@if($patient->planmanage) {{ $patient->planmanage->prescription }} @endif</textarea>
                     </div>
                 </div>
                 <div class="col-md-12">

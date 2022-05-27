@@ -88,9 +88,6 @@
             }
        });
     });
-    $('.daterange').on('apply.daterangepicker', function(ev, picker) {
-      validateTIme();
-    });
     @if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
