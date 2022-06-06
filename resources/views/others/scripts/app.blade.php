@@ -138,6 +138,18 @@
             },
         });
     });
+    $('#zoomCreditForm').on('submit',function(e){
+        e.preventDefault();
+        $('#zoomCreditForm').ajaxSubmit({
+            url:  "{{ url('/zoom-credential') }}",
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+        });
+    });
     $('#feedback').click(function(){
             var url = $(this).data('link');
             $.ajax({

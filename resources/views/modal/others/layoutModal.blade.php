@@ -79,3 +79,60 @@
         </div>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" role="dialog" id="zoomCredentialModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Zoom Credentials</h4>
+               </div>
+            <div class="modal-body">
+                <form id="zoomCreditForm" method="POST">
+                {{ csrf_field() }}
+                    <table class="table table-hover table-form table-striped">
+                    <?php $facs = \App\Facility::orderBy('facilityname', 'asc')->get();?>
+                    <tr>
+                        <td class="col-sm-3"><label>Facility</label></td>
+                        <td class="col-sm-1">:</td>
+                        <td class="col-sm-8"><select class="form-control select2" name="facility_id" required>
+                          <option value="">Select Facility ...</option>
+                            @foreach($facs as $f)
+                              <option value="{{ $f->id }}">{{ $f->facilityname }}</option>
+                             @endforeach 
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-3"><label>Zoom Client ID</label></td>
+                        <td class="col-sm-1">:</td>
+                        <td class="col-sm-8"><textarea class="form-control" name="zoom_client_id" rows="3" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="col-sm-3"><label>Zoom Client Secret</label></td>
+                        <td class="col-sm-1">:</td>
+                        <td class="col-sm-8"><textarea class="form-control" name="zoom_client_secret" rows="3" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class=""><label>Zoom API Key</label></td>
+                        <td>:</td>
+                        <td><textarea class="form-control" name="zoom_api_key" rows="3" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class=""><label>Zoom API Secret</label></td>
+                        <td>:</td>
+                        <td><textarea class="form-control" name="zoom_api_secret" rows="3" required></textarea></td>
+                    </tr>
+                </table>
+                <div class="modal-footer">
+                <!-- <a data-toggle="modal" class="btn btn-danger btn-sm btn-flat btn_subremove">
+                <i class="fa fa-trash"></i> Remove
+                </a> -->
+
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+                <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Save</button>
+             </div>
+             </form>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

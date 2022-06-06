@@ -193,8 +193,8 @@ class TeleController extends Controller
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
          ->where('meetings.id',$decid)
         ->first();
-        $api_key = env('ZOOM_API_KEY');
-        $api_secret = env('ZOOM_API_SECRET');
+        $api_key = $user->facility->zoom->zoom_api_key;
+        $api_secret = $user->facility->zoom->zoom_api_secret;
         $meeting_number = $meetings->meeting_id;
         $password = $meetings->password;
         $role = $meetings->doctor_id == $user->id ? 1 : 0;
@@ -491,9 +491,10 @@ class TeleController extends Controller
     }
 
     public function zoomToken(Request $req) {
-        $facility_id = Session::get('auth')->facility_id;
-        $client_id = env('ZOOM_CLIENT_ID');
-        $client_secret = env('ZOOM_CLIENT_SECRET');
+        $user = Session::get('auth');
+        $facility_id = $user->facility_id;
+        $client_id = $user->facility->zoom->zoom_client_id;
+        $client_secret = $user->facility->zoom->zoom_client_secret;
         $direct_url = env('ZOOM_REDIRECT_URL');
         $client = new \GuzzleHttp\Client(['base_uri' => 'https://zoom.us']);
   
@@ -621,5 +622,68 @@ class TeleController extends Controller
             array_push($result, $values);
         }
         return json_encode($result);
+    }
+
+    public function acceptNotifMeeting(Request $req) {
+        $user = Session::get('auth');
+        $userfac = $user->facility->facilityname;
+        $date = date('Y-m-d', strtotime($req->accept_date_from));
+        $time = date('H:i:s', strtotime($req->accept_time));
+        $endtime = Carbon::parse($time)
+                            ->addMinutes($req->accept_duration)
+                            ->format('H:i:s');
+        $start = $date.'T'.$time;
+        $duration = $req->accept_duration;
+        $patientdata = Patient::find($req->patient_id);
+        $patient = $patientdata->lname.', '.$patientdata->fname.' '.$patientdata->mname;
+        $password = 'doh'.str_random(3);
+        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
+        $action = 'Accept';
+        if($action == 'Accept') {
+            $db = ZoomToken::where('facility_id',$user->facility_id)->first();
+            $arr_token = json_decode($db->provider_value);
+            $accessToken = $arr_token->access_token;
+            $response = $client->request('POST', '/v2/users/me/meetings', [
+                "headers" => [
+                    "Authorization" => "Bearer $accessToken"
+                ],
+                'json' => [
+                    "topic" => $req->accept_notif_title,
+                    "type" => 2,
+                    "start_time" => $start,
+                    "duration" => $duration,
+                    "password" => $password
+                ],
+            ]);
+      
+            $data = json_decode($response->getBody(), true);
+            $create_data = array(
+                'user_id' => $patientdata->account->id,
+                'doctor_id' => $user->id,
+                'patient_id' => $req->patient_id,
+                'date_meeting' => $date,
+                'from_time' => $time,
+                'to_time' => $endtime,
+                'meeting_id' => $data['id'],
+                'title' => $data['topic'],
+                'password' => $data['password'],
+                'web_link' => $data['join_url'],
+            );
+            $create_meeting = Meeting::create($create_data);
+        }
+        $meet_id = $create_meeting->id;
+        $pend = array(
+                    'user_id' => $patientdata->account->id,
+                    'patient_id' => $req->patient_id,
+                    'doctor_id' => $user->id,
+                    'tele_cate_id' => $user->doc_cat_id,
+                    'title' => $req->accept_notif_title,
+                    'meet_id' => $meet_id,
+                    'status' => 'Accept',
+                );
+        $meet = PendingMeeting::create($pend);
+        $pat = $patientdata->update(['complaint' => null]);
+        event(new AcDecReq($user, $create_meeting, $action, $userfac));
+        Session::put("action_made","Successfully Create Teleconsultation.");
     }
 }

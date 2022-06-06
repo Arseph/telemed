@@ -7,6 +7,8 @@
         $t='Dr.';
     }else if($user->level=='patient'){
         $dept_desc = ' / Patient';
+    } else if($user->level=='admin'){
+        $dept_desc = ' / Admin';
     }
 ?>
 
@@ -55,6 +57,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-countdown/2.0.2/jquery.countdown.css" rel="stylesheet"/>
     <link href="{{ asset('public/plugin/fullcalendar/main.css') }}" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>
         @yield('title','Home')
     </title>
@@ -120,6 +123,12 @@
             content:"*";
         }
         #notificationBar {
+            width: 450px;
+            height: 400px;
+            overflow: auto;
+            overflow-x: hidden;
+        }
+        #notificationBarAdmin{
             width: 450px;
             height: 400px;
             overflow: auto;
@@ -253,6 +262,9 @@
                         <li><a href="{{ asset('facilities') }}"><i class="fas fa-hospital-alt"></i>&nbsp;&nbsp;Facilities</a></li>
                         <li><a href="{{ asset('doctor-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Doctor Category</a></li>
                         <li><a href="{{ asset('superadmin/feedback') }}"><i class="fas fa-list"></i>&nbsp;&nbsp;Feedback List</a></li>
+                        <li><a href="#zoomCredentialModal" data-toggle="modal">
+                        <i class="fas fa-video"></i> Zoom Credentials
+                    </a></li>
                     </ul>                       
                 </li>
                 <li class="dropdown">
@@ -279,7 +291,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
-                        <li><a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{env('ZOOM_CLIENT_ID')}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank"><label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. Click to Refresh Token" class="fa-solid fa-circle-question"></i></a></li>
+                        <li><a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{$user->facility->zoom->zoom_client_id}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank"><label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. Click to Refresh Token" class="fa-solid fa-circle-question"></i></a></li>
                     </ul>
                 </li>
                 @endif
@@ -359,6 +371,19 @@
                         <div id="contentPat" class="row hide" style="margin: 10px;">
                         </div>
                         <div id="contentReq" class="row hide" style="margin: 10px;">
+                        </div>
+                    </div>
+                  </ul>
+                </li>
+            </ul>
+            @endif
+            @if($user->level=='admin')
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                  <a title="Notification" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i> <span class="badge" id="totalReqAdmin"></span></a>
+                  <ul id="notificationBarAdmin" class="dropdown-menu notify-drop" onclick="event.stopPropagation()">
+                    <div class="drop-content">
+                        <div id="contentPatAdmin" class="row" style="margin: 10px;">
                         </div>
                     </div>
                   </ul>

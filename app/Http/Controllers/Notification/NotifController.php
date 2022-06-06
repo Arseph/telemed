@@ -10,6 +10,7 @@ use App\Patient;
 use App\Countries;
 use App\MunicipalCity;
 use App\Meeting;
+use App\Events\ReqDocPatient;
 class NotifController extends Controller
 {
     public function __construct()
@@ -40,8 +41,13 @@ class NotifController extends Controller
         ->where('pending_meetings.status', 'Pending')
         ->orderBy('id','desc')
         ->get();
-        $reqpatient = Patient::with('account')->where('doctor_id', $user->id)
-        ->where('is_accepted', 0)->orderBy('id','desc')->get();
+        if($user->level == 'admin') {
+            $reqpatient = Patient::with('account')->where('doctor_id', null)
+            ->where('is_accepted', 0)->orderBy('id','desc')->get();
+        } else {
+            $reqpatient = Patient::with('account')->where('doctor_id', $user->id)
+            ->where('complaint','!=', null)->orderBy('id','desc')->get();
+        }
         $requested = Meeting::with('doctor.facility')->where('user_id', $user->id)->orderBy('id', 'desc')->get();
         $totalmeet = count($reqmeet);
         $totalpat = count($reqpatient);
@@ -71,14 +77,16 @@ class NotifController extends Controller
         }
     }
 
-    public function patientAccept($id) {
+    public function patientAccept($id,Request $req) {
     	$patient = Patient::find($id);
     	$patientnotif = $patient->update([
-    		'is_accepted' => 1
+    		'is_accepted' => 1,
+            'doctor_id' => $req->docid
     	]);
-    	$account = $patient->account->update([
-    		'is_accepted' => 1
+    	$account = Patient::find($id)->account->update([
+    		'status' => 'active'
     	]);
+        event(new ReqDocPatient($patient, $account));
 
     	Session::put("action_made","Successfully Accept Patient");
     }

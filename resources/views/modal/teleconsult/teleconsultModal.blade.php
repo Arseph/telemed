@@ -10,6 +10,7 @@
       		{{ csrf_field() }}
     		<input type="hidden" name="meeting_id">
     		<input type="hidden" name="user_id" value="{{ Session::get('auth')->id }}">
+        @if($active_user->level == 'doctor')
       	<div class="form-group" id="facilityField">
             <label>Facility:</label>
             <select class="form-control select2 selectFacility" name="facility_id" required>
@@ -28,13 +29,14 @@
                  @endforeach 
             </select>
         </div>
-	     <div id="scheduleMeeting" class="hide">
+        @endif
+	     <div id="scheduleMeeting" class="@if($active_user->level !='patient')hide @endif">
+        @if($active_user->level !='patient')
     		<div class="form-group">
           <label>Doctor:</label>
           <select class="form-control select2 selectDoctor" name="doctor_id" required>
           </select>
         </div>
-        @if($active_user->level !='patient')
         <div class="form-group">
         	 <label>Patient:</label>
           <select class="form-control select2" name="patient_id" id="patient_id" required>
@@ -44,10 +46,14 @@
                @endforeach 
           </select>
         </div>
+        <hr>
         @else
         <input type="hidden" name="patient_id" value="{{$active_user->patient->id}}">
+        <input type="hidden" name="doctor_id" value="{{$active_user->patient->doctor_id}}">
+        <input type="hidden" name="tele_cate_id" value="{{$active_user->patient->mydoctor->doc_cat_id}}">
+        <input type="hidden" name="facility_id" value="{{$active_user->patient->facility_id}}">
+
         @endif
-        <hr>
   	     	<div class="form-group">
   		     	<label>Chief Complaint:</label>
   		        <input type="text" class="form-control" value="" name="title" required>

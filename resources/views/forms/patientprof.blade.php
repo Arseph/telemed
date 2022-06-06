@@ -4,6 +4,11 @@
     <div class="col-sm-12">
         <button title="save" type="submit" class="pull-right btnSave btn btn-success hide"><i class="far fa-save"></i></button>
     </div>
+    <div class="col-sm-12">
+        <label>Complaint:</label>
+        <textarea class="form-control" rows="2" readonly>@if($patient->complaint){{$patient->complaint}} @endif</textarea>
+        <hr>
+    </div>
      <div class="col-sm-6">
         <label class="reqField">PhilHealth Status:</label>
             <select class="form-control select_phic" name="phic_status" required>

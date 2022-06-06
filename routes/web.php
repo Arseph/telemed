@@ -73,7 +73,9 @@ Route::get('/doctor-option/{id}', 'Superadmin\ManageController@getDoctors');
 Route::get('/audit-trail', 'Superadmin\ManageController@indexAudit');
 Route::get('/doctor-category', 'Superadmin\ManageController@indexTeleCat');
 Route::post('/doctor-category-store', 'Superadmin\ManageController@storeDoccat');
-Route::post('/doctor-category-delete/{id}', 'Superadmin\ManageController@deleteDoccat');
+Route::post('/doctor-category-delete/{id}', 'Superadmin\ManageController@deleteDoccat');\
+
+Route::post('/zoom-credential', 'Superadmin\ManageController@zoomCredit');
 
 
 //Admin Module
@@ -198,6 +200,7 @@ Route::get('/calendar-meetings', 'Tele\TeleController@calendarMeetings');
 Route::get('/my-calendar-meetings', 'Tele\TeleController@mycalendarMeetings');
 Route::get('/get-doctors-facility','Tele\TeleController@getDoctorsFacility');
 Route::get('/teleconsultation/details/{id}','Tele\TeleController@teleconsultDetails');
+Route::post('/accept-notif-meeting', 'Tele\TeleController@acceptNotifMeeting');
 
 Route::get('/fetch-notification', 'Notification\NotifController@fetchNotif');
 Route::get('/notif-patient-info/{id}', 'Notification\NotifController@patientInfo');

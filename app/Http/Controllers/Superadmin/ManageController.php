@@ -15,6 +15,7 @@ use App\User;
 use App\Patient;
 use App\Login;
 use App\DocCategory;
+use App\ZoomCredential;
 class ManageController extends Controller
 {
     public function __construct()
@@ -473,6 +474,16 @@ class ManageController extends Controller
         $tele = DocCategory::find($id);
         $tele->delete();
         Session::put("delete_action","Successfully delete Doctor Category");
+    }
+
+    public function zoomCredit(Request $req) {
+        $credit = ZoomCredential::where('facility_id', $req->facility_id)->first();
+        if($credit) {
+            ZoomCredential::where('facility_id', $req->facility_id)->update($req->except('_token'));
+        } else {
+            ZoomCredential::create($req->all());
+        }
+        Session::put("action_made","Successfully Added Zoom Credentials");
     }
 
 }

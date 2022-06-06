@@ -44,7 +44,7 @@ class LoginController extends Controller
             ->first();
         if($login && $login->status=='deactivate') {
             return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
-        } else if($login && $login->is_accepted==0 && $login->level=='patient') {
+        } else if($login && $login->status=='notactive' && $login->level=='patient') {
             return Redirect::back()->withErrors(['msg' => 'This user is not accepted by facility, Please wait for the confirmation.']);
         }
         else if($login)
@@ -182,6 +182,7 @@ class LoginController extends Controller
             'brgy' => $req->brgy,
             'address' => $req->address,
             'tsekap_patient' => 0,
+            'complaint' => $req->complaint,
             'is_accepted' => 0
         );
         $patient = Patient::create($data);
@@ -192,7 +193,7 @@ class LoginController extends Controller
                 'lname' => $req->lname,
                 'level' => 'patient',
                 'facility_id' => $req->facility_id,
-                'status' => 'active',
+                'status' => 'inactive',
                 'contact' => $req->contact,
                 'email' => $req->email,
                 'username' => $req->username,

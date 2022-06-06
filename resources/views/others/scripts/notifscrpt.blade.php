@@ -27,6 +27,8 @@
     });
 
     var activeid = "{{Session::get('auth')->id}}";
+    var activefacility = "{{Session::get('auth')->facility_id}}";
+    var level = "{{Session::get('auth')->level}}";
     var reqtel = pusher.subscribe('request-teleconsult');
     reqtel.bind('request-teleconsult-event', function(data) {
     if(activeid == data['to']) {
@@ -50,18 +52,14 @@
     });
     var reqpat = pusher.subscribe('request-patient');
     reqpat.bind('request-patient-event', function(data) {
-      if(activeid == data['data']['doctor_id']) {
+      if(activefacility == data['data']['facility_id'] && level == 'admin') {
           var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
           var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
                 '<hr>'+
                 '<b>New Patient: "'+name+'"</b>' +
                 '<p style="color: red;">'+data['data']['created_at']+'</p>'+
                 '</div>';
-          var total = parseInt($('#totalReq').html(), 10) + 1;
-          var totalreq = parseInt($('#totReqPat').html(), 10) + 1;
-          $('#totalReq').html(total);
-            $('#totReqPat').html(totalreq);
-          $("#contentPat").prepend(html);
+          $("#contentPatAdmin").prepend(html);
           Lobibox.notify('success', {
                 title: "New Patient",
                 msg: name,
@@ -91,6 +89,28 @@
                 rounded: true
             });
         }
+    });
+    var reqpatdoc = pusher.subscribe('doctor-request-patient');
+    reqpatdoc.bind('doctor-request-patient-event', function(data) {
+      if(activeid == data['data']['doctor_id']) {
+          var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
+          var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
+                '<hr>'+
+                '<b>New Patient: "'+name+'"</b>' +
+                '<p style="color: red;">'+data['data']['created_at']+'</p>'+
+                '</div>';
+          var total = parseInt($('#totalReq').html(), 10) + 1;
+          var totalreq = parseInt($('#totReqPat').html(), 10) + 1;
+          $('#totalReq').html(total);
+            $('#totReqPat').html(totalreq);
+          $("#contentPat").prepend(html);
+          Lobibox.notify('success', {
+                title: "New Patient",
+                msg: name,
+                size: 'large',
+                rounded: true
+            });
+      }
     });
     $(document).ready(function() {
         $(".select2").select2();
@@ -131,6 +151,35 @@
                             '</code>"<p style="color: red;">'+data['requested'][i]['created_at']+'</p>'+
                             '</div>';
                         $("#contentReq").append(html);
+                    });
+                },
+                error : function(data){
+                    Lobibox.notify('error', {
+                        title: "",
+                        msg: "Something Went Wrong while fetching notification. Please Refresh the Page.",
+                        size: 'mini',
+                        rounded: true
+                    });
+                }
+            });
+        }
+        if("{{Session::get('auth')->level}}" == 'admin') {
+            var url = "{{ url('/fetch-notification') }}";
+            $.ajax({
+                url: url,
+                type: 'GET',
+                async: false,
+                success: function(data){
+                    $('#totalReqAdmin').html(data['totalpat']);
+                    $(data['reqpatient']).each(function(i) {
+                      var mname = data['reqpatient'][i]['mname'] ? data['reqpatient'][i]['mname'] : '';
+                      var name = data['reqpatient'][i]['lname']+', ' +data['reqpatient'][i]['fname']+' ' + mname;
+                      var html = '<div class="col-md-12" style="cursor: pointer;" onclick="goNotifPat('+data['reqpatient'][i]['id']+')">'+
+                        '<hr>'+
+                        '<b>New Patient: "'+name+'"</b>' +
+                        '<p style="color: red;">'+data['reqpatient'][i]['created_at']+'</p>'+
+                        '</div>';
+                      $("#contentPatAdmin").append(html);
                     });
                 },
                 error : function(data){
@@ -208,6 +257,9 @@
             },
             url:  "{{ url('/notif-patient-accept') }}/"+patient_selected,
             type: "POST",
+            data: {
+                docid: $('#doctorIDnotif').val()
+            },
             success: function(data){
                 setTimeout(function(){
                     window.location.reload(false);
@@ -224,6 +276,13 @@
             }
         });
     });
+    $('#doctorIDnotif').on('change', function (event) {
+        if(this.value) {
+            $('.btnNotifAccept').prop('disabled', false);
+        } else {
+            $('.btnNotifAccept').prop('disabled', true);
+        }
+    });
     var active = "{{Session::get('auth')->level}}";
     if(active == 'doctor') {
         var last_update = "<?php 
@@ -237,14 +296,19 @@
         $('.countdowntoken').countdown(expirewill, function(event) {
             if(event.strftime('%H:%M:%S') == '00:00:00') {
                 if(last_update == 'none') {
+                    console.log('ngi')
                     $(this).html('Facility don\'t have access token.');
+                    $('#notifacceptBtn').prop("disabled", true);
+                    $('#accnotifacceptBtn').prop("disabled", true);
                 } else {
                   $(this).html('Access token was expired. Please contact administrator.');
                     $('#notifacceptBtn').prop("disabled", true);
+                    $('#accnotifacceptBtn').prop("disabled", true);
                 }
             } else {
                 $(this).html('Zoom Token validation left: '+ event.strftime('%M:%S'));
                 $('#notifacceptBtn').prop("disabled", false);
+                $('#accnotifacceptBtn').prop("disabled", false);
             }
         });
         function refreshToken() {
@@ -264,9 +328,11 @@
                               $(this).html('Your access token is expired.');
                               $('.refTok').html('Refresh your token here');
                               $('#notifacceptBtn').prop("disabled", true);
+                              $('#accnotifacceptBtn').prop("disabled", true);
                             } else {
                                 $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
                                 $('#notifacceptBtn').prop("disabled", false);
+                                $('#accnotifacceptBtn').prop("disabled", false);
                             }
                         });
                         clearInterval(interval);
@@ -428,5 +494,38 @@
             }
         });
     }
+
+    $( ".proceedNotifBtn" ).click(function() {
+        $('#accept_notif_tele_request_modal').modal('show');
+    });
+
+    $('#accept_notif_accept_decline_form').on('submit',function(e){
+        var url = "{{ url('/accept-notif-meeting') }}";
+        e.preventDefault();
+        $(".loading").show();
+        $('#accept_notif_accept_decline_form').ajaxSubmit({
+            url:  url,
+            type: "POST",
+            data: {
+                action: action,
+                patient_id: patient_selected
+            },
+            success: function(data){
+                // setTimeout(function(){
+                //     window.location.reload(false);
+                // },500);
+            },
+            error: function (data) {
+                $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            },
+        });
+    });
 
 </script>

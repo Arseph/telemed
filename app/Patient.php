@@ -166,4 +166,8 @@ class Patient extends Model implements Auditable
     public function medhistory() {
         return $this->hasMany(MedicalHistory::class, 'patient_id', 'id');
     }
+
+    public function mydoctor() {
+        return $this->hasOne(User::class, 'id', 'doctor_id');
+    }
 }

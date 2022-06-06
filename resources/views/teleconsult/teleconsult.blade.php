@@ -169,6 +169,7 @@
                                 <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success" target="_blank">
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
+                                <a><i data-toggle="tooltip" title="You can't join when using mobile phone. Please Install Zoom app in your phone and copy the link, teleconsult and password below to join." class="fa-solid fa-circle-question"></i></a>
                                 @endif
                                 <a class="btn btn-info" data-toggle="tab" href="#tabsTelDet{{$row->meetID}}" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '#tabs{{$row->id}}')">
                                     <i class="fa-solid fa-circle-info"></i> More Details

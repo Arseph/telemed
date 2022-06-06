@@ -23,4 +23,7 @@ class Facility extends Model implements Auditable
     public function barangay() {
     	return $this->hasOne(Barangay::class, 'brg_psgc', 'brgy_psgc');
     }
+    public function zoom() {
+        return $this->hasOne(ZoomCredential::class, 'facility_id', 'id');
+    }
 }

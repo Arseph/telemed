@@ -73,7 +73,7 @@
                 {{ csrf_field() }}
                 <div class="row">
                     <div class="col-sm-12">
-                        <label>Facility:</label>
+                        <label class="required-field">Facility:</label>
                         <select class="required-field form-control select2 selectFacility" name="facility_id" required>
                             <option value="">Select Facility ...</option>
                               @foreach($facilities as $fac)
@@ -81,10 +81,9 @@
                              @endforeach 
                         </select>
                     </div>
-                    <div class="select-doctor col-sm-12">
-                        <label>Doctor:</label>
-                        <select class="required-field form-control select2 selectDoctor" name="doctor_id" required>
-                        </select>
+                    <div class="col-sm-12">
+                        <label class="required-field">Complaint:</label>
+                        <textarea class="form-control" name="complaint" rows="2" required></textarea>
                     </div>
                     <div class="col-sm-12"><hr></div>
                     <div class="col-sm-6">
@@ -244,7 +243,7 @@
                 </div>
                 <br>
                 <div class="text-right">
-                    <button type="submit" class="btn btn-success">Sign In</button>
+                    <button type="submit" class="btn btn-success">Register</button>
                 </div>
                 </form>
             </div>
