@@ -382,9 +382,9 @@
                 action: action
             },
             success: function(data){
-                // setTimeout(function(){
-                //     window.location.reload(false);
-                // },500);
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
             },
             error: function (data) {
                 $('.btnSave').html('<i class="fas fa-check"></i> Save');
@@ -480,10 +480,11 @@
     $('body').on('click','.btn-issue-referred',function(){
         var meet_id = $(this).data('meet_id'); 
         var issue_from = $(this).data('issue_from');
-        var user_facility_id = "<?php echo \Illuminate\Support\Facades\Session::get('auth')->facility_id; ?>";
+        var userlevel = "<?php echo \Illuminate\Support\Facades\Session::get('auth')->level; ?>";
 
-        if(user_facility_id == issue_from)
-        $(".issue_footer").remove();
+        if(user_facility_id == 'patient') {
+            $(".issue_footer").remove();
+        }
 
         $('#issue_meeting_id').val(meet_id);
         $("#issue_and_concern_body").html("Loading....");
@@ -685,20 +686,21 @@
     var started;
     function telDetail(id, view, tab, docid, details, backtab) {
         backtb = backtab ? backtab : backtb;
+        var hidde = backtb ? 'hide' : '';
         $(".btnBack").attr("href", backtb);
-        $(".btnBack").removeClass('hide');
+        $(".btnBack").removeClass(hidde);
         info = details ? JSON.parse(details) : info;
-        $('#chiefCom'+id).html('Chief Complaint: ' + info['title']);
-        $('#chiefDate'+id).html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
-        $('#chiefTime'+id).html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
-        $('#chiefType'+id).html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
+        // $('#chiefCom'+id).html('Chief Complaint: ' + info['title']);
+        // $('#chiefDate'+id).html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
+        // $('#chiefTime'+id).html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
+        // $('#chiefType'+id).html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
         docorderid = docid ? docid : docorderid;
         var url = "{{ url('/tele-details') }}";
         view = view ? view : 'demographic';
         tab = tab ? tab : 'patientTab';
         meeting_id = id ? id : meeting_id;
         var urlmet = "{{ url('/meeting-info') }}";
-        $('#'+tab+id).html('loading...');
+        $('.'+tab).html('loading...');
         $.ajax({
             async: true,
             url: urlmet,
@@ -716,7 +718,7 @@
                 }
             },
             error: function (data) {
-                $('#'+tab+id).html('Something went wrong...');
+                $('.'+tab).html('Something went wrong...');
             },
         });
         $.ajax({
@@ -731,7 +733,7 @@
             success : function(data){
                 if(started) {
                     setTimeout(function(){
-                        $('#'+tab+id).html(data);
+                        $('.'+tab).html(data);
                         make_base(document.getElementById('signature-pad'));
                         $('#companion').removeClass('hide');
                         $( '.btnAddrow' ).addClass('hide');
@@ -746,7 +748,7 @@
                         }
                     },500);
                 } else {
-                    $('#'+tab+id).html('Consultation has not yet started.');
+                    $('.'+tab).html('Consultation has not yet started.');
                 }
             }
         });
@@ -776,5 +778,51 @@
         });
     }
     myreqPaging();
+
+    function getPrescription(id) {
+        $('#prescription_modal').modal('show'); 
+        $.ajax({
+            async: true,
+            url: "{{ url('/get-prescription-details') }}",
+            type: 'GET',
+            data: {
+                id: id,
+            },
+            success : function(data){
+                $('.prescription_body').html(data);
+            },
+            error: function (data) {
+                $('.prescription_body').html('Something went wrong...');
+            },
+        });
+    }
+
+    $('#create_tele_form').on('submit',function(e){
+        var url = "{{ url('/create-meeting') }}";
+        e.preventDefault();
+        $(".loading").show();
+        $('#create_tele_form').ajaxSubmit({
+            url:  url,
+            type: "POST",
+            data: {
+                action: 'Accept'
+            },
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error: function (data) {
+                $('.btnSave').html('<i class="fas fa-check"></i> Save');
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            },
+        });
+    });
 
 </script>

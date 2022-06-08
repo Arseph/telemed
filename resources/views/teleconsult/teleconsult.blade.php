@@ -46,11 +46,28 @@
     .disAble {
         pointer-events:none;
     }
+    @media only screen and (max-width: 4000px) {
+      #infoTeleconsultMobile { display: none; }
+    }
+    @media only screen and (max-width: 760px) {
+      #infoTeleconsultMobile { display: block; }
+      .btn-disable
+      {
+        cursor: not-allowed;
+        pointer-events: none;
+        color: #c0c0c0;
+        background-color: #ffffff;
+      }
+    }
 </style>
 <div class="container-fluid">
     <div class="box box-success">
         <div class="box-header with-border">
             <div class="pull-right">
+              @if($active_user->level == 'doctor')
+              <a data-toggle="modal" class="btn btn-warning btn-md" data-target="#creating_tele_modal">
+                    <i class="far fa-calendar-plus"></i> Create Teleconsult
+                </a>@endif
                 <a data-toggle="modal" class="btn btn-success btn-md" data-target="#tele_modal">
                     <i class="far fa-calendar-plus"></i> Request Teleconsult
                 </a>
@@ -142,10 +159,11 @@
                                     </b>
                                 </label>
                                 <p>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</p>
-                                <p>Type of Consultation: {{$row->pendmeet->telecategory->category_name}}</p>
+                                @if($row->pendmeet)<p>Type of Consultation:
+                                  {{$row->pendmeet->telecategory->category_name}} @endif</p>
                                 @if($row->RequestTo == $active_user->id)
-                                <b class="text-primary">Requested By: {{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b>
-                                <br>
+                                @if($row->pendmeet)<b class="text-primary">Requested By: {{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }} {{$row->status}}</b>
+                                <br>@endif
                                 @if($row->encoded->level!='patient')
                                 <b>{{ $row->encoded->facility->facilityname }}</b>
                                 <br>
@@ -166,10 +184,10 @@
                                 <b>{{ $row->doctor->facility->facilityname }}</b>
                                 <br>
                                 <br>
-                                <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success" target="_blank">
+                                <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success btn-disable" target="_blank">
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
-                                <a><i data-toggle="tooltip" title="You can't join when using mobile phone. Please Install Zoom app in your phone and copy the link, teleconsult and password below to join." class="fa-solid fa-circle-question"></i></a>
+                                <a><i id="infoTeleconsultMobile" data-toggle="tooltip" title="You can't join when using mobile phone. Please Install Zoom app in your phone and copy the link, teleconsult and password below to join." class="fa-solid fa-circle-question"></i></a>
                                 @endif
                                 <a class="btn btn-info" data-toggle="tab" href="#tabsTelDet{{$row->meetID}}" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '#tabs{{$row->id}}')">
                                     <i class="fa-solid fa-circle-info"></i> More Details
@@ -201,6 +219,9 @@
                                     <button class="btn btn-info btn-sm"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
                                         <i class="fas fa-file-medical"></i> Lab Request
                                     </button>
+                                    <button class="btn btn-warning btn-sm"onclick="getPrescription('{{$row->meetID}}')">
+                                        <i class="fas fa-prescription"></i> Prescriptions
+                                    </button>
                                     @endif
                                   </div>
                                   <h5>Teleconsultation Details</h5>
@@ -214,38 +235,34 @@
                                     <br>
                                   </div>
                                   <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#demo{{$row->meetID}}" onclick="telDetail('','demographic', 'patientTab{{$row->meetID}}')">Demographic Profile</a></li>
-                                    <li><a data-toggle="tab" href="#clinic{{$row->meetID}}" onclick="telDetail('','clinical', 'clinicTab{{$row->meetID}}')">Clinical History and Physical Examination</a></li>
-                                    <li><a data-toggle="tab" href="#covid{{$row->meetID}}" onclick="telDetail('','covid', 'covidTab{{$row->meetID}}')">Covid-19 Screening</a></li>
-                                    <li><a data-toggle="tab" href="#diag{{$row->meetID}}" onclick="telDetail('','diagnosis', 'diagTab{{$row->meetID}}')">Diagnosis/Assessment</a></li>
-                                    <li><a data-toggle="tab" href="#plan{{$row->meetID}}" onclick="telDetail('','plan', 'planTab{{$row->meetID}}')">Plan of Management</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#demo{{$row->meetID}}" onclick="telDetail('','demographic', 'patientTab')">Demographic Profile</a></li>
+                                    <li><a data-toggle="tab" href="#clinic{{$row->meetID}}" onclick="telDetail('','clinical', 'clinicTab')">Clinical History and Physical Examination</a></li>
+                                    <li><a data-toggle="tab" href="#covid{{$row->meetID}}" onclick="telDetail('','covid', 'covidTab')">Covid-19 Screening</a></li>
+                                    <li><a data-toggle="tab" href="#diag{{$row->meetID}}" onclick="telDetail('','diagnosis', 'diagTab')">Diagnosis/Assessment</a></li>
+                                    <li><a data-toggle="tab" href="#plan{{$row->meetID}}" onclick="telDetail('','plan', 'planTab')">Plan of Management</a></li>
                                   </ul>
 
                                   <div class="tab-content">
                                     <div id="demo{{$row->meetID}}" class="tab-pane fade in active">
                                       <h3><b id="caseNO{{$row->meetID}}"></b></h3>
                                       <br>
-                                      <div id="patientTab{{$row->meetID}}" class="disAble"></div>
+                                      <div class="disAble patientTab"></div>
                                     </div>
                                     <div id="clinic{{$row->meetID}}" class="tab-pane fade">
                                       <br>
-                                      <div id="clinicTab{{$row->meetID}}" class="disAble"></div>
+                                      <div class="disAble clinicTab"></div>
                                     </div>
                                     <div id="covid{{$row->meetID}}" class="tab-pane fade">
                                       <br>
-                                      <div id="covidTab{{$row->meetID}}" class="disAble"></div>
+                                      <div class="disAble covidTab"></div>
                                     </div>
                                     <div id="diag{{$row->meetID}}" class="tab-pane fade">
                                       <br>
-                                      <div id="diagTab{{$row->meetID}}" class="disAble"></div>
+                                      <div class="disAble diagTab"></div>
                                     </div>
                                     <div id="plan{{$row->meetID}}" class="tab-pane fade">
                                       <br>
-                                      <div id="planTab{{$row->meetID}}" class="disAble"></div>
-                                    </div>
-                                    <div id="docorder{{$row->meetID}}" class="tab-pane fade">
-                                      <br>
-                                      <div id="docTab{{$row->meetID}}" class="disAble"></div>
+                                      <div class="disAble planTab"></div>
                                     </div>
                                   </div>
                               </div>
@@ -404,6 +421,9 @@
                                           <br>
                                           <a href="#IssueAndConcern" data-issue_from ='{{$row->encoded->facility->id}}' data-meet_id ='{{$row->meetID}}' data-toggle="modal" class="btn btn-danger btn-issue-referred">
                                               <i class="fas fa-exclamation-triangle"></i> Issues & concern
+                                          </a>
+                                          <a href="#teleconsultpastDetails" data-toggle="modal" class="btn btn-info" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '')">
+                                              <i class="fa-solid fa-circle-info"></i> Details
                                           </a>
                                         </td>
                                     </tr>

@@ -72,9 +72,12 @@ class TeleController extends Controller
         $data_past = Meeting::select(
         	"meetings.*",
         	"meetings.id as meetID",
+            "meetings.user_id as Creator",
+            "meetings.doctor_id as RequestTo",
         	"pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
+            "pat.id as PatID",
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword_past){
         	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range_past)[0]));
@@ -242,6 +245,7 @@ class TeleController extends Controller
         $abdomen = '';
         $genitals = '';
         $extremities = '';
+        $date_referral = '';
         if($patient->covidscreen) {
             $date_departure = $patient->covidscreen->date_departure ? date('m/d/Y', strtotime($patient->covidscreen->date_departure)) : '';
             $date_arrival_ph = $patient->covidscreen->date_arrival_ph ? date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph)) : '';
@@ -274,6 +278,9 @@ class TeleController extends Controller
             $abdomen = $patient->phyexam->abdomen;
             $genitals = $patient->phyexam->genitals;
             $extremities = $patient->phyexam->extremities;
+        }
+        if($patient->clinical) {
+            $date_referral = $patient->clinical->date_referral ? date('m/d/Y', strtotime($patient->clinical->date_referral)) : '';
         }
         $municity =  MunicipalCity::all();
         $prescription = Prescription::orderBy('presc_code', 'asc')->paginate(10);
@@ -318,7 +325,8 @@ class TeleController extends Controller
             'abdomen' => $abdomen,
             'genitals' => $genitals,
             'extremities' => $extremities,
-            'prescription' => $prescription
+            'prescription' => $prescription,
+            'date_referral' => $date_referral
         ]);
     }
 
@@ -685,5 +693,73 @@ class TeleController extends Controller
         $pat = $patientdata->update(['complaint' => null]);
         event(new AcDecReq($user, $create_meeting, $action, $userfac));
         Session::put("action_made","Successfully Create Teleconsultation.");
+    }
+
+    public function createMeeting(Request $req) {
+        $user = Session::get('auth');
+        $userfac = $user->facility->facilityname;
+        $date = date('Y-m-d', strtotime($req->date_from));
+        $time = date('H:i:s', strtotime($req->time));
+        $endtime = Carbon::parse($time)
+                            ->addMinutes($req->duration)
+                            ->format('H:i:s');
+        $start = $date.'T'.$time;
+        $duration = $req->accept_duration;
+        $patientdata = Patient::find($req->patient_id);
+        $patient = $patientdata->lname.', '.$patientdata->fname.' '.$patientdata->mname;
+        $password = 'doh'.str_random(3);
+        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
+        $action = 'Created';
+        if($action == 'Created') {
+            $db = ZoomToken::where('facility_id',$user->facility_id)->first();
+            $arr_token = json_decode($db->provider_value);
+            $accessToken = $arr_token->access_token;
+            $response = $client->request('POST', '/v2/users/me/meetings', [
+                "headers" => [
+                    "Authorization" => "Bearer $accessToken"
+                ],
+                'json' => [
+                    "topic" => $req->title,
+                    "type" => 2,
+                    "start_time" => $start,
+                    "duration" => $duration,
+                    "password" => $password
+                ],
+            ]);
+      
+            $data = json_decode($response->getBody(), true);
+            $create_data = array(
+                'user_id' => $patientdata->account->id,
+                'doctor_id' => $user->id,
+                'patient_id' => $req->patient_id,
+                'date_meeting' => $date,
+                'from_time' => $time,
+                'to_time' => $endtime,
+                'meeting_id' => $data['id'],
+                'title' => $data['topic'],
+                'password' => $data['password'],
+                'web_link' => $data['join_url'],
+            );
+            $create_meeting = Meeting::create($create_data);
+        }
+        $pat = $patientdata->update(['complaint' => null]);
+        Session::put("action_made","Successfully Create Teleconsultation.");
+    }
+
+    public function getPrescription(Request $req) {
+        $prescription = Meeting::find($req->id)->planmanage ? Meeting::find($req->id)->planmanage->prescription : [];
+        $finalpres = [];
+        if($prescription) {
+            $arrpres = explode(",", $prescription);
+            foreach ($arrpres as $value) {
+                $pres = Prescription::where('presc_code', $value)->first();
+                array_push($finalpres, $pres);
+            }
+            return view('teleconsult.prescription',[
+                'prescription' => $finalpres
+            ]);
+        } else {
+            return 'No prescription found.';
+        }
     }
 }

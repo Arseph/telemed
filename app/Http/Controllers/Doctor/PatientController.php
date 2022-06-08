@@ -35,7 +35,7 @@ class PatientController extends Controller
     {
         $user = Session::get('auth');
         $municity =  MunicipalCity::all();
-        $province = Province::all();
+        $province = Province::where('reg_psgc', '120000000')->get();
         if($request->view_all == 'view_all')
             $keyword = '';
         else{
@@ -312,6 +312,7 @@ class PatientController extends Controller
         $oro_naso_swab = [];
         $spe_others = [];
         $outcome_date_discharge = '';
+        $date_referral = '';
         if($patient->covidscreen) {
             $date_departure = $patient->covidscreen->date_departure ? date('m/d/Y', strtotime($patient->covidscreen->date_departure)) : '';
             $date_arrival_ph = $patient->covidscreen->date_arrival_ph ? date('m/d/Y', strtotime($patient->covidscreen->date_arrival_ph)) : '';
@@ -336,6 +337,9 @@ class PatientController extends Controller
             $spe_others = $patient->covidassess->spe_others ? explode("|",$patient->covidassess->spe_others) : [];
             $outcome_date_discharge = $patient->covidassess->outcome_date_discharge ? date('m/d/Y', strtotime($patient->covidassess->outcome_date_discharge)) : '';
         }
+        if($patient->clinical) {
+            $date_referral = $patient->clinical->date_referral ? date('m/d/Y', strtotime($patient->clinical->date_referral)) : '';
+        }
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::find($req->docorderid);
@@ -351,7 +355,8 @@ class PatientController extends Controller
             case 'clinical':
                 return view('forms.clinical',[
                     'patient'=> $patient,
-                    'facility' => $facility
+                    'facility' => $facility,
+                    'date_referral' => $date_referral
                 ]);
                 break;
             case 'covid':

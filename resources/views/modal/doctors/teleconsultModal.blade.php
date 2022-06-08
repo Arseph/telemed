@@ -45,7 +45,7 @@
         </div>
         <hr>
 	     	<div class="form-group">
-		     	<label>Title:</label>
+		     	<label>Chief Complaint:</label>
 		        <input type="text" class="form-control" value="" name="title" required>
 		     </div>
 		     <div class="row">

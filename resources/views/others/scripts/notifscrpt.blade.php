@@ -511,9 +511,9 @@
                 patient_id: patient_selected
             },
             success: function(data){
-                // setTimeout(function(){
-                //     window.location.reload(false);
-                // },500);
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
             },
             error: function (data) {
                 $('.btnSave').html('<i class="fas fa-check"></i> Save');

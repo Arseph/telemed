@@ -43,7 +43,7 @@ ZoomMtg.setZoomJSLib('https://source.zoom.us/2.2.0/lib', '/av');
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip(); 
     window.onbeforeunload = function() {
-        return "Are you sure you want to leave?";
+        return "Are you sure you want to leave? Please end/leave the meeting before you close this tab.";
     }
     var date = new Date();
     var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -513,7 +513,7 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
             data: {
             	signature: signaturePad.toDataURL('image/png'),
             	id: planmanage_id,
-            	patient_id: patient_id
+                meeting_id: meeting_id
             },
             success: function(data){
                 Lobibox.notify('success', {

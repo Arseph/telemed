@@ -201,6 +201,8 @@ Route::get('/my-calendar-meetings', 'Tele\TeleController@mycalendarMeetings');
 Route::get('/get-doctors-facility','Tele\TeleController@getDoctorsFacility');
 Route::get('/teleconsultation/details/{id}','Tele\TeleController@teleconsultDetails');
 Route::post('/accept-notif-meeting', 'Tele\TeleController@acceptNotifMeeting');
+Route::post('/create-meeting', 'Tele\TeleController@createMeeting');
+Route::get('/get-prescription-details','Tele\TeleController@getPrescription');
 
 Route::get('/fetch-notification', 'Notification\NotifController@fetchNotif');
 Route::get('/notif-patient-info/{id}', 'Notification\NotifController@patientInfo');

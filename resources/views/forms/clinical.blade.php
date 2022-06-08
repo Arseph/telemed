@@ -32,7 +32,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Date of Referral <small>(if Applicable)</small>:</label>
-                    <input type="text" class="form-control daterange" value="@if($patient->clinical){{ date('m/d/Y', strtotime($patient->clinical->date_referral)) }}@endif" name="date_referral">
+                    <input type="text" class="form-control daterange" value="{{ $date_referral }}" name="date_referral">
                 </div>
             </div>
             <div class="col-md-12">

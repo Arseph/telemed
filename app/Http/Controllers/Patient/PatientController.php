@@ -383,6 +383,7 @@ class PatientController extends Controller
         $data = $req->all();
         $data['signature'] = $signName;
         unset($data['signaturephy']);
+        unset($data['patient_id']);
         if($req->id) {
             PlanManagement::find($req->id)->update($data);
        } else {

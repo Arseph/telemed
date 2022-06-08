@@ -170,14 +170,16 @@
 		        </div>
 		    </div>
 		    <div class="col-sm-6">
-				<div class="form-group">
-			        <label>Province:</label>
-			        <select class="form-control select2" name="province" id="province">
-			        	<option value="{{ $user->facility->province->prov_psgc }}" selected>{{ $user->facility->province->prov_name }}</option>
-			            <option value="">Select Province...</option>
-			        </select>
-			    </div>
-			</div>
+		    	<div class="form-group">
+	                <label class="required-field">Province:</label>
+	                <select class="form-control select21" name="province" id="province" required>
+	                    <option value="" selected>Select Province...</option>
+	                    @foreach($province as $prov)
+	                    <option value="{{ $prov->prov_psgc }}">{{ $prov->prov_name }}</option>
+	                    @endforeach
+	                </select>
+	            </div>
+            </div>
 		    <div class="col-sm-6">
 		        <div class="form-group">
 		            <label class="required-field">Municipality:</label>

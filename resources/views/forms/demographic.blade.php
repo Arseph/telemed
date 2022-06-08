@@ -7,7 +7,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label>Name of physician:</label>
-            <input type="text" class="form-control" name="name_physician" value="@if($patient->demoprof){{$patient->demoprof->name_physician}} @endif" required>
+            <input type="text" class="form-control" name="name_physician" value="@if($patient->doctor){{$patient->doctor->lname}}, {{$patient->doctor->fname}} {{$patient->doctor->mname}} @endif" required>
         </div>
     </div>
     <div class="col-md-6">

@@ -38,7 +38,7 @@
       events: {
         url: "{{ url('/calendar-meetings') }}",
         failure: function() {
-          alert('error getting teleconsultations')
+          alert('error getting teleconsultations, Please refresh the page.')
         }
       },
     });
