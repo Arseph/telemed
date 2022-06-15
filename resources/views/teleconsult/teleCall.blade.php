@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="{{ asset('public/img/dohro12logo2.png') }}">
     <meta http-equiv="cache-control" content="max-age=0" />
-    <title>DOH CHD XII – Tele Consultation System</title>
+    <title>DOH CHD XII – Telemedicine</title>
     <!-- <title>{{ (isset($title)) ? $title : 'Referral System'}}</title> -->
     <!-- SELECT 2 -->
     <link href="{{ asset('public/plugin/select2/select2.min.css') }}" rel="stylesheet">

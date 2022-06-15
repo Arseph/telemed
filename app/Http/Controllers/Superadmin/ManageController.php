@@ -94,10 +94,8 @@ class ManageController extends Controller
             'username' => $req->username,
         );
         if($req->password) {
-            $pass = [
-                'password' => bcrypt($req->password)
-            ];
-            array_push($pass, $data);
+            $pass = array('password' => \Hash::make($req->password));
+            $data = $data + $pass;
         }
         if($req->user_id){
             Session::put("action_made","Successfully updated account");

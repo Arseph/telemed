@@ -32,7 +32,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+@if(count($pastmeetings)>0)
 <div class="modal fade" role="dialog" id="teleconsultpastDetails">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -99,7 +99,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+@endif
 <div class="modal fade" role="dialog" id="prescription_modal">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">

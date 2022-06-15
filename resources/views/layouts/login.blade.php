@@ -19,7 +19,7 @@
     <link href="{{ asset('public/plugin/select2/select2.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('public/plugin/Lobibox/lobibox.css') }}">
 
-    <title>DOH CHD XII – Tele Consultation</title>
+    <title>DOH CHD XII – Telemedicine</title>
     @yield('css')
     <style>
       .select2 {

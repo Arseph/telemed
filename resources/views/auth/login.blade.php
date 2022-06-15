@@ -15,7 +15,7 @@
               <img src="{{ asset('public/img/dohro12logo2.png') }}" style="width: 25%"/>
             </div>
             <div class="mb-4 text-center">
-              <span class="text-muted">DOH-CHD XII SOCCSKSARGEN TELECONSULTATION</span>
+              <span class="text-muted">DOH-CHD XII SOCCSKSARGEN TELEMEDICINE</span>
               <span class="d-block text-center my-4 text-muted">&mdash; Created by: DOH Region XII &mdash;</span>
             </div>
             <div class="text-center">
@@ -38,7 +38,6 @@
               
             </div>
             <button type="submit" class="btn-submit btn btn-block btn-success">LOGIN</button>
-            <a href="{{ asset('register') }}" style="text-decoration: none;"><button type="button" class="btn btn-block btn-info mt-3">REGISTER AS PATIENT</button></a>
           </form>
           </div>
         </div>
