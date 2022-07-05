@@ -26,7 +26,7 @@
                   <strong style="color: #A52A2A;">{{$errors->first()}}</strong>
               @endif
           </span>
-          <form method="POST" action="{{ asset('login') }}">
+          <form id="login_form" method="POST" action="{{ asset('login') }}">
             {{ csrf_field() }}
             <div class="form-group first">
               <label for="username">Username</label>
@@ -50,9 +50,8 @@
 @endsection
 @section('js')
 <script>
-  $('.btn-submit').on('click',function(){
-      $(this).html('<i class="fa fa-spinner fa-spin"></i> Validating...');
-
+  $('#login_form').on('submit',function(e){
+    $('.btn-submit').html('<i class="fa fa-spinner fa-spin"></i> Validating...');
   });
 </script>
 @endsection

@@ -11,8 +11,8 @@
 |
 */
 Route::Auth();
+Route::get('/test', 'Auth\LoginController@testIndex');
 Route::get('/', 'Auth\LoginController@index');
-Route::get('/register', 'Auth\LoginController@registerIndex');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register-account', 'Auth\LoginController@register');
 Route::get('/places/{id}/{type}', 'Auth\LoginController@getMunandBrgy');

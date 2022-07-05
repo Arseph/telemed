@@ -21,6 +21,7 @@ use App\Province;
 use App\Patient;
 use App\DocCategory;
 use App\Events\ReqPatient;
+use DB;
 class LoginController extends Controller
 {
     public function showLoginForm()
@@ -42,6 +43,14 @@ class LoginController extends Controller
     {
         $login = User::where('username',$req->username)
             ->first();
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', 'http://222.127.126.38/doh/referral/api/getusers', [
+        'form_params' => [
+            'username' => $req->username,
+            ]
+        ]);
+        $res = $response->getBody()->getContents();
+        dd($res);
         if($login && $login->status=='deactivate') {
             return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
         } else if($login && $login->status=='notactive' && $login->level=='patient') {
@@ -124,22 +133,22 @@ class LoginController extends Controller
     }
 
     public function registerIndex() {
-        $facility = Facility::orderBy('facilityname','asc')->get();
-        $nationality = Countries::orderBy('nationality', 'asc')->get();
-        $region = Region::find(13);
-        $nationality_def = Countries::where('num_code', '608')->first();
-        $municity =  MunicipalCity::all();
-        $province = Province::where('reg_code',12)->get();
-        $docat = DocCategory::orderBy('category_name','asc')->get();
-        return view('auth.register',[
-            'facilities' => $facility,
-            'nationality' => $nationality,
-            'nationality_def' => $nationality_def,
-            'region' => $region,
-            'municity' => $municity,
-            'province' => $province,
-            'doccat' => $docat
-        ]);
+        // $facility = Facility::orderBy('facilityname','asc')->get();
+        // $nationality = Countries::orderBy('nationality', 'asc')->get();
+        // $region = Region::find(13);
+        // $nationality_def = Countries::where('num_code', '608')->first();
+        // $municity =  MunicipalCity::all();
+        // $province = Province::where('reg_code',12)->get();
+        // $docat = DocCategory::orderBy('category_name','asc')->get();
+        // return view('auth.register',[
+        //     'facilities' => $facility,
+        //     'nationality' => $nationality,
+        //     'nationality_def' => $nationality_def,
+        //     'region' => $region,
+        //     'municity' => $municity,
+        //     'province' => $province,
+        //     'doccat' => $docat
+        // ]);
     }
 
     public function getMunandBrgy($id, $type) {
@@ -235,5 +244,15 @@ class LoginController extends Controller
     public function validateUsername(Request $req) {
         $username = User::where('username', $req->username)->get();
         return $username;
+    }
+
+    public function testIndex() {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', 'http://222.127.126.38/doh/referral/api/getusers', [
+        'form_params' => [
+            'username' => 'admin_doh1',
+            ]
+        ]);
+        dd($response->getBody()->getContents());
     }
 }

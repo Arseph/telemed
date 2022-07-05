@@ -103,6 +103,16 @@
                         </select></td>
                     </tr>
                     <tr>
+                        <td class="col-sm-3"><label>Doctor</label></td>
+                        <td class="col-sm-1">:</td>
+                        <td class="col-sm-8"><select class="form-control select2" name="doctor_id" required>
+                          <option value="">Select Doctor ...</option>
+                            @foreach($facs as $f)
+                              <option value="{{ $f->id }}">{{ $f->facilityname }}</option>
+                             @endforeach 
+                        </select></td>
+                    </tr>
+                    <tr>
                         <td class="col-sm-3"><label>Zoom Client ID</label></td>
                         <td class="col-sm-1">:</td>
                         <td class="col-sm-8"><textarea class="form-control" name="zoom_client_id" rows="3" required></textarea></td>
@@ -124,9 +134,6 @@
                     </tr>
                 </table>
                 <div class="modal-footer">
-                <!-- <a data-toggle="modal" class="btn btn-danger btn-sm btn-flat btn_subremove">
-                <i class="fa fa-trash"></i> Remove
-                </a> -->
 
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
                 <button type="submit" class="btnSave btn btn-success"><i class="fas fa-check"></i> Save</button>
