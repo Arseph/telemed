@@ -33,7 +33,7 @@
                         <button type="submit" value="view_all" name="view_all" class="btn btn-warning btn-sm btn-flat">
                             <i class="fa fa-eye"></i> View All
                         </button>
-                        <a data-toggle="modal" class="btn btn-info btn-sm btn-flat" data-target="#patient_modal">
+                        <a data-toggle="modal" class="btn btn-info btn-sm btn-flat" data-target="#patiente_search_modal">
                             <i class="fas fa-head-side-mask"></i> Add Patient
                         </a>
                     </div>
