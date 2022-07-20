@@ -11,7 +11,7 @@
 |
 */
 Route::Auth();
-Route::get('/test', 'Auth\LoginController@testIndex');
+// Route::get('/test', 'Auth\LoginController@testIndex');
 Route::get('/', 'Auth\LoginController@index');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register-account', 'Auth\LoginController@register');
@@ -79,7 +79,7 @@ Route::post('/zoom-credential', 'Superadmin\ManageController@zoomCredit');
 
 
 //Admin Module
-Route::get('admin','Admin\HomeController@index');
+Route::get('admin/support','Admin\HomeController@index');
 Route::get('/admin-facility','Admin\ManageController@AdminFacility');
 Route::post('/update-facility','Admin\ManageController@updateFacility');
 Route::match(['GET','POST'],'/admin-patient','Admin\ManageController@patientList');
@@ -115,6 +115,8 @@ Route::post('/docorder-store', 'Doctor\ManageController@doctorOrderStore');
 Route::post('/docorder-delete/{id}', 'Doctor\ManageController@docorderDelete');
 Route::post('/medical-history-store', 'Doctor\PatientController@medHisStore');
 Route::get('/medical-history-info','Doctor\PatientController@medHisData');
+
+Route::get('/get-patient-eref','Doctor\PatientController@getPatientEref');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

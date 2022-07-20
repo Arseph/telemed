@@ -49,8 +49,26 @@ class LoginController extends Controller
             'username' => $req->username,
             ]
         ]);
-        $res = $response->getBody()->getContents();
-        dd($res);
+        $res = json_decode($response->getBody()->getContents(), true);
+        if(!empty($res)) {
+            if($res && !$login) {
+                $data = array(
+                    'fname' => $res['fname'],
+                    'mname' => $res['mname'],
+                    'lname' => $res['lname'],
+                    'level' => $res['level'],
+                    'facility_id' => $res['facility_id'],
+                    'status' => 'active',
+                    'contact' => $res['contact'],
+                    'email' => $res['email'],
+                    'designation' => $res['designation'],
+                    'username' => $res['username'],
+                    'password' => $res['password'],
+                    'eref' => 1
+                );
+                $login = User::create($data);
+            }
+        }
         if($login && $login->status=='deactivate') {
             return Redirect::back()->withErrors(['msg' => 'Your account was deactivated by administrator.']);
         } else if($login && $login->status=='notactive' && $login->level=='patient') {
@@ -83,12 +101,12 @@ class LoginController extends Controller
                 }
                 if($login->level=='superadmin')
                     return redirect('superadmin');
-                if($login->level=='admin' && $login->status=='active')
-                    return redirect('admin');
+                else if(($login->level=='admin' || $login->level=='support') && $login->status=='active')
+                    return redirect('admin/support');
+                else if($login->level=='support' && $login->status=='active')
+                    return redirect('admin/support');
                 else if($login->level=='doctor' && $login->status=='active')
                     return redirect('doctor');
-                else if($login->level=='officer' && $login->status=='active')
-                    return redirect('officer');
                 else if($login->level=='patient' && $login->status=='active')
                     return redirect('patient');
                 else{

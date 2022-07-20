@@ -279,7 +279,7 @@
                 @endif
                 <!-- for admin -->
                 @if($user->level=='admin')
-                <li><a href="{{ asset('admin') }}"><i class="fa fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ asset('admin/support') }}"><i class="fa fa-home"></i> Dashboard</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
@@ -395,10 +395,10 @@
 </nav>
 <div id="app">
     <main class="py-4">
+        <div class="loading"></div>
         @include('modal.others.layoutModal')
         @include('modal.others.notifModal')
         @yield('content')
-        <div class="loading"></div>
     </main>
 </div>
 

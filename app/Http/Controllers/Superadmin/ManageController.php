@@ -48,6 +48,7 @@ class ManageController extends Controller
                 ->where(function($q){
                     $q->where("level",'admin')
                     ->orWhere("level","doctor")
+                    ->orWhere("level","support")
                         ->orWhere("level","patient");
                     })
                 ->orderBy('lname','asc')

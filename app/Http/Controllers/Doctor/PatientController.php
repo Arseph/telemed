@@ -431,4 +431,20 @@ class PatientController extends Controller
         ]);
     }
 
+    public function getPatientEref(Request $req) {
+        $facility_id = Session::get('auth')->facility_id;
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', 'http://222.127.126.38/doh/referral/api/getpatient', [
+        'form_params' => [
+            'fname' => $req->fname,
+            'mname' => $req->mname,
+            'lname' => $req->lname,
+            'dob' => $req->dob,
+            'facility_id' => $facility_id,
+            ]
+        ]);
+        $res = json_decode($response->getBody()->getContents(), true);
+        return $res;
+    }
+
 }

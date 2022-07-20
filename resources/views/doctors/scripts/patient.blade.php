@@ -550,4 +550,49 @@
     //         });
     //     }
     // }); This will use in the future
+    $('#patient_search_eref').on('submit',function(e){
+        e.preventDefault();
+        $(".loading").show();
+        var url = "{{ url('/get-patient-eref') }}";
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: false,
+            data: {
+                fname: $("input[name=fnameeref]").val(),
+                mname: $("input[name=mnameeref]").val(),
+                lname: $("input[name=lnameeref]").val(),
+                dob: $("input[name=doberef]").val()
+            },
+            success : function(val){
+                if(val.length != 0) {
+                    $(".select_phic").val(val.phic_status);
+                    $("input[name=phic_id]").val(val.phic_id);
+                    $("input[name=fname]").val(val.fname);
+                    $("input[name=mname]").val(val.mname);
+                    $("input[name=lname]").val(val.lname);
+                    $("input[name=contact]").val(val.contact);
+                    $("input[name=dob]").val(val.dob);
+                    $(".sex").val(val.sex);
+                    $(".civil_status").val(val.civil_status);
+                } else {
+                    $("input[name=fname]").val($("input[name=fnameeref]").val());
+                    $("input[name=mname]").val($("input[name=mnameeref]").val());
+                    $("input[name=lname]").val($("input[name=lnameeref]").val());
+                    $("input[name=dob]").val($("input[name=doberef]").val());
+                }
+                $('.loading').hide();
+            },
+            error : function(data){
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "",
+                    msg: "Something Went Wrong. Please Try again.",
+                    size: 'mini',
+                    rounded: true
+                });
+            }
+        });
+        
+    });
 </script>

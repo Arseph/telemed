@@ -1,3 +1,48 @@
+<div class="modal fade" id="patiente_search_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Add Patient</h4>
+      </div>
+      <div class="modal-body">
+      	<form id="patient_search_eref">
+      		{{ csrf_field() }}
+         <div class="row">
+		     <div class="col-sm-6">
+		        <div class="form-group">
+		            <label class="required-field">First Name:</label>
+		            <input type="text" class="form-control" value="" name="fnameeref" required>
+		        </div>
+		    </div>
+		    <div class="col-sm-6">
+		        <div class="form-group">
+		            <label>Middle Name:</label>
+		            <input type="text" class="form-control" value="" name="mnameeref">
+		        </div>
+		    </div>
+		    <div class="col-sm-6">
+		        <div class="form-group">
+		            <label class="required-field">Last Name:</label>
+		            <input type="text" class="form-control" value="" name="lnameeref" required>
+		        </div>
+		    </div>
+		    <div class="col-sm-6">
+		        <div class="form-group">
+		            <label class="required-field">Birth Date:</label>
+		            <input type="date" class="form-control" value="" min="1910-05-11" max="{{ date('Y-m-d') }}" name="doberef" required>
+		        </div>
+		    </div>
+		 </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+        <button type="submit" class="btnProceed btn btn-success"><i class="fas fa-angle-right"></i> Proceed</button>
+  	</form>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal fade" id="patient_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
