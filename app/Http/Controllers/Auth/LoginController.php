@@ -79,6 +79,7 @@ class LoginController extends Controller
             if(Hash::check($req->password,$login->password))
             {
                 Session::put('auth',$login);
+                Session::put('doccat',$login->doc_cat_id);
                 $last_login = date('Y-m-d H:i:s');
                 User::where('id',$login->id)
                     ->update([

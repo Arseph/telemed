@@ -64,7 +64,6 @@ class PatientController extends Controller
                
             })
             ->orderby('patients.lname','asc')
-            ->where('patients.is_accepted', 1)
             ->paginate(30);
 
         $patients = Patient::select(

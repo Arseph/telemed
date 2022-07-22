@@ -61,4 +61,7 @@ class User extends Authenticatable implements Auditable
     public function pendmeet() {
         return $this->hasMany(PendingMeeting::class, 'doctor_id', 'id');
     }
+    public function zoom() {
+        return $this->hasOne(ZoomCredential::class, 'doctor_id', 'id');
+    }
 }

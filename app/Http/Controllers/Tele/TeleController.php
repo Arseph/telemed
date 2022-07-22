@@ -55,17 +55,23 @@ class TeleController extends Controller
                 $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
             });
         }
-        $data = $data->where(function($q) use($user){
-            $q->where("meetings.doctor_id","=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id);
+        $activeid = $user->patient ? $user->patient->id : $user->id; 
+        $data = $data->where(function($q) use($user, $activeid){
+            $q->where("meetings.doctor_id","=", $activeid)
+            ->orWhere("meetings.user_id", "=", $activeid)
+            ->orWhere("meetings.patient_id", "=", $activeid);
             })->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
         		->orderBy('meetings.date_meeting', 'asc')
         		->paginate(20);
     	$patients =  Patient::select(
             "patients.*",
-            "user.email as email"
-        ) ->leftJoin("users as user","patients.account_id","=","user.id")
-         ->where('patients.facility_id',$user->facility_id)
+            "bar.brg_name as barangay",
+            "user.email as email",
+            "user.username as username",
+        ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
+        ->leftJoin("users as user","user.id","=","patients.account_id")
+        ->where('patients.doctor_id', $user->id)
+        ->orderby('patients.lname','asc')
         ->get();
 
         $keyword_past = $request->view_all_past ? '' : $request->date_range_past;
@@ -500,9 +506,10 @@ class TeleController extends Controller
 
     public function zoomToken(Request $req) {
         $user = Session::get('auth');
+        $user_id =  $user->id;
         $facility_id = $user->facility_id;
-        $client_id = $user->facility->zoom->zoom_client_id;
-        $client_secret = $user->facility->zoom->zoom_client_secret;
+        $client_id = $user->zoom->zoom_client_id;
+        $client_secret = $user->zoom->zoom_client_secret;
         $direct_url = env('ZOOM_REDIRECT_URL');
         $client = new \GuzzleHttp\Client(['base_uri' => 'https://zoom.us']);
   
@@ -518,14 +525,14 @@ class TeleController extends Controller
         ]);
 
         $token = json_decode($response->getBody()->getContents(), true);
-        $data = array('facility_id' => $facility_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
-        $zoomtoken = ZoomToken::where('facility_id',$facility_id)->first() ?  ZoomToken::where('facility_id',$facility_id)->first()->update($data) : ZoomToken::create($data);
+        $data = array('facility_id' => $facility_id, 'doctor_id' => $user_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
+        $zoomtoken = ZoomToken::where('doctor_id',$user_id)->first() ?  ZoomToken::where('doctor_id',$user_id)->first()->update($data) : ZoomToken::create($data);
         echo "Your access token was Successfully Refresh. You can close this tab now.";
     }
 
     public function refreshToken(Request $req) {
-        $facility_id = Session::get('auth')->facility_id;
-        $zoomtoken = ZoomToken::where('facility_id',$facility_id)->first();
+        $user_id = Session::get('auth')->user_id;
+        $zoomtoken = ZoomToken::where('doctor_id',$user_id)->first();
         return json_encode($zoomtoken);
         
     }

@@ -117,6 +117,7 @@ Route::post('/medical-history-store', 'Doctor\PatientController@medHisStore');
 Route::get('/medical-history-info','Doctor\PatientController@medHisData');
 
 Route::get('/get-patient-eref','Doctor\PatientController@getPatientEref');
+Route::post('/doc-cat-complete-profile', 'Doctor\ManageController@doccatcomplete');
 
 // Patient Module 
 Route::get('patient','Patient\HomeController@index');

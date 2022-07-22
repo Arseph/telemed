@@ -64,10 +64,10 @@
     <div class="box box-success">
         <div class="box-header with-border">
             <div class="pull-right">
-              @if($active_user->level == 'doctor')
+              <!-- @if($active_user->level == 'doctor')
               <a data-toggle="modal" class="btn btn-warning btn-md" data-target="#creating_tele_modal">
                     <i class="far fa-calendar-plus"></i> Create Teleconsult
-                </a>@endif
+                </a>@endif -->
                 <a data-toggle="modal" class="btn btn-success btn-md" data-target="#tele_modal">
                     <i class="far fa-calendar-plus"></i> Request Teleconsult
                 </a>
@@ -187,13 +187,13 @@
                                 <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success btn-disable" target="_blank">
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
-                                <a><i id="infoTeleconsultMobile" data-toggle="tooltip" title="You can't join when using mobile phone. Please Install Zoom app in your phone and copy the link, teleconsult and password below to join." class="fa-solid fa-circle-question"></i></a>
                                 @endif
                                 <a class="btn btn-info" data-toggle="tab" href="#tabsTelDet{{$row->meetID}}" onclick="telDetail('<?php echo $row->meetID; ?>', 'demographic','patientTab','<?php echo $row->docorder ? $row->docorder->id : ""; ?>', '{{$row}}', '#tabs{{$row->id}}')">
                                     <i class="fa-solid fa-circle-info"></i> More Details
                                 </a>
                                 <br>
                                 <br>
+                                @if($active_user->level != 'patient')
                                 <p>Teleconsult link:</p>
                                 <label id="meetlinkZ">{{$row->web_link}}</label>
                                 <a href="javascript:void(0)"onclick="copyToClipboard('#meetlinkZ')"><i class="far fa-copy"></i></a>
@@ -205,6 +205,7 @@
                                 <br>
                                 <p>Password:</p>
                                 <label>{{$row->password}}</label>
+                                @endif
                               </div>
                               <div id="tabsTelDet{{$row->meetID}}" class="tab-pane fade in">
                                   <div class="pull-right">
@@ -215,7 +216,7 @@
                                     <a href="#attachments_modal" class="btn btn-info btn-sm" data-toggle="modal" onclick="getattachment('@if($row->docorder){{$row->docorder->id}}@endif')">
                                         <i class="fas fa-vials"></i> Lab Results/Attachments
                                     </a>
-                                    @elseif($row->Creator == $active_user->id)
+                                    @elseif($row->Creator == $active_user->id || $row->PatID == $active_user->patient->id)
                                     <button class="btn btn-info btn-sm"onclick="getDocorder('@if($row->docorder){{$row->docorder->id}}@endif', '{{$row->patFname}}', '{{$row->patMname}}', '{{$row->patLname}}', '{{$row->PatID}}')">
                                         <i class="fas fa-file-medical"></i> Lab Request
                                     </button>
@@ -224,7 +225,7 @@
                                     </button>
                                     @endif
                                   </div>
-                                  <h5>Teleconsultation Details</h5>
+                                  <h3>Teleconsultation Details</h3>
                                   <div>
                                     <h5 id="chiefCom{{$row->meetID}}" class="title-info update_info"></h5>
                                     <b><small id="chiefDate{{$row->meetID}}"></small></b>
