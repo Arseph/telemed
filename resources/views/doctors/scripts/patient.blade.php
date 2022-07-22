@@ -506,28 +506,71 @@
         username = $("#usernamesug").html().split(':');
         $("#username").val(username[1]);
     }
-    // $('#province').on('change', function() {
-    //     var id = this.value;
-    //     if(id) {
-    //         $.ajax({
-    //             url: "{{ url('facilities') }}/"+id+"/municipality",
-    //             method: 'GET',
-    //             success: function(result) {
-    //                 $('#municipality').empty()
-    //                 .append($('<option>', {
-    //                     value: '',
-    //                     text : 'Select Municipality...'
-    //                 }));
-    //                 $.each(result.municipal,function(key,value){
-    //                     $('#municipality').append($("<option/>", {
-    //                        value: value.muni_psgc,
-    //                        text: value.muni_name
-    //                     }));
-    //                 });
-    //             }
-    //         });
-    //     }
-    // });
+    $('#province').on('change', function() {
+        var id = this.value;
+        if(id) {
+            $.ajax({
+                url: "{{ url('facilities') }}/"+id+"/municipality",
+                method: 'GET',
+                success: function(result) {
+                    $('#municipality').empty()
+                    .append($('<option>', {
+                        value: '',
+                        text : 'Select Municipality...'
+                    }));
+                    $.each(result.municipal,function(key,value){
+                        $('#municipality').append($("<option/>", {
+                           value: value.muni_psgc,
+                           text: value.muni_name
+                        }));
+                    });
+                }
+            });
+        }
+    });
+    var muncity_id = 0;
+    $('.filter_muncity').on('change',function(){
+        muncity_id = $(this).val();
+        if(muncity_id!='others' && $(this).val()!=''){
+            $('.filter_muncity').val(muncity_id);
+            var brgy = getBarangay();
+            $('.barangays').empty()
+                .append($('<option>', {
+                    value: '',
+                    text : 'Select Barangay...'
+                }));
+            $.each(brgy.barangay, function(i,val){
+                $('.barangays').append($('<option>', {
+                    value: val.brg_psgc,
+                    text : val.brg_name
+                }));
+
+            });
+            $('.barangay_holder').show();
+            $('.barangays').attr('required',true);
+            $('.others_holder').addClass('hide');
+            $('.others').attr('required',false);
+        }else{
+            $('.barangay_holder').hide();
+            $('.barangays').attr('required',false);
+            $('.others_holder').removeClass('hide');
+            $('.others').attr('required',true);
+        }
+    });
+    function getBarangay()
+    {
+        var url = "{{ url('places') }}";
+        var tmp;
+        $.ajax({
+            url: url+"/"+muncity_id+"/barangay",
+            type: 'GET',
+            async: false,
+            success : function(data){
+                tmp = data;
+            }
+        });
+        return tmp;
+    }
     //  $('#region').on('change', function() {
     //     var id = this.value;
     //     if(id) {
@@ -566,6 +609,7 @@
             },
             success : function(val){
                 if(val.length != 0) {
+                    $("#patient_modal").modal('show');
                     $(".select_phic").val(val.phic_status);
                     $("input[name=phic_id]").val(val.phic_id);
                     $("input[name=fname]").val(val.fname);
@@ -576,6 +620,7 @@
                     $(".sex").val(val.sex);
                     $(".civil_status").val(val.civil_status);
                 } else {
+                    $("#patient_modal").modal('show');
                     $("input[name=fname]").val($("input[name=fnameeref]").val());
                     $("input[name=mname]").val($("input[name=mnameeref]").val());
                     $("input[name=lname]").val($("input[name=lnameeref]").val());

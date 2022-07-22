@@ -296,12 +296,11 @@
         $('.countdowntoken').countdown(expirewill, function(event) {
             if(event.strftime('%H:%M:%S') == '00:00:00') {
                 if(last_update == 'none') {
-                    console.log('ngi')
-                    $(this).html('Facility don\'t have access token.');
+                    $(this).html('You don\'t have access token. Please contact administrator.');
                     $('#notifacceptBtn').prop("disabled", true);
                     $('#accnotifacceptBtn').prop("disabled", true);
                 } else {
-                  $(this).html('Access token was expired. Please contact administrator.');
+                  $(this).html('Access token was expired.');
                     $('#notifacceptBtn').prop("disabled", true);
                     $('#accnotifacceptBtn').prop("disabled", true);
                 }

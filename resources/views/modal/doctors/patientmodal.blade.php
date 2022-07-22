@@ -58,17 +58,6 @@
           </div>
           <input type="hidden" name="patient_id" id="patient_id">
           <input type="hidden" value="1" name="is_accepted">
-         <!--  @if($user->level == 'admin')
-          <div class="form-group">
-            <label>Doctor:</label>
-            <select class="form-control select2" name="doctor_id" id="doctor_id" required>
-        		<option value="">Select Doctor ...</option>
-	              @foreach($users as $doctor)
-	                <option value="{{ $doctor->id }}">{{ $doctor->lname }}, {{ $doctor->fname }} {{ $doctor->mname }} @if($doctor->email)(<small>{{$doctor->email}}</small>)@endif</option>
-                 @endforeach 
-            </select>
-	      </div>
-          @endif -->
          <div class="row">
 		     <div class="col-sm-6">
 		     	<label class="required-field">PhilHealth Status:</label>
@@ -84,7 +73,7 @@
 		     </div>
 		     <div class="col-sm-6">
 		        <div class="form-group">
-		            <label required-field>First Name:</label>
+		            <label class="required-field">First Name:</label>
 		            <input type="text" class="form-control" value="" name="fname" required>
 		        </div>
 		    </div>
@@ -255,7 +244,7 @@
 	    
 	    <hr>
 	    <div class="text-left">
-        	<h4>Create account</h4>
+        	<h4>Create account to access telemedicine</h4>
         </div>
 		  <div id="collapseAccount">
 			<div class="card card-body">

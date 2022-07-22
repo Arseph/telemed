@@ -18,15 +18,13 @@ class AcDecReq implements ShouldBroadcast
     public $data;
     public $action;
     public $fac;
-    public $notification
 
-    public function __construct($user, $data, $action, $fac, $notif)
+    public function __construct($user, $data, $action, $fac)
     {
          $this->user = $user;
          $this->data = $data;
          $this->action = $action;
          $this->fac = $fac;
-         $this->notification = $notif;
     }
     public function broadcastOn()
     {

@@ -48,7 +48,7 @@
         $('.countdowntoken').countdown(expirewill, function(event) {
             if(event.strftime('%H:%M:%S') == '00:00:00') {
                 if(last_update == 'none') {
-                    $(this).html('Facility don\'t have access token.');
+                    $(this).html('You don\'t have access token.');
                 } else {
                   $(this).html('Your access token was expired.');
                 }
@@ -90,7 +90,12 @@
     }
     $(document).ready(function() {
         $(".select2").select2();
-        $('[data-toggle="tooltip"]').tooltip();   
+        $('[data-toggle="tooltip"]').tooltip();
+        var doccategoryfill = "{{Session::get('auth')->doc_cat_id}}";
+        var docat = "{{Session::get('doccat')}}";
+        if(active == 'doctor' && !docat) {
+            $("#doccatModal").modal("show");
+        }
     });
     function refreshPage(){
         <?php
@@ -151,26 +156,71 @@
         });
     });
     $('#feedback').click(function(){
-            var url = $(this).data('link');
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(data) {
-                    $('.feedback_body').html(data);
-                }
-            });
+        var url = $(this).data('link');
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) {
+                $('.feedback_body').html(data);
+            }
         });
-
-
-        @if(Session::get('feedback_add'))
-        Lobibox.notify('success', {
-            title: "",
-            msg: "Successfully added Feedback",
-            size: 'mini',
-            rounded: true
-        });
-        <?php
-            Session::put("feedback_add",false);
-        ?>
+    });
+    @if(Session::get('feedback_add'))
+    Lobibox.notify('success', {
+        title: "",
+        msg: "Successfully added Feedback",
+        size: 'mini',
+        rounded: true
+    });
+    <?php
+        Session::put("feedback_add",false);
+    ?>
     @endif
+
+    $('#welcome_form').on('submit',function(e){
+        e.preventDefault();
+        $('#welcome_form').ajaxSubmit({
+            url:  "{{ url('/doc-cat-complete-profile') }}",
+            type: "POST",
+            success: function(data){
+                $("#doccatModal").modal("hide");
+            },
+        });
+    });
+
+    $( ".selectCat" ).change(function() {
+        var id = $('.selectFacility').val();
+        var cat_id = $(this).val();
+        var url = "{{ url('/get-doctors-facility') }}";
+        $.ajax({
+            async: true,
+            url: url,
+            type: 'GET',
+            data: {
+                fac_id: id,
+                cat_id: cat_id
+            },
+            success : function(data){
+                $('#fac_doc_id').empty();
+                var val = JSON.parse(data);
+                if(val.length > 0) {
+                    $("#fac_doc_id").append('<option selected>Select Doctor</option>').change();
+                    $.each(val,function(key,value){
+                        $('#fac_doc_id').append($("<option/>", {
+                           value: value.id,
+                           text: value.lname + ', ' + value.fname + ' ' + value.mname
+                        }));
+                    });
+                } else {
+                    Lobibox.notify('error', {
+                        title: "Schedule",
+                        msg: "No doctors found in this category",
+                        size: 'normal',
+                        rounded: true
+                    });
+                }
+            }
+        });
+    });
+
 </script>

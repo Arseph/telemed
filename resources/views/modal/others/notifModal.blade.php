@@ -5,25 +5,6 @@
     .form-group {
         margin-bottom: 10px;
     }
-    .modal {
-      text-align: center;
-      padding: 0!important;
-    }
-
-    .modal:before {
-      content: '';
-      display: inline-block;
-      height: 100%;
-      vertical-align: middle;
-      margin-right: -4px;
-    }
-
-    .modal-dialog {
-          width: 60%;
-      display: inline-block;
-      text-align: left;
-      vertical-align: middle;
-    }
 </style>
 <div class="modal fade" id="req_patient_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 <div class="modal-dialog modal-lg">
@@ -123,11 +104,11 @@
            </div>
            <div class="col-sm-12">
              <a data-target="#notif_calendar_meetings_modal" data-toggle="modal" id="notifshowCalendar" 
-       href="#notif_calendar_meetings_modal">Show Facility Calendar</a>
+       href="#notif_calendar_meetings_modal">Show My Calendar</a>
            </div>
           </div>
           <div class="modal-footer">
-            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. If token expired, Please contact your administrator" class="fa-solid fa-circle-question"></i>&nbsp;
+            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
             <a class="refTok"></a>
             <button type="submit" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
             <button id="notifacceptBtn" type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>

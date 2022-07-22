@@ -163,4 +163,13 @@ class ManageController extends Controller
         }
         Session::put("delete_action","Successfully delete Doctor Order");
     }
+
+    public function doccatcomplete(Request $req) {
+        $user = Session::get('auth');
+        $doctor = User::find($user->id);
+        $doctor->update([
+            'doc_cat_id' => $req->tele_cate_id
+        ]);
+        Session::put('doccat', $req->tele_cate_id);
+    }
 }

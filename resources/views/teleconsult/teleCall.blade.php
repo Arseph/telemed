@@ -301,14 +301,12 @@
 </head>
 
 <body>
-@if($role > 0)
 <button id="myBtn" title="Teleconsultation forms"><i class="fas fa-file"></i></button>
 <button type="button" data-toggle="tooltip" data-placement="left" title="Demographic Profile" class="btnDemo btn btn-primary" onclick="showForm('demoDiv', 'btnSaveDemo')"><i class="fa-solid fa-address-card"></i></button>
 <button type="button" data-toggle="tooltip" data-placement="left" title="Clinical History and Physical Examination"  class="btnClinical btn btn-primary" onclick="showForm('cliDiv', 'btnSaveClinical')"><i class="fa-solid fa-book-medical"></i></button>
 <button type="button" data-toggle="tooltip" data-placement="left" title="Covid-19 Screening" class="btnCovid btn btn-primary" onclick="showForm('covDiv', 'btnSaveCovid')"><i class="fa-solid fa-virus"></i></button>
 <button type="button"data-toggle="tooltip" data-placement="left" title="Diagnosis/Assessment" class="btnDiagnosis btn btn-primary" onclick="showForm('diagDiv', 'btnSaveDiag')"><i class="fa-solid fa-person-dots-from-line"></i></button>
 <button type="button" data-toggle="tooltip" data-placement="left" title="Plan of Management" class="btnPlan btn btn-primary" onclick="showForm('planDiv', 'btnSavePlan')"><i class="fa-solid fa-file-medical"></i></button>
-@endif
 <input type="hidden" name="meeting_id" value="{{ $meeting->id }}">
 <input type="hidden" name="patient_id" value="{{ $patient->id }}">
 <input type="hidden" name="demographic_id" value="@if($patient->demoprof){{ $patient->demoprof->id }} @endif">
@@ -464,11 +462,6 @@
 <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 @include('others.scripts.form')
-<script>
-    $("#wc-loading").click(function(){
-        alert('hahays');
-    });
-</script>
 @yield('js')
 </body>
 </html>

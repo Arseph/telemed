@@ -61,7 +61,8 @@ class IssueConcernCtrl extends Controller
 
         return view('doctors.issue',[
             'data' => $data,
-            'daterange' => $str
+            'daterange' => $str,
+            'pastmeetings' => []
         ]);
     }
 

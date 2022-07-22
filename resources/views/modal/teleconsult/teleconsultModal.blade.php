@@ -1,3 +1,6 @@
+<?php
+    $user = Session::get('auth');
+?>
 <div class="modal fade" id="tele_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -68,7 +71,7 @@
     </div>
   </div>
 </div>
-
+@if($user->level=='doctor')
 <div class="modal fade" id="tele_request_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -123,12 +126,12 @@
            </div>
            <div class="col-sm-12">
              <a data-target="#calendar_meetings_modal" data-toggle="modal" id="showCalendar" 
-       href="#calendar_meetings_modal">Show Facility Calendar</a>
+       href="#calendar_meetings_modal">Show My Calendar</a>
            </div>
           </div>
 		      <div class="modal-footer">
-            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. If token expired, Please contact your administrator" class="fa-solid fa-circle-question"></i>&nbsp;
-            <a class="refTok"></a>
+            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
+            <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{$user->zoom->zoom_client_id}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank"></a>
 		        <button type="submit" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
 		        <button id="acceptBtn" type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
@@ -138,7 +141,7 @@
     </div>
   </div>
 </div>
-
+@endif
 <div class="modal fade" id="info_meeting_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

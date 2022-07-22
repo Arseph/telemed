@@ -42,8 +42,8 @@
     $('.countdowntoken').countdown(expirewill, function(event) {
         if(event.strftime('%H:%M:%S') == '00:00:00') {
             if(last_update == 'none') {
-                $(this).html('Facility don\'t have access token.');
-                $('.refTok').html('Please Contact Administrator');      
+                $(this).html('You don\'t have access token.');
+                $('.refTok').html('Get your token here');      
                 $('#acceptBtn').prop("disabled", true);
             } else {
               $(this).html('Access token was expired. Please contact administrator ');
@@ -731,25 +731,21 @@
                 docorderid: docorderid
             },
             success : function(data){
-                if(started) {
-                    setTimeout(function(){
-                        $('.'+tab).html(data);
-                        make_base(document.getElementById('signature-pad'));
-                        $('#companion').removeClass('hide');
-                        $( '.btnAddrow' ).addClass('hide');
-                        $( '.btnAddrowScrum' ).addClass('hide');
-                        $( '.btnAddrowSwab' ).addClass('hide');
-                        $( '.btnAddrowother' ).addClass('hide');
-                        $('.ifCovid').removeClass('hide');
-                        $( '.btnRemoveRow' ).addClass('hide');
-                        $(".select2").select2();
-                        if(tab == 'docTab') {
-                            getDocorder();
-                        }
-                    },500);
-                } else {
-                    $('.'+tab).html('Consultation has not yet started.');
-                }
+                setTimeout(function(){
+                    $('.'+tab).html(data);
+                    make_base(document.getElementById('signature-pad'));
+                    $('#companion').removeClass('hide');
+                    $( '.btnAddrow' ).addClass('hide');
+                    $( '.btnAddrowScrum' ).addClass('hide');
+                    $( '.btnAddrowSwab' ).addClass('hide');
+                    $( '.btnAddrowother' ).addClass('hide');
+                    $('.ifCovid').removeClass('hide');
+                    $( '.btnRemoveRow' ).addClass('hide');
+                    $(".select2").select2();
+                    if(tab == 'docTab') {
+                        getDocorder();
+                    }
+                },500);
             }
         });
     }
