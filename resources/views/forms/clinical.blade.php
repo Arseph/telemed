@@ -1,7 +1,7 @@
 <form id="clinical_form" method="POST">
     {{ csrf_field() }}
 </div>
-<div id="formEdit" class="box-body disAble">
+<div id="formEdit" class="box-body">
     <div class="pull-right">
         <button title="save" type="submit" class="btnSaveClinical btn btn-success hide"><i class="far fa-save"></i></button>
     </div>

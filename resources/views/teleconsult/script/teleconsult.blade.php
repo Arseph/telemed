@@ -86,7 +86,13 @@
             afterDone: function() {
                 validateTIme();
             }
-       });
+        });
+       var tokurl;
+       var cred = "{{$zoomclient}}";
+       if(cred) {
+        tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
+        $(".refTok").attr("href", tokurl);
+       }
     });
     @if(Session::get('action_made'))
         Lobibox.notify('success', {
@@ -398,8 +404,8 @@
             },
         });
     });
-    $( ".selectFacility" ).change(function() {
-        var id = $('.selectFacility').val();
+    $( "#reqFac" ).change(function() {
+        var id = $(this).val();
         if(id > 0) {
             $('#catField').removeClass('hide');
         }
@@ -684,23 +690,23 @@
     var docorderid;
     var backtb;
     var started;
+    var viewfrm;
     function telDetail(id, view, tab, docid, details, backtab) {
         backtb = backtab ? backtab : backtb;
         var hidde = backtb ? 'hide' : '';
         $(".btnBack").attr("href", backtb);
         $(".btnBack").removeClass(hidde);
         info = details ? JSON.parse(details) : info;
-        // $('#chiefCom'+id).html('Chief Complaint: ' + info['title']);
-        // $('#chiefDate'+id).html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
-        // $('#chiefTime'+id).html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
-        // $('#chiefType'+id).html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
+        $('#chiefCom'+id).html('Chief Complaint: ' + info['title']);
+        $('#chiefDate'+id).html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
+        $('#chiefTime'+id).html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
+        $('#chiefType'+id).html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
         docorderid = docid ? docid : docorderid;
         var url = "{{ url('/tele-details') }}";
-        view = view ? view : 'demographic';
-        tab = tab ? tab : 'patientTab';
+        viewfrm = view ? view : 'demographic';
+        tab = tab ? tab : 'Demographic Profile';
         meeting_id = id ? id : meeting_id;
         var urlmet = "{{ url('/meeting-info') }}";
-        $('.'+tab).html('loading...');
         $.ajax({
             async: true,
             url: urlmet,
@@ -718,7 +724,12 @@
                 }
             },
             error: function (data) {
-                $('.'+tab).html('Something went wrong...');
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'mini',
+                    rounded: true
+                });
             },
         });
         $.ajax({
@@ -727,21 +738,151 @@
             type: 'GET',
             data: {
                 meet_id: meeting_id,
-                view: view,
+                view: viewfrm,
                 docorderid: docorderid
             },
             success : function(data){
                 setTimeout(function(){
-                    $('.'+tab).html(data);
+                    if(!id) {
+                        
+                        $('#TelDetailHead').html(tab);
+                        $('#tele_details_modal').modal('show');
+                        if(viewfrm == 'clinical') {
+                            $.ajax({
+                                async: true,
+                                url: "{{ url('/clinical-info') }}",
+                                type: 'GET',
+                                data: {
+                                    meet_id: meeting_id
+                                },
+                                success : function(data){
+                                    console.log(data)
+                                    var conjunctiva = data.conjunctiva;
+                                    var neck = data.neck;
+                                    var breast = data.breast;
+                                    var thorax = data.thorax;
+                                    var abdomen = data.abdomen;
+                                    var genitals = data.genitals;
+                                    var extremities = data.extremities;
+                                    $("#conjunctiva").val(conjunctiva.split(',')).trigger('change');
+                                    $("#neck").val(neck.split(',')).trigger('change');
+                                    $("#breast").val(breast.split(',')).trigger('change');
+                                    $("#thorax").val(thorax.split(',')).trigger('change');
+                                    $("#abdomen").val(abdomen.split(',')).trigger('change');
+                                    $("#genitals").val(genitals.split(',')).trigger('change');
+                                    $("#extremities").val(extremities.split(',')).trigger('change');
+
+                                }
+                            });
+                        }
+                    }
+                    $('#tele_detail_body').html(data);
                     make_base(document.getElementById('signature-pad'));
                     $('#companion').removeClass('hide');
-                    $( '.btnAddrow' ).addClass('hide');
-                    $( '.btnAddrowScrum' ).addClass('hide');
-                    $( '.btnAddrowSwab' ).addClass('hide');
-                    $( '.btnAddrowother' ).addClass('hide');
-                    $('.ifCovid').removeClass('hide');
-                    $( '.btnRemoveRow' ).addClass('hide');
                     $(".select2").select2();
+                    $('.daterange').daterangepicker({
+                        "singleDatePicker": true
+                    });
+                    $(".btnAddrow").click(function () {
+                        var html = '';
+                        html += '<div class="col-md-6">';
+                        html += '<div class="inputRow input-group">';
+                        html += '<input type="text" name="list_name_occasion[]" class="form-control" placeholder="e.g John Doe - 1234567890">';
+                        html += '<div class="input-group-btn">';
+                        html += '<button class="btnRemoveRow btn btn-danger" type="button">Remove</button>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '<br>';
+
+                        $('#nameContact').append(html);
+                    });
+                    $(document).on('click', '.btnRemoveRow', function () {
+                        $(this).closest('.inputRow').remove();
+                    });
+                    $(".checkbox").change(function() {
+                        if(this.checked) {
+                            this.value = 1;
+                        } else {
+                            this.value = 0;
+                        }
+                    });
+                    $('input[name="history_illness"]').change(function() {
+                        if(this.value > 0) {
+                            $('.formHi').removeClass('hide');
+                        } else {
+                            $('.formHi').addClass('hide');
+                        }
+                    });
+                    $('input[name="xray"]').change(function() {
+                        if(this.value > 0) {
+                            $('.formX').removeClass('hide');
+                        } else {
+                            $('.formX').addClass('hide');
+                        }
+                    });
+                    $('input[name="pregnant"]').change(function() {
+                        if(this.value > 0) {
+                            $('.formlmp').removeClass('hide');
+                        } else {
+                            $('.formlmp').addClass('hide');
+                        }
+                    });
+                    
+                    $(".btnAddrowScrum").click(function () {
+                        var html = '';
+                        html += '<div class="inputRow col-md-3">';
+                        html += '<div class="input-group">';
+                        html += '<input type="text" name="scrum[]" class="form-control" placeholder="___/___/____">';
+                        html += '<div class="input-group-btn">';
+                        html += '<button class="btnRemoveRow btn btn-danger" type="button">Remove</button>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '<br>';
+
+                        $('#scrumRow').append(html);
+                    });
+                    $(".btnAddrowSwab").click(function () {
+                        var html = '';
+                        html += '<div class="inputRow col-md-3">';
+                        html += '<div class="input-group">';
+                        html += '<input type="text" name="oro_naso_swab[]" class="form-control" placeholder="___/___/____">';
+                        html += '<div class="input-group-btn">';
+                        html += '<button class="btnRemoveRow btn btn-danger" type="button">Remove</button>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+
+                        $('#swabRow').append(html);
+                    });
+                    $(".btnAddrowother").click(function () {
+                        var html = '';
+                        html += '<div class="inputRow col-md-3">';
+                        html += '<div class="input-group">';
+                        html += '<input type="text" name="spe_others[]" class="form-control" placeholder="___/___/____">';
+                        html += '<div class="input-group-btn">';
+                        html += '<button class="btnRemoveRow btn btn-danger" type="button">Remove</button>';    
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+
+                        $('#otherRow').append(html);
+                    });
+                    $('input[name="clinical_classification"]').change(function() {
+                        if($("input[name='clinical_classification']:checked").val() == 1) {
+                            $('.ifCovid').removeClass('hide');
+                        } else {
+                            $('.ifCovid').addClass('hide');
+                        }
+                    });
+                    $('input[name="clinical_classification"]').change(function() {
+                        if($("input[name='clinical_classification']:checked").val() == 1) {
+                            $('.ifCovid').removeClass('hide');
+                        } else {
+                            $('.ifCovid').addClass('hide');
+                        }
+                    });
                     if(tab == 'docTab') {
                         getDocorder();
                     }
@@ -818,6 +959,207 @@
                     rounded: true
                 });
             },
+        });
+    });
+    //form editing
+    $('#saveBtnForm').click(function(){
+        var url = "{{ url('/meeting-info') }}";
+        var tmp;
+        $.ajax({
+            async: true,
+            url: url,
+            type: 'GET',
+            data: {
+                meet_id: meeting_id
+            },
+            success : function(data){
+                var val = JSON.parse(data);
+                console.log(val)
+                console.log(viewfrm)
+                switch(viewfrm) {
+                    case 'demographic':
+                    $('#demographic_form').ajaxSubmit({
+                        url:  "{{ url('/demographic-store') }}",
+                        type: "POST",
+                        data: {
+                            meeting_id: meeting_id,
+                            id: val['demographic_id']
+                        },
+                        success: function(data){
+                            Lobibox.notify('success', {
+                                title: "",
+                                msg: "Successfully save Demographic profile",
+                                size: 'normal',
+                                rounded: true
+                            });
+                        },
+                        error: function (data) {
+                            $(".loading").hide();
+                            Lobibox.notify('error', {
+                                title: "",
+                                msg: "Something went wrong, Please try again.",
+                                size: 'normal',
+                                rounded: true
+                            });
+                        },
+                    });
+                    break;
+                    case 'clinical':
+                    $('#clinical_form').ajaxSubmit({
+                        url:  "{{ url('/clinical-store') }}",
+                        type: "POST",
+                        data: {
+                            meeting_id: meeting_id,
+                            id: val['clinical_id']
+                        },
+                        success: function(data){
+                            // $( "#physical_form" ).submit();
+                            var conjunctiva = $("#conjunctiva")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            var neck = $("#neck")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            var breast = $("#breast")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            var thorax = $("#thorax")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            var abdomen = $("#abdomen")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            var genitals = $("#genitals")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            var extremities = $("#extremities")
+                                  .map(function(){return $(this).val();}).get().join(',');
+                            $('#physical_form').ajaxSubmit({
+                                url:  "{{ url('/physical-exam-store') }}",
+                                type: "POST",
+                                data: {
+                                    meeting_id: meeting_id,
+                                    id: val['phy_id'],
+                                    conjunctiva: conjunctiva,
+                                    neck: neck,
+                                    breast: breast,
+                                    thorax: thorax,
+                                    abdomen: abdomen,
+                                    genitals: genitals,
+                                    extremities: extremities
+                                },
+                                success: function(data){
+                                    Lobibox.notify('success', {
+                                        title: "",
+                                        msg: "Successfully save clinical history and physical examination",
+                                        size: 'normal',
+                                        rounded: true
+                                    });
+                                },
+                                error: function (data) {
+                                    $(".loading").hide();
+                                    Lobibox.notify('error', {
+                                        title: "",
+                                        msg: "Something went wrong, Please try again.",
+                                        size: 'normal',
+                                        rounded: true
+                                    });
+                                },
+                            });
+                        },
+                        error: function (data) {
+                            $(".loading").hide();
+                            Lobibox.notify('error', {
+                                title: "",
+                                msg: "Something went wrong, Please try again.",
+                                size: 'normal',
+                                rounded: true
+                            });
+                        },
+                    });
+                    break;
+                    case 'covid':
+                    var values = $("input[name='list_name_occasion[]']")
+                          .map(function(){return $(this).val();}).get();
+                    var scrum = $("input[name='scrum[]']")
+                          .map(function(){return $(this).val();}).get();
+                    var oro_naso_swab = $("input[name='oro_naso_swab[]']")
+                          .map(function(){return $(this).val();}).get();
+                    var spe_others = $("input[name='spe_others[]']")
+                          .map(function(){return $(this).val();}).get();
+                    $('#covid_form').ajaxSubmit({
+                        url:  "{{ url('/covid-store') }}",
+                        type: "POST",
+                        data: {
+                            list_name_occa: values ? values : '',
+                            meeting_id: meeting_id,
+                            id: val['covidscreen_id'] 
+                        },
+                        success: function(data){
+                            $('#assess_form').ajaxSubmit({
+                                url:  "{{ url('/assess-store') }}",
+                                type: "POST",
+                                data: {
+                                    meeting_id: meeting_id,
+                                    scrumee: scrum,
+                                    oro_naso_swabee: oro_naso_swab ? oro_naso_swab : '',
+                                    spe_othersee: spe_others ? spe_others : '',
+                                    assess_id: val['covidassess_id']
+                                },
+                                success: function(data){
+                                    Lobibox.notify('success', {
+                                        title: "",
+                                        msg: "Successfully save Covid-19 Screening",
+                                        size: 'normal',
+                                        rounded: true
+                                    });
+                                },
+                                error: function (data) {
+                                    $(".loading").hide();
+                                    Lobibox.notify('error', {
+                                        title: "",
+                                        msg: "Something went wrong, Please try again.",
+                                        size: 'normal',
+                                        rounded: true
+                                    });
+                                },
+                            });
+                        },
+                        error: function (data) {
+                            $(".loading").hide();
+                            Lobibox.notify('error', {
+                                title: "",
+                                msg: "Something went wrong, Please try again.",
+                                size: 'normal',
+                                rounded: true
+                            });
+                        },
+                    });
+                    break;
+                    case 'diagnosis':
+                    $('#diag_form').ajaxSubmit({
+                        url:  "{{ url('/diagnosis-store') }}",
+                        type: "POST",
+                        data: {
+                            meeting_id: meeting_id,
+                            id: val['diagassess_id']
+                        },
+                        success: function(data){
+                           Lobibox.notify('success', {
+                                title: "",
+                                msg: "Successfully save diagnosis/assessment",
+                                size: 'normal',
+                                rounded: true
+                            });
+                        },
+                        error: function (data) {
+                            $(".loading").hide();
+                            Lobibox.notify('error', {
+                                title: "",
+                                msg: "Something went wrong, Please try again.",
+                                size: 'normal',
+                                rounded: true
+                            });
+                        },
+                    });
+                    break;
+
+                }
+            }
         });
     });
 

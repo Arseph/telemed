@@ -21,7 +21,7 @@
       events: {
         url: "{{ url('/my-calendar-meetings') }}",
         failure: function() {
-          alert('error getting teleconsultations')
+          alert('error getting teleconsultations, Please refresh the page.')
         }
       },
     });
@@ -36,7 +36,7 @@
       editable: true,
       dayMaxEvents: true,
       events: {
-        url: "{{ url('/calendar-meetings') }}",
+        url: "{{ url('/my-calendar-meetings') }}",
         failure: function() {
           alert('error getting teleconsultations, Please refresh the page.')
         }

@@ -269,7 +269,7 @@ class LoginController extends Controller
         $client = new \GuzzleHttp\Client();
         $response = $client->request('POST', 'http://222.127.126.38/doh/referral/api/getusers', [
         'form_params' => [
-            'username' => 'admin_doh1',
+            'sample' => 'sample1',
             ]
         ]);
         dd($response->getBody()->getContents());

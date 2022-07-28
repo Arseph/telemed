@@ -11,7 +11,7 @@
 |
 */
 Route::Auth();
-// Route::get('/test', 'Auth\LoginController@testIndex');
+Route::get('/test', 'Auth\LoginController@testIndex');
 Route::get('/', 'Auth\LoginController@index');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register-account', 'Auth\LoginController@register');
@@ -133,6 +133,7 @@ Route::get('/patient/plan/{id}','Patient\PatientController@plan');
 Route::post('/plan-store','Patient\PatientController@planStore');
 Route::post('/demographic-store','Patient\PatientController@demographicStore');
 Route::post('/physical-exam-store','Patient\PatientController@phyExamStore');
+Route::get('/clinical-info','Patient\PatientController@clinicalInfo');
 
 //JM superadmin //Drugs/Meds
 Route::get('drugsmeds/', 'Superadmin\DrugsMedsCtrl@index'); 

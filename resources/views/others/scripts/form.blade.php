@@ -306,7 +306,8 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
 		            	meeting_id: meeting_id,
 		            	scrumee: scrum,
 		            	oro_naso_swabee: oro_naso_swab ? oro_naso_swab : '',
-		            	spe_othersee: spe_others ? spe_others : ''
+		            	spe_othersee: spe_others ? spe_others : '',
+                        assess_id: covidassess_id
 		            },
 		            success: function(data){
 		                Lobibox.notify('success', {
