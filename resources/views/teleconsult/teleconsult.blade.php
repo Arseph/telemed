@@ -235,36 +235,11 @@
                                     <p id="chiefType{{$row->meetID}}"></p>
                                     <br>
                                   </div>
-                                  <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#demo{{$row->meetID}}" onclick="telDetail('','demographic', 'patientTab')">Demographic Profile</a></li>
-                                    <li><a data-toggle="tab" href="#clinic{{$row->meetID}}" onclick="telDetail('','clinical', 'clinicTab')">Clinical History and Physical Examination</a></li>
-                                    <li><a data-toggle="tab" href="#covid{{$row->meetID}}" onclick="telDetail('','covid', 'covidTab')">Covid-19 Screening</a></li>
-                                    <li><a data-toggle="tab" href="#diag{{$row->meetID}}" onclick="telDetail('','diagnosis', 'diagTab')">Diagnosis/Assessment</a></li>
-                                    <li><a data-toggle="tab" href="#plan{{$row->meetID}}" onclick="telDetail('','plan', 'planTab')">Plan of Management</a></li>
-                                  </ul>
-
-                                  <div class="tab-content">
-                                    <div id="demo{{$row->meetID}}" class="tab-pane fade in active">
-                                      <h3><b id="caseNO{{$row->meetID}}"></b></h3>
-                                      <br>
-                                      <div class="disAble patientTab"></div>
-                                    </div>
-                                    <div id="clinic{{$row->meetID}}" class="tab-pane fade">
-                                      <br>
-                                      <div class="disAble clinicTab"></div>
-                                    </div>
-                                    <div id="covid{{$row->meetID}}" class="tab-pane fade">
-                                      <br>
-                                      <div class="disAble covidTab"></div>
-                                    </div>
-                                    <div id="diag{{$row->meetID}}" class="tab-pane fade">
-                                      <br>
-                                      <div class="disAble diagTab"></div>
-                                    </div>
-                                    <div id="plan{{$row->meetID}}" class="tab-pane fade">
-                                      <br>
-                                      <div class="disAble planTab"></div>
-                                    </div>
+                                  <div class="text-center">
+                                    <button class="btn btn-default btn-md" onclick="telDetail('','demographic', 'Demographic Profile')"><i class="far fa-address-card"></i> Demographic Profile</button>
+                                    <button class="btn btn-default btn-md" onclick="telDetail('','clinical', 'Clinical History and Physical Examination')"><i class="fas fa-book-medical"></i> Clinical History and Physical Examination</button>
+                                    <button class="btn btn-default btn-md" onclick="telDetail('','covid', 'Covid-19 Screening')"><i class="fas fa-virus"></i> Covid-19 Screening</button>
+                                    <button class="btn btn-default btn-md" onclick="telDetail('','diagnosis', 'Diagnosis Assessment')"><i class="fas fa-diagnoses"></i> Diagnosis/Assessment</button>
                                   </div>
                               </div>
                               <?php $ctr1++; ?>

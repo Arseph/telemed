@@ -7,7 +7,6 @@
             <h4 style="">Diagnosis/Assessment</h4>
         </div>
         <div class="box-body">
-        	<input type="hidden" name="patient_id" value="{{ $patient->id }}">
             <input type="hidden" name="id" value="@if($patient->diagassess){{ $patient->diagassess->id }} @endif">
                 {{ csrf_field() }}
             <div class="row">

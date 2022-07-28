@@ -156,6 +156,7 @@ class TeleController extends Controller
                         ZoomToken::where('facility_id',$user->facility_id)->first()->updated_at
                         : 'none';
         $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
+        $zoomclient = $user->zoom ? $user->zoom->zoom_client_id : '';
         return view('teleconsult.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -175,7 +176,8 @@ class TeleController extends Controller
             'imaging' => $imaging,
             'docorder' => $docorder,
             'zoomtoken'=> $zoomtoken,
-            'doc_type'=> $doc_type
+            'doc_type'=> $doc_type,
+            'zoomclient' => $zoomclient
         ]);
     }
 
@@ -390,11 +392,31 @@ class TeleController extends Controller
     		"meetings.*",
     		"pat.*",
     		"meetings.id as meetID",
-            "d.case_no as caseNO"
+            "d.case_no as caseNO",
+            "d.id as demographic_id",
+            "ch.id as clinical_id",
+            "pe.id as phy_id",
+            "cs.id as covidscreen_id",
+            "csa.id as covidassess_id",
+            "das.id as diagassess_id"
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
         ->leftJoin("tele_demographic_profile as d","d.meeting_id","=","meetings.id")
+        ->leftJoin("tele_clinical_histories as ch","ch.meeting_id","=","meetings.id")
+        ->leftJoin("tele_physical_exams as pe","pe.meeting_id","=","meetings.id")
+        ->leftJoin("tele_covid19_screening as cs","cs.meeting_id","=","meetings.id")
+        ->leftJoin("tele_covid19_clinical_assessment as csa","csa.meeting_id","=","meetings.id")
+        ->leftJoin("tele_diagnosis_assessment as das","das.meeting_id","=","meetings.id")
          ->where('meetings.id',$req->meet_id)
         ->first();
+        if($meeting->phyexam) {
+            $conjunctiva = $meeting->phyexam->conjunctiva;
+            $neck = $meeting->phyexam->neck;
+            $breast = $meeting->phyexam->breast;
+            $thorax = $meeting->phyexam->thorax;
+            $abdomen = $meeting->phyexam->abdomen;
+            $genitals = $meeting->phyexam->genitals;
+            $extremities = $meeting->phyexam->extremities;
+        }
 
     	return json_encode($meeting);
     }

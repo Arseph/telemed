@@ -16,7 +16,7 @@
         @if($active_user->level == 'doctor')
       	<div class="form-group" id="facilityField">
             <label>Facility:</label>
-            <select class="form-control select2 selectFacility" name="facility_id" required>
+            <select id="reqFac" class="form-control select2 selectFacility" name="facility_id" required>
             	<option value="">Select Facility ...</option>
 	              @foreach($facilities as $fac)
 	                <option value="{{ $fac->id }}">{{ $fac->facilityname }}</option>
@@ -131,7 +131,7 @@
           </div>
 		      <div class="modal-footer">
             <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
-            <a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{$user->zoom->zoom_client_id}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank"></a>
+            <a class="refTok" target="_blank"></a>
 		        <button type="submit" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
 		        <button id="acceptBtn" type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
@@ -328,6 +328,24 @@
       </div>
       <div class="modal-body" id="calendarInfo">
         <div id='fac-calendar'></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="tele_details_modal" role="dialog" aria-labelledby="calendar_meetings_modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="TelDetailHead"></h4>
+      </div>
+      <div class="modal-body">
+        <div id='tele_detail_body'></div>
+      </div>
+      <div class="modal-footer">
+          <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+          <button id="saveBtnForm" type="button" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
       </div>
     </div>
   </div>

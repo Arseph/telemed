@@ -356,7 +356,6 @@ class PatientController extends Controller
     }
 
     public function diagnosisStore(Request $req) {
-        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
        if($req->id) {
         DiagnosisAssessment::find($req->id)->update($req->all());
        } else {
@@ -406,5 +405,37 @@ class PatientController extends Controller
        } else {
         PhysicalExam::create($req->all());
        }
+    }
+
+    public function clinicalInfo(Request $req) {
+        $meeting = Meeting::find($req->meet_id);
+        $conjunctiva = '';
+        $neck = '';
+        $breast = '';
+        $thorax = '';
+        $abdomen = '';
+        $genitals = '';
+        $extremities = '';
+        if($meeting->phyexam) {
+            $conjunctiva = $meeting->phyexam->conjunctiva;
+            $neck = $meeting->phyexam->neck;
+            $breast = $meeting->phyexam->breast;
+            $thorax = $meeting->phyexam->thorax;
+            $abdomen = $meeting->phyexam->abdomen;
+            $genitals = $meeting->phyexam->genitals;
+            $extremities = $meeting->phyexam->extremities;
+        }
+
+        return response()->json(
+            [
+                'conjunctiva' => $conjunctiva,
+                'neck' => $neck,
+                'breast' => $breast,
+                'thorax' => $thorax,
+                'abdomen' => $abdomen,
+                'genitals' => $genitals,
+                'extremities' => $extremities
+            ]
+        );
     }
 }
