@@ -25,7 +25,7 @@
         </div>
         <div class="form-group hide" id="catField">
             <label>Doctor Category:</label>
-            <select class="form-control select2 selectCat" name="tele_cate_id" required>
+            <select class="form-control select2 selectCatRequest" name="tele_cate_id" required>
               <option value="">Select Category ...</option>
                 @foreach($telecat as $tel)
                   <option value="{{ $tel->id }}">{{ $tel->category_name }}</option>

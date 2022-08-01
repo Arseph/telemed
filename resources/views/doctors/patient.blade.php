@@ -52,6 +52,9 @@
                             <th>Age / DOB</th>
                             <th>Barangay</th>
                             <th>Contact</th>
+                            @if($user->level=='admin' || $user->level=='support')
+                            <th>Doctor Attended</th>
+                            @endif
                         </tr>
                         
                         @foreach($data as $row)
@@ -82,6 +85,9 @@
                             </td>
                             <td>{{ $row->barangay }}</td>
                             <td>{{ $row->contact }}</td>
+                            @if($user->level=='admin' || $user->level=='support')
+                            <td>{{ $row->mydoctor->lname }}, {{ $row->mydoctor->fname }} {{ $row->mydoctor->mname }}</td>
+                            @endif
                         </tr>
                         @endforeach
                     </table>

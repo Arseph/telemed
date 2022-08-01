@@ -10,6 +10,9 @@
     } else if($user->level=='admin'){
         $dept_desc = ' / Admin';
     }
+    else if($user->level=='support'){
+        $dept_desc = ' / Support';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -284,6 +287,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Manage <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ asset('/admin-doctors') }}"><i class="fas fa-user-md"></i>&nbsp; Doctors</a></li>
+                        <li><a href="{{ asset('doctor/patient/list') }}"><i class="fas fa-head-side-mask"></i>&nbsp; Patients</a></li>
                         <li><a href="{{ asset('/admin-facility') }}"><i class="fas fa-hospital"></i>&nbsp; Facility</a></li>
                     </ul>
                 </li>
@@ -291,7 +295,6 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
-                        <li><a class="refTok" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{$user->facility->zoom->zoom_client_id}}&redirect_uri={{env('ZOOM_REDIRECT_URL')}}" target="_blank"><label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. Click to Refresh Token" class="fa-solid fa-circle-question"></i></a></li>
                     </ul>
                 </li>
                 @endif
