@@ -1,4 +1,8 @@
 <script>
+    <?php
+    $user = Session::get('auth');
+    $zoomclient = $user->zoom ? $user->zoom->zoom_client_id : '';
+    ?>
     @if(Session::get('action_made'))
         Lobibox.notify('success', {
             title: "",
@@ -301,6 +305,13 @@
                     $('#accnotifacceptBtn').prop("disabled", true);
                 } else {
                   $(this).html('Access token was expired.');
+                  $('.refTok').html('Get your token here');
+                  var tokurl;
+                   var cred = "{{$zoomclient}}";
+                   if(cred) {
+                    tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
+                    $(".refTok").attr("href", tokurl);
+                   }
                     $('#notifacceptBtn').prop("disabled", true);
                     $('#accnotifacceptBtn').prop("disabled", true);
                 }

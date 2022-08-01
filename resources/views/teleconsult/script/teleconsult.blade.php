@@ -42,11 +42,17 @@
     $('.countdowntoken').countdown(expirewill, function(event) {
         if(event.strftime('%H:%M:%S') == '00:00:00') {
             if(last_update == 'none') {
-                $(this).html('You don\'t have access token.');
-                $('.refTok').html('Get your token here');      
+                $(this).html('You don\'t have access token. Please Contact Administrator');   
                 $('#acceptBtn').prop("disabled", true);
             } else {
-              $(this).html('Access token was expired. Please contact administrator ');
+              $(this).html('Access token was expired.');
+              $('.refTok').html('Get your token here');
+              var tokurl;
+               var cred = "{{$zoomclient}}";
+               if(cred) {
+                tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
+                $(".refTok").attr("href", tokurl);
+               }
               $('#acceptBtn').prop("disabled", true);
             }
         } else {
@@ -410,8 +416,8 @@
             $('#catField').removeClass('hide');
         }
     });
-    $( ".selectCat" ).change(function() {
-        var id = $('.selectFacility').val();
+    $( ".selectCatRequest" ).change(function() {
+        var id = $('#reqFac').val();
         var cat_id = $(this).val();
         var url = "{{ url('/get-doctors-facility') }}";
         $.ajax({

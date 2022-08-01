@@ -57,6 +57,7 @@ class PatientController extends Controller
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
         ->where('patients.doctor_id', $user->id)
+        ->orWhere('patients.facility_id', $user->facility_id)
         ->where(function($q) use ($keyword){
             $q->where('patients.fname',"like","%$keyword%")
                 ->orwhere('patients.lname',"like","%$keyword%")
@@ -74,7 +75,8 @@ class PatientController extends Controller
         ) ->leftJoin("barangays as bar","bar.brg_psgc","=","patients.brgy")
         ->leftJoin("users as user","user.id","=","patients.account_id")
         ->where('patients.doctor_id', $user->id)->get();
-        $users = User::all();
+        $users = User::where('facility_id', $user->facility_id)
+                      ->where('level', 'doctor')->get();
         $nationality = Countries::orderBy('nationality', 'asc')->get();
         $region = Region::all();
         $nationality_def = Countries::where('num_code', '608')->first();

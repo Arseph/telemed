@@ -58,6 +58,17 @@
           </div>
           <input type="hidden" name="patient_id" id="patient_id">
           <input type="hidden" value="1" name="is_accepted">
+           @if($user->level == 'admin')
+          <div class="form-group">
+            <label>Doctor:</label>
+            <select class="form-control select2" name="doctor_id" id="doctor_id" required>
+        		<option value="">Select Doctor ...</option>
+	              @foreach($users as $doctor)
+	                <option value="{{ $doctor->id }}">{{ $doctor->lname }}, {{ $doctor->fname }} {{ $doctor->mname }} @if($doctor->email)(<small>{{$doctor->email}}</small>)@endif</option>
+                 @endforeach 
+            </select>
+	      </div>
+          @endif
          <div class="row">
 		     <div class="col-sm-6">
 		     	<label class="required-field">PhilHealth Status:</label>
@@ -219,23 +230,19 @@
 		            <label class="required-field">Municipality:</label>
 		            <select class="form-control muncity filter_muncity select2" name="muncity" id="municipality" required>
 		        		<option value="">Select Municipal/City...</option>
-			              @foreach($municity as $m)
-			                <option value="{{ $m->muni_psgc }}">{{ $m->muni_name }}</option>
-			                 @endforeach 
-			             <option value="others">Others</option>
 	                </select>
 		        </div>
 		    </div>
 			<div class="col-sm-6">
 				<div class="form-group barangay_holder">
 			        <label>Barangay:</label>
-			        <select class="form-control barangay select2" name="brgy" required>
+			        <select class="form-control barangays select2" name="brgy" required>
 			            <option value="">Select Barangay...</option>
 			        </select>
 			    </div>
 			</div>
 		    <div class="col-sm-12">
-		    	<div class="has-group others_holder hide">
+		    	<div class="has-group others_holder">
 			        <label class="required-field">Complete Address :</label>
 			        <input type="text" name="address" class="form-control others" placeholder="Enter complete address..." />
 			    </div>

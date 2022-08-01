@@ -6,6 +6,7 @@
         margin-bottom: 10px;
     }
 </style>
+
 <div class="modal fade" id="req_patient_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 <div class="modal-dialog modal-lg">
   <div class="modal-content">

@@ -52,21 +52,23 @@ class LoginController extends Controller
         $res = json_decode($response->getBody()->getContents(), true);
         if(!empty($res)) {
             if($res && !$login) {
-                $data = array(
-                    'fname' => $res['fname'],
-                    'mname' => $res['mname'],
-                    'lname' => $res['lname'],
-                    'level' => $res['level'],
-                    'facility_id' => $res['facility_id'],
-                    'status' => 'active',
-                    'contact' => $res['contact'],
-                    'email' => $res['email'],
-                    'designation' => $res['designation'],
-                    'username' => $res['username'],
-                    'password' => $res['password'],
-                    'eref' => 1
-                );
-                $login = User::create($data);
+                if(Hash::check($req->password,$res['password'])) {
+                    $data = array(
+                        'fname' => $res['fname'],
+                        'mname' => $res['mname'],
+                        'lname' => $res['lname'],
+                        'level' => $res['level'],
+                        'facility_id' => $res['facility_id'],
+                        'status' => 'active',
+                        'contact' => $res['contact'],
+                        'email' => $res['email'],
+                        'designation' => $res['designation'],
+                        'username' => $res['username'],
+                        'password' => $res['password'],
+                        'eref' => 1
+                    );
+                    $login = User::create($data);
+                }
             }
         }
         if($login && $login->status=='deactivate') {
