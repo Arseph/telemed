@@ -442,7 +442,10 @@ class TeleController extends Controller
         $duration = $req->duration;
         $patient = $meet->patient->lname.', '.$meet->patient->fname.' '.$meet->patient->mname;
         $password = 'doh'.str_random(3);
-        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://api.zoom.us',
+            'verify' => false
+        ]);
         if($action == 'Accept') {
             $db = ZoomToken::where('facility_id',$user->facility_id)->first();
             $arr_token = json_decode($db->provider_value);
@@ -533,7 +536,10 @@ class TeleController extends Controller
         $client_id = $user->zoom->zoom_client_id;
         $client_secret = $user->zoom->zoom_client_secret;
         $direct_url = env('ZOOM_REDIRECT_URL');
-        $client = new \GuzzleHttp\Client(['base_uri' => 'https://zoom.us']);
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://zoom.us',
+            'verify' => false
+        ]);
   
         $response = $client->request('POST', '/oauth/token', [
             "headers" => [
@@ -674,7 +680,10 @@ class TeleController extends Controller
         $patientdata = Patient::find($req->patient_id);
         $patient = $patientdata->lname.', '.$patientdata->fname.' '.$patientdata->mname;
         $password = 'doh'.str_random(3);
-        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://api.zoom.us',
+            'verify' => false
+        ]);
         $action = 'Accept';
         if($action == 'Accept') {
             $db = ZoomToken::where('facility_id',$user->facility_id)->first();
@@ -737,7 +746,10 @@ class TeleController extends Controller
         $patientdata = Patient::find($req->patient_id);
         $patient = $patientdata->lname.', '.$patientdata->fname.' '.$patientdata->mname;
         $password = 'doh'.str_random(3);
-        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.zoom.us']);
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://api.zoom.us',
+            'verify' => false
+        ]);
         $action = 'Created';
         if($action == 'Created') {
             $db = ZoomToken::where('facility_id',$user->facility_id)->first();

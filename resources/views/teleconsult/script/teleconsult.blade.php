@@ -49,8 +49,9 @@
               $('.refTok').html('Get your token here');
               var tokurl;
                var cred = "{{$zoomclient}}";
+               var uri = "http://180.193.207.196/telemed/getToken";
                if(cred) {
-                tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
+                tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
                 $(".refTok").attr("href", tokurl);
                }
               $('#acceptBtn').prop("disabled", true);
@@ -96,7 +97,8 @@
        var tokurl;
        var cred = "{{$zoomclient}}";
        if(cred) {
-        tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
+        var uri = "http://180.193.207.196/telemed/getToken";
+        tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
         $(".refTok").attr("href", tokurl);
        }
     });
@@ -454,8 +456,7 @@
 
     $('#tele_form').on('submit',function(e){
         e.preventDefault();
-        $('.btnSavePend').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
-        // $(".loading").show();
+        $(".loading").show();
         $('#tele_form').ajaxSubmit({
             url:  "{{ url('/sched-pending') }}",
             type: "GET",
@@ -465,7 +466,6 @@
                 },500);
             },
             error: function (data) {
-                $('.btnSavePend').html('<i class="fas fa-check"></i> Save');
                 $(".loading").hide();
                 Lobibox.notify('error', {
                     title: "Schedule",

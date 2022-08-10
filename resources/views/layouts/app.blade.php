@@ -311,18 +311,6 @@
                         <li><a href="{{ asset('feedback/view') }}"><i class="fas fa-list"></i> Feedback List</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-paste"></i>&nbsp; Reports <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fas fa-notes-medical"></i>&nbsp;Doctor Orders</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
-                    </ul>
-                </li>
                 @endif
                 @if($user->level=='patient')
                 <li><a href="{{ asset('patient') }}"><i class="fa fa-home"></i> Dashboard</a></li>
