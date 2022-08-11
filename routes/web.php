@@ -94,6 +94,7 @@ Route::get('/admin-doctors','Admin\ManageController@indexDoctors');
 
 // Doctor Module
 Route::get('doctor','Doctor\HomeController@index');
+Route::get('home/chart','Doctor\HomeController@chart');
 Route::match(['GET','POST'],'doctor/patient/list','Doctor\PatientController@patientList');
 Route::match(['GET','POST'],'doctor/patient/update','Doctor\PatientController@patientUpdate');
 Route::get('location/barangay/{muncity_id}','Doctor\PatientController@getBaranggays');

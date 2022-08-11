@@ -347,9 +347,6 @@
                                 <div id="chipCon" class="chip actColor">
                                   Consultation(<b id="totReqTel"></b>)
                                 </div>
-                                <div id="chipPat" class="chip">
-                                  Patient(<b id="totReqPat"></b>)
-                                </div>
                                 <div id="chipReq" class="chip">
                                   Accepted<b id="totRequest"></b>
                                 </div>
