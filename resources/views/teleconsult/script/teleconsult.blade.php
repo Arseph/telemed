@@ -697,6 +697,7 @@
     var backtb;
     var started;
     var viewfrm;
+    var info;
     function telDetail(id, view, tab, docid, details, backtab) {
         backtb = backtab ? backtab : backtb;
         var hidde = backtb ? 'hide' : '';
@@ -756,6 +757,16 @@
                         
                         $('#TelDetailHead').html(tab);
                         $('#tele_details_modal').modal('show');
+                        var active = "<?php echo \Illuminate\Support\Facades\Session::get('auth')->id; ?>";
+                        if(info['RequestTo'] == active) {
+                            $('#tele_detail_body').addClass('disAble');
+                            $('#cancelBtnDetails').addClass('hide');
+                            $('#saveBtnForm').addClass('hide');
+                        } else  {
+                            $('#tele_detail_body').removeClass('disAble');
+                            $('#cancelBtnDetails').removeClass('hide');
+                            $('#saveBtnForm').removeClass('hide');
+                        }
                         if(viewfrm == 'clinical') {
                             $.ajax({
                                 async: true,
@@ -765,7 +776,6 @@
                                     meet_id: meeting_id
                                 },
                                 success : function(data){
-                                    console.log(data)
                                     var conjunctiva = data.conjunctiva;
                                     var neck = data.neck;
                                     var breast = data.breast;
@@ -983,8 +993,6 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
-                console.log(val)
-                console.log(viewfrm)
                 switch(viewfrm) {
                     case 'demographic':
                     $('#demographic_form').ajaxSubmit({

@@ -344,7 +344,7 @@
         <div id='tele_detail_body'></div>
       </div>
       <div class="modal-footer">
-          <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+          <button id="cancelBtnDetails" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
           <button id="saveBtnForm" type="button" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
       </div>
     </div>
