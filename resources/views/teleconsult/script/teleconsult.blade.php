@@ -707,6 +707,9 @@
         $('#chiefDate'+id).html('Date:' +moment(info['date_meeting']).format('MMMM D, YYYY'));
         $('#chiefTime'+id).html('Time:' +moment(info['from_time'], "HH:mm:ss").format('h:mm A'));
         $('#chiefType'+id).html('Type of Consultation: ' +info['pendmeet']['telecategory']['category_name']);
+        $('#chiefCom'+id).html('Chief Complaint: ' + info['title']);
+        var mname = info['patMname'] ? info['patMname'] : '';
+        $('#patientName'+id).html('Patient: '+info['patLname']+', '+info['patFname'] + ' ' + mname);
         docorderid = docid ? docid : docorderid;
         var url = "{{ url('/tele-details') }}";
         viewfrm = view ? view : 'demographic';

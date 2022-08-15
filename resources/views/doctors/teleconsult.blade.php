@@ -9,25 +9,6 @@
     .form-group {
         margin-bottom: 10px;
     }
-    .modal {
-      text-align: center;
-      padding: 0!important;
-    }
-
-    .modal:before {
-      content: '';
-      display: inline-block;
-      height: 100%;
-      vertical-align: middle;
-      margin-right: -4px;
-    }
-
-    .modal-dialog {
-          width: 60%;
-      display: inline-block;
-      text-align: left;
-      vertical-align: middle;
-    }
     .btn-circle {
       position: relative;
       display: inline-block;

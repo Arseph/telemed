@@ -16,6 +16,7 @@ use App\Patient;
 use App\Login;
 use App\DocCategory;
 use App\ZoomCredential;
+use App\ZoomToken;
 class ManageController extends Controller
 {
     public function __construct()
@@ -476,11 +477,17 @@ class ManageController extends Controller
     }
 
     public function zoomCredit(Request $req) {
-        $credit = ZoomCredential::where('facility_id', $req->facility_id)->first();
+        $credit = ZoomCredential::where('doctor_id', $req->doctor_id)->first();
         if($credit) {
-            ZoomCredential::where('facility_id', $req->facility_id)->update($req->except('_token'));
+            ZoomCredential::where('doctor_id', $req->doctor_id)->update($req->except('_token'));
         } else {
             ZoomCredential::create($req->all());
+            $arr = array(
+                'facility_id' => $req->facility_id,
+                'doctor_id' => $req->doctor_id,
+                'provider' => 'zoom'
+            );
+            ZoomToken::create($arr);
         }
         Session::put("action_made","Successfully Added Zoom Credentials");
     }

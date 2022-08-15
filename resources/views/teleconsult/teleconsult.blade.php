@@ -9,25 +9,6 @@
     .form-group {
         margin-bottom: 10px;
     }
-    .modal {
-      text-align: center;
-      padding: 0!important;
-    }
-
-    .modal:before {
-      content: '';
-      display: inline-block;
-      height: 100%;
-      vertical-align: middle;
-      margin-right: -4px;
-    }
-
-    .modal-dialog {
-          width: 60%;
-      display: inline-block;
-      text-align: left;
-      vertical-align: middle;
-    }
     .btn-circle {
       position: relative;
       display: inline-block;
@@ -64,10 +45,6 @@
     <div class="box box-success">
         <div class="box-header with-border">
             <div class="pull-right">
-              <!-- @if($active_user->level == 'doctor')
-              <a data-toggle="modal" class="btn btn-warning btn-md" data-target="#creating_tele_modal">
-                    <i class="far fa-calendar-plus"></i> Create Teleconsult
-                </a>@endif -->
                 <a data-toggle="modal" class="btn btn-success btn-md" data-target="#tele_modal">
                     <i class="far fa-calendar-plus"></i> Request Teleconsult
                 </a>
@@ -131,7 +108,7 @@
                               }
                               ?>
                               <li class="@if($ctr == 0)active @endif"><a data-toggle="tab" href="#tabs{{$row->id}}">
-                                <b>{{ $row->title }}</b><br>
+                                <b style="text-transform: uppercase;" class="title-info">{{ $row->title }}</b><br>
                                 <label class="text-warning update_info">{{ \Carbon\Carbon::parse($row->date_meeting)->format('l, F d, Y') }}
                                     <br><b>
                                         <small class="text-warning">
@@ -149,8 +126,16 @@
                               <?php $ctr1 = 0;  ?>
                               @foreach($data as $row)
                               <div id="tabs{{$row->id}}" class="tab-pane fade in @if($ctr1 == 0)active @endif">
-                                <h3>{{ $row->title }}</h3>
-                                <label class="title-info update_info">Date:
+                                <h3 class="title-info" style="text-transform: uppercase; font-size: 150%;">{{ $row->title }}</h3>
+                                <h4 class="patientName{{$row->id}} text-green update_info">Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}<i class="fas fa-info-circle" data-toggle="collapse" data-target="#morepatInfo{{$row->id}}"></i></h4>
+                                <div id="morepatInfo{{$row->id}}" class="collapse">
+                                  <div style="margin-bottom: 6px;">{{\Carbon\Carbon::parse($row->dob)->diff(\Carbon\Carbon::now())->format('%y years %m months old and %d day(s)')}}</div>
+                                  <div>Birthdate: <label>{{\Carbon\Carbon::parse($row->dob)->format('F d, Y')}}</label></div>
+                                  <div>Sex: <label>{{$row->sex}}</label></div>
+                                  <div>Civil Status: <label>{{$row->civil_status}}</label></div>
+                                  <hr>
+                                </div>
+                                <label>Date:
                                       {{ \Carbon\Carbon::parse($row->date_meeting)->format('l, F d, Y') }}
                                     <br><b>
                                         <small class="text-warning">Time:
@@ -158,7 +143,6 @@
                                         </small>
                                     </b>
                                 </label>
-                                <p>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</p>
                                 @if($row->pendmeet)<p>Type of Consultation:
                                   {{$row->pendmeet->telecategory->category_name}} @endif</p>
                                 @if($row->RequestTo == $active_user->id)
@@ -228,6 +212,7 @@
                                   <h3>Teleconsultation Details</h3>
                                   <div>
                                     <h5 id="chiefCom{{$row->meetID}}" class="title-info update_info"></h5>
+                                    <h5 id="patientName{{$row->meetID}}" class="text-green update_info"></h5>
                                     <b><small id="chiefDate{{$row->meetID}}"></small></b>
                                     <br><b>
                                         <small id="chiefTime{{$row->meetID}}"></small>

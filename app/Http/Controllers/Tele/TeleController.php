@@ -45,6 +45,9 @@ class TeleController extends Controller
         	"pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
+            "pat.dob as dob",
+            "pat.sex as sex",
+            "pat.civil_status as civil_status",
             "pat.id as PatID",
         )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
         if($keyword){
