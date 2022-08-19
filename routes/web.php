@@ -11,7 +11,7 @@
 |
 */
 Route::Auth();
-Route::get('/test', 'Auth\LoginController@testIndex');
+//Route::get('/test', 'Auth\LoginController@testIndex');
 Route::get('/', 'Auth\LoginController@index');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register-account', 'Auth\LoginController@register');
@@ -19,28 +19,8 @@ Route::get('/places/{id}/{type}', 'Auth\LoginController@getMunandBrgy');
 Route::get('/get-doctor/{id}', 'Auth\LoginController@getDoctor');
 Route::get('/validate-email', 'Auth\LoginController@validateEmail');
 Route::get('/validate-username', 'Auth\LoginController@validateUsername');
-Route::get('/logout', function(){
-    $user = \Illuminate\Support\Facades\Session::get('auth');
-    \Illuminate\Support\Facades\Session::flush();
-    if(isset($user)){
-        \App\User::where('id',$user->id)
-            ->update([
-                'login_status' => 'logout'
-            ]);
-        $logout = date('Y-m-d H:i:s');
-        $logoutId = \App\Login::where('user_id',$user->id)
-            ->orderBy('id','desc')
-            ->first()
-            ->id;
-
-        \App\Login::where('id',$logoutId)
-            ->update([
-                'status' => 'login_off',
-                'logout' => $logout
-            ]);
-    }
-    return redirect('/');
-});
+Route::post('change-password', 'Auth\LoginController@changePassword');
+Route::get('/logout', 'Auth\LoginController@logout');
 // SuperSuperadmin Module
 Route::get('superadmin','Superadmin\HomeController@index');
 Route::get('/users', 'Superadmin\ManageController@indexUser');

@@ -266,7 +266,42 @@ class LoginController extends Controller
         $username = User::where('username', $req->username)->get();
         return $username;
     }
+    public function changePassword(Request $req) {
+        $user = Session::get('auth');
+        $u = User::find($user->id);
+        if(!Hash::check($req->oldpass, $u->password)) {
+            return 0;
+        } else if($req->newpass != $req->confirmpass) {
+            return 1;
+        } else {
+            $u->update([
+                'password' => Hash::make($req->confirmpass)
+            ]);
+            return 'valid';
+        }
+    }
+    public function logout(){
+        $user = Session::get('auth');
+        Session::flush();
+        if(isset($user)){
+            User::where('id',$user->id)
+                ->update([
+                    'login_status' => 'logout'
+                ]);
+            $logout = date('Y-m-d H:i:s');
+            $logoutId = Login::where('user_id',$user->id)
+                ->orderBy('id','desc')
+                ->first()
+                ->id;
 
+            Login::where('id',$logoutId)
+                ->update([
+                    'status' => 'login_off',
+                    'logout' => $logout
+                ]);
+        }
+        return redirect('/');
+    }
     public function testIndex() {
         $client = new \GuzzleHttp\Client();
         $response = $client->request('POST', 'http://222.127.126.38/doh/referral/api/getusers', [

@@ -334,7 +334,13 @@
                 </li>
               
                 @endif
-                <li><a href="{{ asset('logout') }}"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#changePassModal" data-toggle="modal"><i class="fas fa-key"></i> Change Password</a></li>
+                        <li><a href="{{ asset('logout') }}"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
+                    </ul>
+                </li>
             </ul>
             @if($user->level=='doctor')
             <ul class="nav navbar-nav navbar-right">

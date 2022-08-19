@@ -180,3 +180,35 @@
         </div>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" role="dialog" id="changePassModal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Change Password</h4>
+               </div>
+            <div class="modal-body">
+                <form id="changePassForm" method="POST">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label>Enter old password:</label>
+                        <input type="password" class="form-control" value="" autofocus name="oldpass" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Enter new password:</label>
+                        <input type="password" class="form-control" autofocus name="newpass" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm new password:</label>
+                        <input type="password" class="form-control" name="confirmpass" required minlength="8">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Change</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
