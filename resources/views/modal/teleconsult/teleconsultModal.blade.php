@@ -62,8 +62,8 @@
   		        <input type="text" class="form-control" value="" name="title" required>
   		    </div>
 		      <div class="modal-footer">
-		        <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
-		        <button id="saveBtn" type="submit" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
+		        <button type="submit" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
 		     </div>
 	      </div>
   	</form>
@@ -268,7 +268,7 @@
        <div id="createscheduleMeeting">
         <div class="form-group">
            <label>Patient:</label>
-          <select class="form-control select2" name="patient_id" id="patient_id" required>
+          <select class="form-control select2" name="patient_id" required>
             <option value="">Select Patient ...</option>
               @foreach($patients as $pat)
                 <option value="{{ $pat->id }}">{{ $pat->lname }}, {{ $pat->fname }} {{ $pat->mname }}</option>

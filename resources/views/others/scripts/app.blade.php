@@ -223,4 +223,41 @@
         });
     });
 
+    $('#changePassForm').on('submit',function(e){
+        e.preventDefault();
+        $('#changePassForm').ajaxSubmit({
+            url:  "{{ url('/change-password') }}",
+            type: "POST",
+            success: function(data){
+                switch(data) {
+                    case '0':
+                    Lobibox.notify('error', {
+                        title: "Password",
+                        msg: "Old password is incorrect.",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    break;
+                    case '1':
+                    Lobibox.notify('error', {
+                        title: "Password",
+                        msg: "New password does not match.",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    break;
+                    case 'valid':
+                    Lobibox.notify('success', {
+                        title: "Password",
+                        msg: "Password Successfully Changed.",
+                        size: 'normal',
+                        rounded: true
+                    });
+                    $('#changePassModal').modal('hide');
+                    break;
+                }
+            },
+        });
+    });
+
 </script>

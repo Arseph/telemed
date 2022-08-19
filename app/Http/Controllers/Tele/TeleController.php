@@ -489,6 +489,28 @@ class TeleController extends Controller
         $meet->update($data); 
         if($action == 'Accept') {
             event(new AcDecReq($user, $create_meeting, $action, $userfac));
+            try {
+      
+                $client = new \GuzzleHttp\Client([
+                    'base_uri' => 'https://api.semaphore.co',
+                    'verify' => false
+                ]);
+          
+                $response = $client->request('POST', '/api/v4/messages', [
+                    "headers" => [
+                        "7f3e45b0e5b095e32620b1a4ca42f511" => "",
+                        "Cookie" => "XSRF-TOKEN=eyJpdiI6IjhvN3NjVHNiWkZJdjRhZ2RUbWZDK3c9PSIsInZhbHVlIjoiNndcL0dMRSsyXC9wTFBScm5nSlRITmw5NUlpMzJBZmNmeW1MTmxKMlVnazE4TnJ6eEJjeEptQ29FT0M3cHFaMU1rNzc4ZHEzOWloUlJKb2V0SmIzbUppUT09IiwibWFjIjoiNTBlNmI3NDVmOTU3ZGI2YzZhMTJjNmJjNDY0NzE2YTk2YTY3NGQ5YmYxNmFlMWI0Mjg5Zjk0OTdkNTRlNmI5NSJ9; laravel_session=eyJpdiI6Ilg2MVwveEpKejgreUxyaDBqTlFqXC9Ydz09IiwidmFsdWUiOiJCdXdOaHI3Q0xKSUxTS3JYR2lUcVltYVdYVkVnYzUzVEJUUngxOGNZRGpXZXc4QjB3R09WWXpUU0xXZ2VcL20ya1IwZGU2Z2FFUXVaRjg2XC83b0FnQ213PT0iLCJtYWMiOiI1NDVlZDZlNTUwOTZlMjZkMDQyNjgxMTI0NTU3NmMwNzQzZGVmODY1YmVhOGM2YmNlZTU5MTIxZWQ5NTk5MDA4In0%3D"
+                    ],
+                    'form_params' => [
+                        "apikey" => env('SEMAPHORE_KEY'),
+                        "number" => $meet->patient->contact,
+                        "message" => 'Hello '.$patient.'. This will inform you that your teleconsultation schedule will be on '.date('F d,Y', strtotime($req->date_from)).' '.date('H:i a', strtotime($req->time))
+                    ],
+                ]);
+                  
+            } catch (Exception $e) {
+                dd("Error: ". $e->getMessage());
+            }
             Session::put("action_made","Successfully Accept Teleconsultation.");
         } else {
             event(new AcDecReq($user, $meet, $action, $userfac));
