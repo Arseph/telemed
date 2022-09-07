@@ -35,17 +35,17 @@
     <div class="box box-success">
         <div class="row">
             <div class="col-md-3">
-                @if($patient->sex=='Male')
+                @if(\Crypt::decrypt($patient->sex)=='Male')
                 <img src="{{ asset('public/img/mans.png') }}" class="image-center" />
                 @else
                 <img src="{{ asset('public/img/womans.png') }}" class="image-center" />
                 @endif
                 <div><label class="heading-info">Patient Information</label></div>
-                <div><label style="text-transform: uppercase;">{{$patient->lname}}, {{$patient->fname}} {{$patient->mname}}</label></div>
+                <div><label style="text-transform: uppercase;">{{\Crypt::decrypt($patient->lname)}}, {{\Crypt::decrypt($patient->fname)}} {{\Crypt::decrypt($patient->mname)}}</label></div>
                 <div style="margin-bottom: 6px;">{{\Carbon\Carbon::parse($patient->dob)->diff(\Carbon\Carbon::now())->format('%y years %m months old and %d day(s)')}}</div>
                 <div>Birthdate: <label>{{\Carbon\Carbon::parse($patient->dob)->format('F d, Y')}}</label></div>
-                <div>Sex: <label>{{$patient->sex}}</label></div>
-                <div>Civil Status: <label>{{$patient->civil_status}}</label></div>
+                <div>Sex: <label>{{\Crypt::decrypt($patient->sex)}}</label></div>
+                <div>Civil Status: <label>{{\Crypt::decrypt($patient->civil_status)}}</label></div>
                 <hr>
                 <div>
                     <ul class="nav nav-pills nav-stacked" style="overflow: auto; height: 350px;">
@@ -59,7 +59,7 @@
                 <div class="tab-content">
                     <div id="tabspatientInfo" class="tab-pane fade in">
                         <div class="pull-right">
-                            <h4 id="btnEdit" title="Edit Facility" onclick="enableView()"><a href="javascript:void(0)"><i class="far fa-edit"></i></a></h4>
+                            <h4 id="btnEdit" title="Edit Patient Profile" onclick="enableView()"><a href="javascript:void(0)"><i class="far fa-edit"></i></a></h4>
                         </div>
                         <h3>Patient Profile</h3>
                         @include('forms.patientprof')

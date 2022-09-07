@@ -45,7 +45,7 @@
           <select class="form-control select2" name="patient_id" id="patient_id" required>
           	<option value="">Select Patient ...</option>
               @foreach($patients as $pat)
-                <option value="{{ $pat->id }}">{{ $pat->lname }}, {{ $pat->fname }} {{ $pat->mname }}</option>
+                <option value="{{ $pat->id }}">{{\Crypt::decrypt($pat->lname)}}, {{\Crypt::decrypt($pat->fname)}} {{\Crypt::decrypt($pat->mname) }}</option>
                @endforeach 
           </select>
         </div>

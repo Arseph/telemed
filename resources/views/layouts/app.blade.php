@@ -264,7 +264,6 @@
                         <li><a href="#"><i class="fas fa-list-ul"></i>&nbsp; Role/Permission</a></li>
                         <li><a href="{{ asset('facilities') }}"><i class="fas fa-hospital-alt"></i>&nbsp;&nbsp;Facilities</a></li>
                         <li><a href="{{ asset('doctor-category') }}"><i class="fas fa-stream"></i>&nbsp;&nbsp;Doctor Category</a></li>
-                        <li><a href="{{ asset('superadmin/feedback') }}"><i class="fas fa-list"></i>&nbsp;&nbsp;Feedback List</a></li>
                         <li><a href="#zoomCredentialModal" data-toggle="modal">
                         <i class="fas fa-video"></i> Zoom Credentials
                     </a></li>
@@ -276,7 +275,7 @@
                         <li><a href="#"><i class="far fa-file"></i>&nbsp; Monitoring Report</a></li>
                         <li><a href="{{ asset('audit-trail') }}"><i class="fas fa-user-clock"></i>&nbsp; User Logs</a></li>
                         <li><a href="{{ asset('superadim/audit-trail') }}"><i class="fa-solid fa-arrows-rotate"></i>&nbsp; Audit Trail</a></li>
-                        <li><a href="{{ asset('feedback') }}"><i class="fas fa-comments"></i>&nbsp; Feedback</a></li>
+                        <li><a href="{{ asset('superadmin/feedback') }}"><i class="fas fa-comments"></i>&nbsp; Feedback</a></li>
                     </ul>
                 </li>
                 @endif

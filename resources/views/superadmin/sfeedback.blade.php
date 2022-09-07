@@ -78,7 +78,7 @@
             @else
                 <div class="alert alert-warning">
                     <span class="text-warning">
-                        <i class="fa fa-warning"></i> No Drugs/Meds found!
+                        <i class="fa fa-warning"></i> No Feedbacks found!
                     </span>
                 </div>
             @endif

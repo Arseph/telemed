@@ -29,7 +29,8 @@
 	var pusher = new Pusher('456a1ac12f0bec491f4c', {
       cluster: '{{env("PUSHER_APP_CLUSTER")}}'
     });
-
+    var audioElement = document.createElement('audio');
+    audioElement.setAttribute('src', "{{ asset('public/sounds/notif.wav') }}");
     var activeid = "{{Session::get('auth')->id}}";
     var activefacility = "{{Session::get('auth')->facility_id}}";
     var level = "{{Session::get('auth')->level}}";
@@ -57,6 +58,7 @@
     var reqpat = pusher.subscribe('request-patient');
     reqpat.bind('request-patient-event', function(data) {
       if(activefacility == data['data']['facility_id'] && level == 'admin') {
+        audioElement.play();
           var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
           var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
                 '<hr>'+
@@ -75,6 +77,7 @@
     var requestedtele = pusher.subscribe('requested-tele');
     requestedtele.bind('requested-tele-event', function(data) {
         if(activeid == data['data']['user_id']) {
+        audioElement.play();
           var docname = data['user']['lname'] + ', '+ data['user']['fname']+' '+data['user']['mname'];
           var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goRequested('+data['data']['id']+', '+data['data']['user_id']+')">'+
             '<hr>'+
@@ -97,6 +100,7 @@
     var reqpatdoc = pusher.subscribe('doctor-request-patient');
     reqpatdoc.bind('doctor-request-patient-event', function(data) {
       if(activeid == data['data']['doctor_id']) {
+        audioElement.play();
           var name = data['data']['lname']+', ' +data['data']['fname']+' ' +data['data']['mname'];
           var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifPat('+data['data']['id']+', '+data['account']['id']+')">'+
                 '<hr>'+
@@ -219,6 +223,7 @@
         }
     });
     function goNotifTel(id) {
+        audioElement.play();
         var url = "{{ url('/get-pending-meeting') }}";
         $.ajax({
             async: false,

@@ -67,10 +67,10 @@
                                     class="title-info update_info"
                                     href="{{ asset('/patient-information') }}/{{$id}}"
                                 >
-                                    {{ $row->lname }}, {{ $row->fname }} {{ $row->mname }}
+                                    {{ \Crypt::decrypt($row->lname) }}, {{ \Crypt::decrypt($row->fname) }} {{ \Crypt::decrypt($row->mname) }}
                                 </a>
                             </td>
-                            <td>{{ $row->sex }}</td>
+                            <td>{{ \Crypt::decrypt($row->sex) }}</td>
                             <td>
                                 @if($row->dob)
                                 <b><?php echo
@@ -84,7 +84,7 @@
                                 @endif
                             </td>
                             <td>{{ $row->barangay }}</td>
-                            <td>{{ $row->contact }}</td>
+                            <td>{{ \Crypt::decrypt($row->contact) }}</td>
                             @if($user->level=='admin' || $user->level=='support')
                             <td>{{ $row->mydoctor->lname }}, {{ $row->mydoctor->fname }} {{ $row->mydoctor->mname }}</td>
                             @endif

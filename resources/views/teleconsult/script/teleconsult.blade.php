@@ -361,17 +361,16 @@
             url: url+"/"+id,
             type: 'GET',
             success : function(data){
-                var mname = data.mname ? data.mname : '';
-                var patient = data.patient.fname + ' ' + mname + ' ' + data.patient.lname;
-                var encoded = data.encoded.fname + ' ' + data.encoded.mname + ' ' + data.encoded.lname;
-                var fac = data.encoded.facility.facilityname;
-                var requestdate = moment(data.created_at).format('MMMM Do YYYY, h:mm:ss a');
+                var patient = data['patname'];
+                var encoded = data['pend_meet']['encoded']['fname'] + ' ' + data['pend_meet']['encoded']['mname'] + ' ' + data['pend_meet']['encoded']['lname'];
+                var fac = data['pend_meet']['encoded']['facility']['facilityname'];
+                var requestdate = moment(data['pend_meet']['created_at']).format('MMMM Do YYYY, h:mm:ss a');
                 $('#req_meeting_id').val(data.id);
                 $('#txtEncoded').html(encoded);
                 $('#req_fac').html('Facility: ' + fac);
                 $('#txtreqDate').html(requestdate);
                 $('#req_patient').val(patient);
-                $('#req_title').val(data.title);
+                $('#req_title').val(data['pend_meet']['title']);
                 if(meet_id > 0) {
                     getMeeting(meet_id, 'no');
                 } else {
