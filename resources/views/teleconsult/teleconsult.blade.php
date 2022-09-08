@@ -303,7 +303,7 @@
                                         <td>
                                           <b >{{ $row->title }}</b>
                                           <br>
-                                          <b class="text-muted">Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                          <b class="text-muted">Patient: {{\Crypt::decrypt($row->patLname)}}, {{\Crypt::decrypt($row->patFname)}} {{\Crypt::decrypt($row->patMname)}}</b>
                                         </td>
                                         <td>
                                           @if($row->status == 'Accept')

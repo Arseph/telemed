@@ -136,35 +136,35 @@ class PatientController extends Controller
         ->where('facilities.id',$user->facility_id)
         ->first();
         $subcat = Patient::find($req->patient_id);
-        $unique_id = $req->fname.' '.$req->mname.' '.$req->lname.mt_rand(1000000, 9999999);
+        $unique_id = $req->lname.mt_rand(1000000, 9999999);
         $data = array(
             'unique_id' => $unique_id,
             'doctor_id' => $doctor_id,
             'facility_id' => $user->facility_id,
             'phic_status' => $req->phic_status,
-            'phic_id' => $req->phic_id,
-            'fname' => $req->fname,
-            'mname' => $req->mname,
-            'lname' => $req->lname,
+            'phic_id' => \Crypt::encrypt($req->phic_id),
+            'fname' => \Crypt::encrypt($req->fname),
+            'mname' => \Crypt::encrypt($req->mname),
+            'lname' => \Crypt::encrypt($req->lname),
             'occupation' => $req->occupation,
             'monthly_income' => $req->monthly_income,
             'nationality_id' => $req->nationality_id,
-            'id_type' => $req->id_type,
-            'id_type_no' => $req->id_type_no,
-            'contact' => $req->contact,
+            'id_type' => \Crypt::encrypt($req->id_type),
+            'id_type_no' => \Crypt::encrypt($req->id_type_no),
+            'contact' => \Crypt::encrypt($req->contact),
             'dob' => $req->dob,
-            'sex' => $req->sex,
-            'civil_status' => $req->civil_status,
+            'sex' => \Crypt::encrypt($req->sex),
+            'civil_status' => \Crypt::encrypt($req->civil_status),
             'region' => $req->region,
-            'house_no' => $req->house_no,
-            'street' => $req->street,
+            'house_no' => \Crypt::encrypt($req->house_no),
+            'street' => \Crypt::encrypt($req->street),
             'muncity' => $req->muncity,
             'province' => $province->p_id,
             'brgy' => $req->brgy,
-            'address' => $req->address,
+            'address' => \Crypt::encrypt($req->address),
             'tsekap_patient' => 0,
             'is_accepted' => $accept,
-            'religion' => $req->religion,
+            'religion' => \Crypt::encrypt($req->religion),
             'edu_attain' => $req->edu_attain
         );
         if($req->patient_id){

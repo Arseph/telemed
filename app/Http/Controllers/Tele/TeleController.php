@@ -428,7 +428,11 @@ class TeleController extends Controller
         $pend_meet = PendingMeeting::find($id);
         $encoded = $pend_meet->encoded->facility;
         $patient = $pend_meet->patient;
-        return response()->json($pend_meet);
+        $patname = \Crypt::decrypt($patient->fname).' '.\Crypt::decrypt($patient->mname).' '.\Crypt::decrypt($patient->lname);
+        return response()->json([
+            'pend_meet' => $pend_meet,
+            'patname' => $patname
+        ]);
     }
 
     public function acceptDeclineMeeting($id, Request $req) {
