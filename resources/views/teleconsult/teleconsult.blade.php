@@ -40,6 +40,10 @@
         background-color: #ffffff;
       }
     }
+    .disabledMeet {
+      pointer-events: none;
+      cursor: default;
+    }
 </style>
 <div class="container-fluid">
     <div class="box box-success">
@@ -155,20 +159,38 @@
                                 <br>
                                 <?php
                                 $id = \Crypt::encrypt($row->meetID);
+                                $dis = '';
+                                $date = \Carbon\Carbon::now();
+                                $sdate = \Carbon\Carbon::parse($row->from_time);
+                                $edate = \Carbon\Carbon::parse($row->to_time);
+                                if (!$date->between($sdate, $edate)) {
+                                    $dis='disabled';
+                                } else {
+                                    $dis='';
+                                }
                                 ?>
-                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-primary" target="_blank">
+                                <a href="{{ asset('/start-meeting') }}/{{$id}}" class="btn btn-primary {{$dis}}" target="_blank" {{$dis}}>
                                     <i class="fas fa-play-circle"></i> Start Consultation
                                 </a>
                                 @elseif($row->Creator == $active_user->id)
                                 <?php
                                 $id = \Crypt::encrypt($row->meetID);
+                                $dis = '';
+                                $date = \Carbon\Carbon::now();
+                                $sdate = \Carbon\Carbon::parse($row->from_time);
+                                $edate = \Carbon\Carbon::parse($row->to_time);
+                                if (!$date->between($sdate, $edate)) {
+                                    $dis='disabled';
+                                } else {
+                                    $dis='';
+                                }
                                 ?>
                                 <b class="text-primary">Requested To: {{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b>
                                 <br>
                                 <b>{{ $row->doctor->facility->facilityname }}</b>
                                 <br>
                                 <br>
-                                <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success btn-disable" target="_blank">
+                                <a href="{{ asset('/join-meeting') }}/{{$id}}" class="btn btn-success btn-disable {{$dis}}" target="_blank" {{$dis}}>
                                     <i class="fas fa-play-circle"></i> Join Consultation
                                 </a>
                                 @endif
