@@ -15,10 +15,6 @@
           <input type="hidden" class="form-control" value="" autofocus="" name="doctororder_meet_id" id="doctororder_meet_id">
           <input type="hidden" class="form-control" value="" autofocus="" name="patientid" id="patientid">
           <div class="form-group">
-            <label>Patient:</label>
-            <input type="text" class="form-control" id="patient_name" disabled>
-          </div>
-          <div class="form-group">
             <label>Lab Request Codes:</label>
             <select multiple class="select2" id="labrequestcodes" required>
               <option value="BC">Blood Chemistry</option>

@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <label>Reason for Teleconsultation:</label>
-                    <textarea class="form-control" name="reason_consult" rows="2" required>@if($patient->clinical) {{ $patient->clinical->reason_consult }}@endif</textarea>
+                    <textarea class="form-control" name="reason_consult" rows="2" required>@if($patient->clinical){{ $patient->clinical->reason_consult }}@endif</textarea>
                 </div>
             </div>
             <div class="col-md-4">
@@ -24,7 +24,7 @@
                     <select name="facility_id" class="select2">
                         <option value="">Select Facility</option>
                         @foreach($facility as $row)
-                            <option value="{{ $row->id }}" @if($patient->clinical)@if($patient->clinical->facility_id == $row->id)selected@endif@endif>{{ $row->facilityname }}</option>
+                            <option value="{{ $row->id }}" @if($patient->clinical)@if($patient->clinical->facility_id == $row->id)selected @endif @endif>{{ $row->facilityname }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -38,7 +38,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <label>Known Medical Condition/s & Medical History:</label>
-                    <textarea class="form-control" name="known_medical_history" rows="2" required>@if($patient->clinical) {{ $patient->clinical->known_medical_history }}@endif</textarea>
+                    <textarea class="form-control" name="known_medical_history" rows="2" required>@if($patient->clinical){{ $patient->clinical->known_medical_history }}@endif</textarea>
                 </div>
             </div>
             <div class="col-md-8">
@@ -60,13 +60,13 @@
                 </div> 
                 <div class="form-group">
                     <label>Clinical Status at the Time of Consult:</label>
-                    <textarea class="form-control" name="clinical_status_time_consult" rows="2" required>@if($patient->clinical) {{ $patient->clinical->clinical_status_time_consult }}@endif</textarea>
+                    <textarea class="form-control" name="clinical_status_time_consult" rows="2" required>@if($patient->clinical){{ $patient->clinical->clinical_status_time_consult }}@endif</textarea>
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="form-group">
                     <label>Specific Findings:</label>
-                    <textarea class="form-control" name="specific_findings" rows="2" required>@if($patient->clinical) {{ $patient->clinical->specific_findings }}@endif</textarea>
+                    <textarea class="form-control" name="specific_findings" rows="2" required>@if($patient->clinical){{ $patient->clinical->specific_findings }}@endif</textarea>
                 </div>
             </div>
         </div>

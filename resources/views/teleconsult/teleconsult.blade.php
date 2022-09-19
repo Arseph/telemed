@@ -131,7 +131,7 @@
                               @foreach($data as $row)
                               <div id="tabs{{$row->id}}" class="tab-pane fade in @if($ctr1 == 0)active @endif">
                                 <h3 class="title-info" style="text-transform: uppercase; font-size: 150%;">{{ $row->title }}</h3>
-                                <h4 class="patientName{{$row->id}} text-green update_info">Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}<i class="fas fa-info-circle" data-toggle="collapse" data-target="#morepatInfo{{$row->id}}"></i></h4>
+                                <h4 class="patientName{{$row->id}} text-green update_info">Patient: {{ \Crypt::decrypt($row->patLname) }}, {{ \Crypt::decrypt($row->patFname) }} {{ \Crypt::decrypt($row->patMname) }}<i class="fas fa-info-circle" data-toggle="collapse" data-target="#morepatInfo{{$row->id}}"></i></h4>
                                 <div id="morepatInfo{{$row->id}}" class="collapse">
                                   <div style="margin-bottom: 6px;">{{\Carbon\Carbon::parse($row->dob)->diff(\Carbon\Carbon::now())->format('%y years %m months old and %d day(s)')}}</div>
                                   <div>Birthdate: <label>{{\Carbon\Carbon::parse($row->dob)->format('F d, Y')}}</label></div>
@@ -234,7 +234,7 @@
                                   <h3>Teleconsultation Details</h3>
                                   <div>
                                     <h5 id="chiefCom{{$row->meetID}}" class="title-info update_info"></h5>
-                                    <h5 id="patientName{{$row->meetID}}" class="text-green update_info"></h5>
+                                    <h5 class="text-green update_info">Patient: {{ \Crypt::decrypt($row->patLname) }}, {{ \Crypt::decrypt($row->patFname) }} {{ \Crypt::decrypt($row->patMname) }}</h5>
                                     <b><small id="chiefDate{{$row->meetID}}"></small></b>
                                     <br><b>
                                         <small id="chiefTime{{$row->meetID}}"></small>
@@ -397,7 +397,7 @@
                                         <td>
                                           <b class="text-primary">{{ $row->title }}</b>
                                           <br>
-                                          <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                          <b>Patient: {{ \Crypt::decrypt($row->patLname) }}, {{ \Crypt::decrypt($row->patFname) }} {{ \Crypt::decrypt($row->patMname) }}</b>
                                         </td>
                                         <td>
                                         <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
