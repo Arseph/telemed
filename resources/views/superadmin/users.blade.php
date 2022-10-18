@@ -77,9 +77,9 @@ if($searchKeyword){
                                            >
                                            {{ $row->fname }} {{ $row->mname }} {{ $row->lname }}
                                             <br><label>
-                                                @if($row->email)
+                                                @if(\Crypt::decrypt($row->email))
                                                 <small class="text-warning">
-                                                    Email: {{ $row->email }}
+                                                    Email: {{ \Crypt::decrypt($row->email) }}
                                                 </small>
                                                 @endif
                                             </label>
