@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use App\Barangay;
 use App\Facility;
 use App\MunicipalCity;
@@ -91,7 +93,7 @@ class ManageController extends Controller
             'facility_id' => $req->facility_id,
             'status' => 'active',
             'contact' => $req->contact,
-            'email' => $req->email,
+            'email' => Crypt::encrypt($req->email),
             'designation' => $req->designation,
             'username' => $req->username,
         );

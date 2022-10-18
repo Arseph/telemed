@@ -315,12 +315,6 @@
                 <li><a href="{{ asset('patient') }}"><i class="fa fa-home"></i> Dashboard</a></li>
                 <li><a href="{{ asset('/teleconsultation') }}"><i class="fas fa-video"></i> Teleconsultation</a></li>
                 <li><a href="#"><i class="fas fa-notes-medical"></i> Profile</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cogs"></i>&nbsp; Settings <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fas fa-key"></i> Change Password</a></li>
-                    </ul>
-                </li>
                 @endif
                 <!-- For doctors and rhu -->
                 @if($user->level=='doctor' || $user->level=='admin')
