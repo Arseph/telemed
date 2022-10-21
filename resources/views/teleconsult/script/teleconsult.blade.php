@@ -49,7 +49,8 @@
               $('.refTok').html('Get your token here');
               var tokurl;
                var cred = "{{$zoomclient}}";
-               var uri = "http://180.193.207.196/telemed/getToken";
+               var uri = "https://localhost/tele-consultant/getToken";
+               //var uri = "http://180.193.207.196/telemed/getToken"; for deployment
                if(cred) {
                 tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
                 $(".refTok").attr("href", tokurl);
@@ -97,7 +98,8 @@
        var tokurl;
        var cred = "{{$zoomclient}}";
        if(cred) {
-        var uri = "http://180.193.207.196/telemed/getToken";
+        var uri = "https://localhost/tele-consultant/getToken";
+        // var uri = "http://180.193.207.196/telemed/getToken"; for deployment
         tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
         $(".refTok").attr("href", tokurl);
        }
@@ -365,7 +367,7 @@
                 var encoded = data['pend_meet']['encoded']['fname'] + ' ' + data['pend_meet']['encoded']['mname'] + ' ' + data['pend_meet']['encoded']['lname'];
                 var fac = data['pend_meet']['encoded']['facility']['facilityname'];
                 var requestdate = moment(data['pend_meet']['created_at']).format('MMMM Do YYYY, h:mm:ss a');
-                $('#req_meeting_id').val(data.id);
+                $('#req_meeting_id').val(data['pend_meet']['id']);
                 $('#txtEncoded').html(encoded);
                 $('#req_fac').html('Facility: ' + fac);
                 $('#txtreqDate').html(requestdate);

@@ -207,8 +207,8 @@ class TeleController extends Controller
     	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
          ->where('meetings.id',$decid)
         ->first();
-        $api_key = $user->facility->zoom->zoom_api_key;
-        $api_secret = $user->facility->zoom->zoom_api_secret;
+        $api_key = "51JAnl6LT5eDa9b2oX9gpA";
+        $api_secret = "oBESX7AoVyMbNbjwT3PeJe05qxW2ZOP23Yj9";
         $meeting_number = $meetings->meeting_id;
         $password = $meetings->password;
         $role = $meetings->doctor_id == $user->id ? 1 : 0;
@@ -439,6 +439,7 @@ class TeleController extends Controller
         $user = Session::get('auth');
         $userfac = $user->facility->facilityname;
         $meet = PendingMeeting::find($id);
+        // dd(Crypt::decrypt($meet->patient->contact));
         $action = $req->action;
         $date = date('Y-m-d', strtotime($req->date_from));
         $time = date('H:i:s', strtotime($req->time));
@@ -447,7 +448,7 @@ class TeleController extends Controller
                             ->format('H:i:s');
         $start = $date.'T'.$time;
         $duration = $req->duration;
-        $patient = $meet->patient->lname.', '.$meet->patient->fname.' '.$meet->patient->mname;
+        $patient = Crypt::decrypt($meet->patient->lname).', '.Crypt::decrypt($meet->patient->fname).' '.Crypt::decrypt($meet->patient->mname);
         $password = 'doh'.str_random(3);
         $client = new \GuzzleHttp\Client([
             'base_uri' => 'https://api.zoom.us',
@@ -493,28 +494,28 @@ class TeleController extends Controller
         $meet->update($data); 
         if($action == 'Accept') {
             event(new AcDecReq($user, $create_meeting, $action, $userfac));
-            try {
+            // try {
       
-                $client = new \GuzzleHttp\Client([
-                    'base_uri' => 'https://api.semaphore.co',
-                    'verify' => false
-                ]);
+            //     $client = new \GuzzleHttp\Client([
+            //         'base_uri' => 'https://api.semaphore.co',
+            //         'verify' => false
+            //     ]);
           
-                $response = $client->request('POST', '/api/v4/messages', [
-                    "headers" => [
-                        "7f3e45b0e5b095e32620b1a4ca42f511" => "",
-                        "Cookie" => "XSRF-TOKEN=eyJpdiI6IjhvN3NjVHNiWkZJdjRhZ2RUbWZDK3c9PSIsInZhbHVlIjoiNndcL0dMRSsyXC9wTFBScm5nSlRITmw5NUlpMzJBZmNmeW1MTmxKMlVnazE4TnJ6eEJjeEptQ29FT0M3cHFaMU1rNzc4ZHEzOWloUlJKb2V0SmIzbUppUT09IiwibWFjIjoiNTBlNmI3NDVmOTU3ZGI2YzZhMTJjNmJjNDY0NzE2YTk2YTY3NGQ5YmYxNmFlMWI0Mjg5Zjk0OTdkNTRlNmI5NSJ9; laravel_session=eyJpdiI6Ilg2MVwveEpKejgreUxyaDBqTlFqXC9Ydz09IiwidmFsdWUiOiJCdXdOaHI3Q0xKSUxTS3JYR2lUcVltYVdYVkVnYzUzVEJUUngxOGNZRGpXZXc4QjB3R09WWXpUU0xXZ2VcL20ya1IwZGU2Z2FFUXVaRjg2XC83b0FnQ213PT0iLCJtYWMiOiI1NDVlZDZlNTUwOTZlMjZkMDQyNjgxMTI0NTU3NmMwNzQzZGVmODY1YmVhOGM2YmNlZTU5MTIxZWQ5NTk5MDA4In0%3D"
-                    ],
-                    'form_params' => [
-                        "apikey" => env('SEMAPHORE_KEY'),
-                        "number" => $meet->patient->contact,
-                        "message" => 'Hello '.$patient.'. This will inform you that your teleconsultation schedule will be on '.date('F d,Y', strtotime($req->date_from)).' '.date('H:i a', strtotime($req->time))
-                    ],
-                ]);
+            //     $response = $client->request('POST', '/api/v4/messages', [
+            //         "headers" => [
+            //             "7f3e45b0e5b095e32620b1a4ca42f511" => "",
+            //             "Cookie" => "XSRF-TOKEN=eyJpdiI6IjhvN3NjVHNiWkZJdjRhZ2RUbWZDK3c9PSIsInZhbHVlIjoiNndcL0dMRSsyXC9wTFBScm5nSlRITmw5NUlpMzJBZmNmeW1MTmxKMlVnazE4TnJ6eEJjeEptQ29FT0M3cHFaMU1rNzc4ZHEzOWloUlJKb2V0SmIzbUppUT09IiwibWFjIjoiNTBlNmI3NDVmOTU3ZGI2YzZhMTJjNmJjNDY0NzE2YTk2YTY3NGQ5YmYxNmFlMWI0Mjg5Zjk0OTdkNTRlNmI5NSJ9; laravel_session=eyJpdiI6Ilg2MVwveEpKejgreUxyaDBqTlFqXC9Ydz09IiwidmFsdWUiOiJCdXdOaHI3Q0xKSUxTS3JYR2lUcVltYVdYVkVnYzUzVEJUUngxOGNZRGpXZXc4QjB3R09WWXpUU0xXZ2VcL20ya1IwZGU2Z2FFUXVaRjg2XC83b0FnQ213PT0iLCJtYWMiOiI1NDVlZDZlNTUwOTZlMjZkMDQyNjgxMTI0NTU3NmMwNzQzZGVmODY1YmVhOGM2YmNlZTU5MTIxZWQ5NTk5MDA4In0%3D"
+            //         ],
+            //         'form_params' => [
+            //             "apikey" => env('SEMAPHORE_KEY'),
+            //             "number" => Crypt::decrypt($meet->patient->contact),
+            //             "message" => 'Hello '.$patient.'. This will inform you that your teleconsultation schedule will be on '.date('F d,Y', strtotime($req->date_from)).' '.date('H:i a', strtotime($req->time))
+            //         ],
+            //     ]);
                   
-            } catch (Exception $e) {
-                dd("Error: ". $e->getMessage());
-            }
+            // } catch (Exception $e) {
+            //     dd("Error: ". $e->getMessage());
+            // }
             Session::put("action_made","Successfully Accept Teleconsultation.");
         } else {
             event(new AcDecReq($user, $meet, $action, $userfac));
