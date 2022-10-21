@@ -11,7 +11,7 @@
 |
 */
 Route::Auth();
-//Route::get('/test', 'Auth\LoginController@testIndex');
+Route::get('/test', 'Auth\LoginController@testIndex');
 Route::get('/', 'Auth\LoginController@index');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register-account', 'Auth\LoginController@register');

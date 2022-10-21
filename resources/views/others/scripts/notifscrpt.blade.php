@@ -37,6 +37,7 @@
     var reqtel = pusher.subscribe('request-teleconsult');
     reqtel.bind('request-teleconsult-event', function(data) {
     if(activeid == data['to']) {
+        audioElement.play();
         var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifTel('+data['id']+')">'+
             '<hr>'+
             '<b>('+data['facility']+')<br>'+data['from'] +'</b>' + ' Request a teleconsultation: "<code>' + data['title']+
