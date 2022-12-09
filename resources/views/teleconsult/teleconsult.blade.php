@@ -296,31 +296,20 @@
                             <table class="table table-striped table-hover">
                                 <tr class="bg-black">
                                     <th></th>
-                                    <th>Teleconsult Date & Time</th>
-                                    <th>Encoded By:</th>
                                     <th>Date Requested:</th>
+                                    <th>Encoded By:</th>
                                     <th>Chief Complaint / Patient</th>
                                     <th>Status</th>
                                 </tr>
                                 @foreach($data_req as $row)
                                     <tr onclick="infoMeeting('<?php echo $row->meetID?>','<?php echo $row->meet_id?>')">
                                       <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
-                                        <td style="width: 20%;">
-                                            <a href="javascript:void(0)" class="title-info update_info">
-                                               {{ \Carbon\Carbon::parse($row->time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->time)->addMinutes($row->duration)->format('h:i A') }}
-                                                <br><b>
-                                                    <small class="text-warning">
-                                                        {{ \Carbon\Carbon::parse($row->datefrom)->format('l, F d, Y') }}
-                                                    </small>
-                                                </b>
-                                            </a>
+                                        <td>
+                                          <b class="text-warning"> {{ \Carbon\Carbon::parse($row->reqDate)->format('l, h:i A F d, Y') }}</b>
                                         </td>
                                         <td>
                                           <b class="text-primary">@if($row->encoded->level=='patient')Patient: @endif{{ $row->encoded->lname }}, {{ $row->encoded->fname }} {{ $row->encoded->mname }}</b><br>
                                           <b>@if($row->encoded->level!='patient'){{ $row->encoded->facility->facilityname }} @endif</b>
-                                        </td>
-                                        <td>
-                                          <b class="text-warning"> {{ \Carbon\Carbon::parse($row->reqDate)->format('l, h:i A F d, Y') }}</b>
                                         </td>
                                         <td>
                                           <b >{{ $row->title }}</b>
