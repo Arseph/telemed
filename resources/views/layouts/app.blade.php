@@ -179,6 +179,14 @@
         ::-webkit-scrollbar-thumb:hover {
           background: #555; 
         }
+        .img-img-icon {
+            margin: 0;
+          position: relative;
+          top: 50%;
+          left: 50%;
+          -ms-transform: translate(-50%, -50%) !important;
+          transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 
@@ -187,27 +195,25 @@
 <!-- Fixed navbar -->
 
 <nav class="navbar navbar-default fixed-top" >
-    <div class="header" style="background-color:#2F4054;padding:10px;">
+    <div class="header" style="background-color:#7FC8A9;padding:5px;">
         <div>
             <div class="col-md-6">
                 <div class="pull-left">
-                    <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
+                    <span class="title-desc" style="color: white;">Welcome,{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
                     @if($user->level != 'superadmin' && $user->level != 'patient')
-                    <span class="title-info">Facility:</span> <span class="title-desc">{{ $user->facility->facilityname }}</span>
+                    <span class="title-desc" style="color: white;">Facility:{{ $user->facility->facilityname }}</span>
                     @endif
                 </div>
             </div>
             <div class="clearfix"></div>
         </div>
     </div>
-    <div class="header" style="background-color:#59ab91;padding:10px;">
-        <div class="container">
-            <img src="{{ asset('public/img/header.png') }}" class="img-responsive" />
-        </div>
+    <div class="header" style="background-color:#D5EEBB;padding:10px;">
+        <h3 class="img-img-icon" style="color: #297F87; position: absolute; margin-top: 10px;">DOH-XII TELEMEDICINE</h3><img src="{{ asset('public/img/dohro12logo2.png') }}" class="img-responsive img-img-icon" style="width: 70px;"/>
     </div>
     <div class="container-fluid" >
         <div class="navbar-header">
@@ -217,7 +223,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset('public/img/doh.png') }}" class="img-responsive" style="margin-top: -10px; width: 40px;"/></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse" style="font-size: 13px;">
             <ul class="nav navbar-nav">

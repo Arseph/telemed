@@ -191,7 +191,6 @@
                     <table class="table table-striped table-hover">
                         <tr class="bg-black">
                             <th></th>
-                            <th>Teleconsult Date & Time</th>
                             <th>Requested To:</th>
                             <th>Date Requested:</th>
                             <th>Chief Complaint / Patient</th>
@@ -200,16 +199,6 @@
                         @foreach($data_my_req as $row)
                             <tr onclick="getMeeting('<?php echo $row->meet_id?>', 'yes')">
                               <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
-                                <td style="width: 20%;">
-                                    <a href="javascript:void(0)" class="title-info update_info">
-                                       {{ \Carbon\Carbon::parse($row->time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($row->time)->addMinutes($row->duration)->format('h:i A') }}
-                                        <br><b>
-                                            <small class="text-warning">
-                                                {{ \Carbon\Carbon::parse($row->datefrom)->format('l, F d, Y') }}
-                                            </small>
-                                        </b>
-                                    </a>
-                                </td>
                                 <td>
                                   <b class="text-primary">{{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b><br>
                                   <b>{{ $row->doctor->facility->facilityname }}</b>
@@ -303,7 +292,7 @@
            </div>
            <div class="col-sm-12">
              <a data-target="#calendar_meetings_modal" data-toggle="modal" id="showCalendar" 
-       href="#calendar_meetings_modal">Show Facility Calendar</a>
+       href="#calendar_meetings_modal">Show My Calendar</a>
            </div>
           </div>
           <div class="modal-footer">

@@ -294,72 +294,72 @@
         }
     });
     var active = "{{Session::get('auth')->level}}";
-    if(active == 'doctor') {
-        var last_update = "<?php 
-            $token = \App\ZoomToken::where('facility_id',$user->facility_id)->first() ?
-                                \App\ZoomToken::where('facility_id',$user->facility_id)->first()->updated_at
-                                : 'none';
-            echo $token;
-            ?>";
-        var zoomtoken = last_update == 'none' ? '' : new Date(last_update);
-        var expirewill = last_update != 'none' ? zoomtoken.setHours(zoomtoken.getHours() + 1) : '';
-        $('.countdowntoken').countdown(expirewill, function(event) {
-            if(event.strftime('%H:%M:%S') == '00:00:00') {
-                if(last_update == 'none') {
-                    $(this).html('You don\'t have access token. Please contact administrator.');
-                    $('#notifacceptBtn').prop("disabled", true);
-                    $('#accnotifacceptBtn').prop("disabled", true);
-                } else {
-                  $(this).html('Access token was expired.');
-                  $('.refTok').html('Get your token here');
-                  var tokurl;
-                   var cred = "{{$zoomclient}}";
-                   if(cred) {
-                    tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
-                    $(".refTok").attr("href", tokurl);
-                   }
-                    $('#notifacceptBtn').prop("disabled", true);
-                    $('#accnotifacceptBtn').prop("disabled", true);
-                }
-            } else {
-                $(this).html('Zoom Token validation left: '+ event.strftime('%M:%S'));
-                $('#notifacceptBtn').prop("disabled", false);
-                $('#accnotifacceptBtn').prop("disabled", false);
-            }
-        });
-        function refreshToken() {
-            var url = "{{ url('/refresh-token') }}";
-            $.ajax({
-                url: url,
-                type: 'GET',
-                async: false,
-                success : function(data){
-                    var val = JSON.parse(data);
-                    if(val.updated_at != last_update) {
-                        last_update = val.updated_at;
-                        zoomtoken = new Date(last_update);
-                        expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
-                        $('.countdowntoken').countdown(expirewill, function(event) {
-                            if(event.strftime('%H:%M:%S') == '00:00:00') {
-                              $(this).html('Your access token is expired.');
-                              $('.refTok').html('Refresh your token here');
-                              $('#notifacceptBtn').prop("disabled", true);
-                              $('#accnotifacceptBtn').prop("disabled", true);
-                            } else {
-                                $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
-                                $('#notifacceptBtn').prop("disabled", false);
-                                $('#accnotifacceptBtn').prop("disabled", false);
-                            }
-                        });
-                        clearInterval(interval);
-                    }
-                }
-            });
-        }
-        $('.refTok').on('click',function () {
-            interval = setInterval(refreshToken, 5000);
-        });
-    }
+    // if(active == 'doctor') {
+    //     var last_update = "<?php 
+    //         $token = \App\ZoomToken::where('facility_id',$user->facility_id)->first() ?
+    //                             \App\ZoomToken::where('facility_id',$user->facility_id)->first()->updated_at
+    //                             : 'none';
+    //         echo $token;
+    //         ?>";
+    //     var zoomtoken = last_update == 'none' ? '' : new Date(last_update);
+    //     var expirewill = last_update != 'none' ? zoomtoken.setHours(zoomtoken.getHours() + 1) : '';
+    //     $('.countdowntoken').countdown(expirewill, function(event) {
+    //         if(event.strftime('%H:%M:%S') == '00:00:00') {
+    //             if(last_update == 'none') {
+    //                 $(this).html('You don\'t have access token. Please contact administrator.');
+    //                 $('#notifacceptBtn').prop("disabled", true);
+    //                 $('#accnotifacceptBtn').prop("disabled", true);
+    //             } else {
+    //               $(this).html('Access token was expired.');
+    //               $('.refTok').html('Get your token here');
+    //               var tokurl;
+    //                var cred = "{{$zoomclient}}";
+    //                if(cred) {
+    //                 tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri={{env('ZOOM_REDIRECT_URL')}}";
+    //                 $(".refTok").attr("href", tokurl);
+    //                }
+    //                 $('#notifacceptBtn').prop("disabled", true);
+    //                 $('#accnotifacceptBtn').prop("disabled", true);
+    //             }
+    //         } else {
+    //             $(this).html('Zoom Token validation left: '+ event.strftime('%M:%S'));
+    //             $('#notifacceptBtn').prop("disabled", false);
+    //             $('#accnotifacceptBtn').prop("disabled", false);
+    //         }
+    //     });
+    //     function refreshToken() {
+    //         var url = "{{ url('/refresh-token') }}";
+    //         $.ajax({
+    //             url: url,
+    //             type: 'GET',
+    //             async: false,
+    //             success : function(data){
+    //                 var val = JSON.parse(data);
+    //                 if(val.updated_at != last_update) {
+    //                     last_update = val.updated_at;
+    //                     zoomtoken = new Date(last_update);
+    //                     expirewill = zoomtoken.setHours(zoomtoken.getHours() + 1);
+    //                     $('.countdowntoken').countdown(expirewill, function(event) {
+    //                         if(event.strftime('%H:%M:%S') == '00:00:00') {
+    //                           $(this).html('Your access token is expired.');
+    //                           $('.refTok').html('Refresh your token here');
+    //                           $('#notifacceptBtn').prop("disabled", true);
+    //                           $('#accnotifacceptBtn').prop("disabled", true);
+    //                         } else {
+    //                             $(this).html('Your access token will expire in '+ event.strftime('%H:%M:%S'));
+    //                             $('#notifacceptBtn').prop("disabled", false);
+    //                             $('#accnotifacceptBtn').prop("disabled", false);
+    //                         }
+    //                     });
+    //                     clearInterval(interval);
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     $('.refTok').on('click',function () {
+    //         interval = setInterval(refreshToken, 5000);
+    //     });
+    // }
     var notifcalendarFac = document.getElementById('notif-fac-calendar');
     var notiffaccalendar = new FullCalendar.Calendar(notifcalendarFac, {
       headerToolbar: {

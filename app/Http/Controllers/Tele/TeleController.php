@@ -155,8 +155,8 @@ class TeleController extends Controller
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
-        $zoomtoken = ZoomToken::where('facility_id',$user->facility_id)->first() ?
-                        ZoomToken::where('facility_id',$user->facility_id)->first()->updated_at
+        $zoomtoken = ZoomToken::where('doctor_id',$user->id)->first() ?
+                        ZoomToken::where('doctor_id',$user->id)->first()->updated_at
                         : 'none';
         $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
         $zoomclient = $user->zoom ? $user->zoom->zoom_client_id : '';
