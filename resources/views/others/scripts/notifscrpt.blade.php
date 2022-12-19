@@ -26,8 +26,9 @@
         ?>
     @endif
 	var patient_selected;
-	var pusher = new Pusher('456a1ac12f0bec491f4c', {
-      cluster: '{{env("PUSHER_APP_CLUSTER")}}'
+    Pusher.logToConsole = true;
+	var pusher = new Pusher('e32615978aad92596063', {
+      cluster: 'ap2'
     });
     var audioElement = document.createElement('audio');
     audioElement.setAttribute('src', "{{ asset('public/sounds/notif.wav') }}");
@@ -36,6 +37,7 @@
     var level = "{{Session::get('auth')->level}}";
     var reqtel = pusher.subscribe('request-teleconsult');
     reqtel.bind('request-teleconsult-event', function(data) {
+        alert('ngi')
     if(activeid == data['to']) {
         audioElement.play();
         var html = '<div class="col-md-12" style="cursor: pointer; background: #2F4054; color: white;" onclick="goNotifTel('+data['id']+')">'+

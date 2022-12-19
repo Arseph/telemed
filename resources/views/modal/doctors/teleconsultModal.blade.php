@@ -210,8 +210,10 @@
                                     </a>
                                 </td>
                                 <td>
+                                  @if($row->doctor)
                                   <b class="text-primary">{{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b><br>
                                   <b>{{ $row->doctor->facility->facilityname }}</b>
+                                  @endif
                                 </td>
                                 <td>
                                   <b class="text-warning"> {{ \Carbon\Carbon::parse($row->reqDate)->format('l, h:i A F d, Y') }}</b>

@@ -190,30 +190,47 @@
     </style>
 </head>
 
-<body>
+<body onload="initClock()">
 
 <!-- Fixed navbar -->
 
 <nav class="navbar navbar-default fixed-top" >
-    <div class="header" style="background-color:#7FC8A9;padding:5px;">
+    <div class="header" style="background-color:#2F4054;padding:5px;">
         <div>
             <div class="col-md-6">
                 <div class="pull-left">
-                    <span class="title-desc" style="color: white;">Welcome,{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
+                    <span class="title-info">Welcome,</span> <span class="title-desc">{{ $t }} {{ $user->fname }} {{ $user->lname }} {{ $dept_desc }}</span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
                     @if($user->level != 'superadmin' && $user->level != 'patient')
-                    <span class="title-desc" style="color: white;">Facility:{{ $user->facility->facilityname }}</span>
+                    <span class="title-info">Facility:</span> <span class="title-desc">{{ $user->facility->facilityname }}</span>
                     @endif
                 </div>
             </div>
             <div class="clearfix"></div>
         </div>
     </div>
-    <div class="header" style="background-color:#D5EEBB;padding:10px;">
-        <h3 class="img-img-icon" style="color: #297F87; position: absolute; margin-top: 10px;">DOH-XII TELEMEDICINE</h3><img src="{{ asset('public/img/dohro12logo2.png') }}" class="img-responsive img-img-icon" style="width: 70px;"/>
+    <div class="header" style="background-image: url('{{ asset('public/img/ulo.jpg') }}');">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9">
+                    <img src="{{ asset('public/img/head.png') }}" class="img-responsive" />
+                </div>
+                <div class="col-md-3">
+                    <div id="timedate" style="padding: 10px; color: white;">
+                        <label style="color: white;">Philippine Standard Time</label><br>
+                        <a id="mon"style="color: white;">Jan</a>
+                        <a id="d" style="color: white;">1</a>,
+                        <a id="y" style="color: white;">0</a><br />
+                        <a id="h" style="color: white;">12</a> :
+                        <a id="m" style="color: white;">00</a>:
+                        <a id="s" style="color: white;">00</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="container-fluid" >
         <div class="navbar-header">
@@ -223,7 +240,6 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{{ asset('public/img/doh.png') }}" class="img-responsive" style="margin-top: -10px; width: 40px;"/></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse" style="font-size: 13px;">
             <ul class="nav navbar-nav">
@@ -434,7 +450,7 @@
 <script src="https://cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
 <script src="{{ asset('public/plugin/fullcalendar/main.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
 @yield('js')
 @include('others.scripts.app')
 @include('others.scripts.notifscrpt')

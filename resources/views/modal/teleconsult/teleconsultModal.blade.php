@@ -200,8 +200,13 @@
                             <tr onclick="getMeeting('<?php echo $row->meet_id?>', 'yes')">
                               <td style="width: 1%;"><button class="avatar btn-info"><i class="fas fa-calendar-day"></i></button></td>
                                 <td>
+                                  @if($row->doctor)
                                   <b class="text-primary">{{ $row->doctor->lname }}, {{ $row->doctor->fname }} {{ $row->doctor->mname }}</b><br>
                                   <b>{{ $row->doctor->facility->facilityname }}</b>
+                                  @else
+                                  <b>{{ $row->facility->facilityname }}</b>
+                                  @endif
+                                  <b>{{ $row->facility->facilityname }}</b>
                                 </td>
                                 <td>
                                   <b class="text-warning"> {{ \Carbon\Carbon::parse($row->reqDate)->format('l, h:i A F d, Y') }}</b>
@@ -209,7 +214,7 @@
                                 <td>
                                   <b >{{ $row->title }}</b>
                                   <br>
-                                  <b class="text-muted">Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                  <b class="text-muted">Patient: {{\Crypt::decrypt($row->patLname)}}, {{\Crypt::decrypt($row->patFname)}} {{\Crypt::decrypt($row->patMname) }}</b>
                                 </td>
                                 <td>
                                   @if($row->status == 'Accept')

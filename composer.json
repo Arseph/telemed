@@ -13,7 +13,7 @@
         "laravel/tinker": "^1.0",
         "owen-it/laravel-auditing": "8.0",
         "phpseclib/phpseclib": "~0.3.10",
-        "pusher/pusher-php-server": "^4.1"
+        "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
