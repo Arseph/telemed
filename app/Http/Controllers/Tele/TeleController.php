@@ -155,7 +155,8 @@ class TeleController extends Controller
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
-        $zoomtoken = ZoomToken::where('doctor_id',$user->id)->first() ?
+        $zoomtoken = ZoomToken::where('doctor_id',$user->id)
+                                ->where('provider_value', '!=', '')->first() ?
                         ZoomToken::where('doctor_id',$user->id)->first()->updated_at
                         : 'none';
         $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
@@ -189,9 +190,9 @@ class TeleController extends Controller
             'status' => 'Pending'
         ]);
         if($req->meeting_id) {
-            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id', 'facility_id'));
+            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id'));
         } else {
-            $data = PendingMeeting::create($req->except('meeting_id', 'facility_id'));
+            $data = PendingMeeting::create($req->except('meeting_id'));
         }
         event(new ReqTele($data));
         Session::put("action_made","Please wait for the confirmation of doctor.");
@@ -455,7 +456,7 @@ class TeleController extends Controller
             'verify' => false
         ]);
         if($action == 'Accept') {
-            $db = ZoomToken::where('facility_id',$user->facility_id)->first();
+            $db = ZoomToken::where('doctor_id',$user->id)->first();
             $arr_token = json_decode($db->provider_value);
             $accessToken = $arr_token->access_token;
             $response = $client->request('POST', '/v2/users/me/meetings', [

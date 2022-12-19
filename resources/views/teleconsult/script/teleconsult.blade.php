@@ -41,21 +41,22 @@
     });
     $('.countdowntoken').countdown(expirewill, function(event) {
         if(event.strftime('%H:%M:%S') == '00:00:00') {
-            if(last_update == 'none') {
+            if("{{$zoomclient}}" == '') {
                 $(this).html('You don\'t have access token. Please Contact Administrator');   
                 $('#acceptBtn').prop("disabled", true);
-            } else {
+            }
+            else {
               $(this).html('Access token was expired.');
               $('.refTok').html('Get your token here');
               var tokurl;
                var cred = "{{$zoomclient}}";
-               var uri = "https://localhost/tele-consultant/getToken";
+               var uri = "{{env('ZOOM_REDIRECT_URL')}}";
                //var uri = "http://180.193.207.196/telemed/getToken"; for deployment
                if(cred) {
                 tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
                 $(".refTok").attr("href", tokurl);
-               }
-              $('#acceptBtn').prop("disabled", true);
+                  $('#acceptBtn').prop("disabled", true);
+                }
             }
         } else {
             $(this).html('Access token will expire in '+ event.strftime('%H:%M:%S'));
@@ -98,7 +99,7 @@
        var tokurl;
        var cred = "{{$zoomclient}}";
        if(cred) {
-        var uri = "https://localhost/tele-consultant/getToken";
+        var uri = "{{env('ZOOM_REDIRECT_URL')}}";
         // var uri = "http://180.193.207.196/telemed/getToken"; for deployment
         tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
         $(".refTok").attr("href", tokurl);
@@ -402,8 +403,8 @@
                 },500);
             },
             error: function (data) {
-                $('.btnSave').html('<i class="fas fa-check"></i> Save');
                 $(".loading").hide();
+                console.log(data)
                 Lobibox.notify('error', {
                     title: "Schedule",
                     msg: "Something went wrong, Please try again.",
