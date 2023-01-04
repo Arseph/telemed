@@ -135,8 +135,8 @@
                                 <div id="morepatInfo{{$row->id}}" class="collapse">
                                   <div style="margin-bottom: 6px;">{{\Carbon\Carbon::parse($row->dob)->diff(\Carbon\Carbon::now())->format('%y years %m months old and %d day(s)')}}</div>
                                   <div>Birthdate: <label>{{\Carbon\Carbon::parse($row->dob)->format('F d, Y')}}</label></div>
-                                  <div>Sex: <label>{{$row->sex}}</label></div>
-                                  <div>Civil Status: <label>{{$row->civil_status}}</label></div>
+                                  <div>Sex: <label>{{\Crypt::decrypt($row->sex)}}</label></div>
+                                  <div>Civil Status: <label>{{\Crypt::decrypt($row->civil_status)}}</label></div>
                                   <hr>
                                 </div>
                                 <label>Date:
