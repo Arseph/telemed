@@ -26,7 +26,6 @@
         ?>
     @endif
 	var patient_selected;
-    Pusher.logToConsole = true;
 	var pusher = new Pusher('e32615978aad92596063', {
       cluster: 'ap2'
     });
@@ -137,11 +136,11 @@
                     $('#totReqPat').html(data['totalpat']);
                     $('#totRequest').html();
                     $(data['reqmeet']).each(function(i) {
-                      var html = '<div class="col-md-12" style="cursor: pointer;" onclick="goNotifTel('+data['reqmeet'][i]['pendID']+')">'+
+                      var html = '<div class="col-md-12" style="cursor: pointer;")"><a href=" {{url("/teleconsultation")}}"'+
                             '<hr>'+
                             '<b>('+data['reqmeet'][i]['facname']+')<br>'+data['reqmeet'][i]['fromLname'] + ', '+data['reqmeet'][i]['fromFname']+' '+data['reqmeet'][i]['fromMname'] +'</b>' + ' Request a teleconsultation: "<code>' + data['reqmeet'][i]['title']+
                             '</code>"<p style="color: red;">'+data['reqmeet'][i]['datereq']+'</p>'+
-                            '</div>';
+                            '<a</div>';
                       $("#contentCon").append(html);
                     });
                     $(data['reqpatient']).each(function(i) {

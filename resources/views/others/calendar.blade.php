@@ -19,10 +19,7 @@
       editable: true,
       dayMaxEvents: true,
       events: {
-        url: "{{ url('/calendar-meetings') }}",
-        failure: function() {
-          alert('error getting teleconsultations')
-        }
+        url: "{{ url('/calendar-meetings') }}"
       },
     });
   	$( "#sel1" ).change(function() {

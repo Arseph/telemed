@@ -2,9 +2,6 @@
     var patients = {!! json_encode($patients->toArray()) !!};
     var docorder = {!! json_encode($docorder->toArray()) !!};
     var currentFile = null;
-    var last_update = "{!! $zoomtoken !!}";
-    var zoomtoken = last_update == 'none' ? '' : new Date(last_update);
-    var expirewill = last_update != 'none' ? zoomtoken.setHours(zoomtoken.getHours() + 1) : '';
     var interval;
     Dropzone.autoDiscover = false,
     $("#labReqFile").dropzone({
@@ -39,30 +36,6 @@
         });
       }   
     });
-    $('.countdowntoken').countdown(expirewill, function(event) {
-        if(event.strftime('%H:%M:%S') == '00:00:00') {
-            if("{{$zoomclient}}" == '') {
-                $(this).html('You don\'t have access token. Please Contact Administrator');   
-                $('#acceptBtn').prop("disabled", true);
-            }
-            else {
-              $(this).html('Access token was expired.');
-              $('.refTok').html('Get your token here');
-              var tokurl;
-               var cred = "{{$zoomclient}}";
-               var uri = "{{env('ZOOM_REDIRECT_URL')}}";
-               //var uri = "http://180.193.207.196/telemed/getToken"; for deployment
-               if(cred) {
-                tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
-                $(".refTok").attr("href", tokurl);
-                  $('#acceptBtn').prop("disabled", true);
-                }
-            }
-        } else {
-            $(this).html('Access token will expire in '+ event.strftime('%H:%M:%S'));
-            $('#acceptBtn').prop("disabled", false);
-        }
-    });
 	$(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip();   
 		var date = new Date();
@@ -96,14 +69,6 @@
                 validateTIme();
             }
         });
-       var tokurl;
-       var cred = "{{$zoomclient}}";
-       if(cred) {
-        var uri = "{{env('ZOOM_REDIRECT_URL')}}";
-        // var uri = "http://180.193.207.196/telemed/getToken"; for deployment
-        tokurl = "https://zoom.us/oauth/authorize?response_type=code&client_id="+cred+"&redirect_uri="+uri+"";
-        $(".refTok").attr("href", tokurl);
-       }
     });
     @if(Session::get('action_made'))
         Lobibox.notify('success', {
@@ -144,16 +109,17 @@
                 doctor_id: doctor_id
             },
             success : function(data){
-                if(data == 'Not valid') {
-                    Lobibox.notify('error', {
-                        title: "Schedule",
-                        msg: "Please set a schedule before 3 hours of Teleconsultation",
-                        size: 'normal',
-                        rounded: true
-                    });
-                    $("input[name=time]").val('');
-                }
-                else if(data > 0) {
+                // if(data == 'Not valid') {
+                //     Lobibox.notify('error', {
+                //         title: "Schedule",
+                //         msg: "Please set a schedule before 3 hours of Teleconsultation",
+                //         size: 'normal',
+                //         rounded: true
+                //     });
+                //     $("input[name=time]").val('');
+                // }
+                // else 
+                if(data > 0) {
                     Lobibox.notify('error', {
                         title: "Schedule",
                         msg: "Schedule is not available!",
@@ -210,24 +176,25 @@
             },
             success : function(data){
                 var val = JSON.parse(data);
+                console.log(data)
                 var today = moment(new Date());
                 let diff = today.diff(moment(val['date_meeting']), 'days');
                 if(val) {
                     var time = moment(val['date_meeting']).format('MMMM D, YYYY')+' '+moment(val['from_time'], "HH:mm:ss").format('h:mm A')+' - '+moment(val['to_time'], "HH:mm:ss").format('h:mm A');
                     var mname = val['mname'] ? val['mname'] : '';
+                    ReqMyFac
+                    $('#ReqMyFac').html(val['FacName']);
                     $('#myrequest_modal').modal('hide');
                     $('#info_meeting_modal').modal('show'); 
                     $('#timeConsult').html('Date & Time: ' +time);
                     $('#myInfoLabel').html(val['title']);
-                    $('#meetlink').html(val['web_link']);
-                    $('#meetnumber').html(val['meeting_id']);
-                    $('#patientName').val(val['lname']+", "+val['fname']+" "+mname);
-                    $('#meetPass').html(val['password']);
-                    $('#meetKey').html(val['host_key']);
                     $('.btnMeeting').val(val['meetID']);
-                    if(diff >= 0) {
+                    if(diff > 0) {
                          $('.btnMeeting').prop('disabled', true);
                          $('.btnMeeting').html('Consultation complete');
+                    } else if(diff <= 0) {
+                        $('.btnMeeting').prop('disabled', true);
+                         $('.btnMeeting').html('Consultation has not started');
                     } else if(join == 'no') {
                         $('.btnMeeting').prop('disabled', false);;
                         $('.btnMeeting').html('<i class="fas fa-play-circle"></i> Start Consultation');
@@ -1179,6 +1146,30 @@
 
                 }
             }
+        });
+    });
+    
+    $('#decline_form').on('submit',function(e){
+        e.preventDefault();
+        var id = $('#req_meeting_id').val();
+        $(".loading").show();
+        $('#decline_form').ajaxSubmit({
+            url:  "{{ url('/decline-tele') }}"+"/"+id,
+            type: "POST",
+            success: function(data){
+                setTimeout(function(){
+                    window.location.reload(false);
+                },500);
+            },
+            error: function (data) {
+                $(".loading").hide();
+                Lobibox.notify('error', {
+                    title: "Schedule",
+                    msg: "Something went wrong, Please try again.",
+                    size: 'normal',
+                    rounded: true
+                });
+            },
         });
     });
 

@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use App\PendingMeeting;
 use App\Patient;
 use App\User;
-use App\Meeting;
+use App\Teleconsult;
 class HomeController extends Controller
 {
     public function __construct()
@@ -22,14 +22,14 @@ class HomeController extends Controller
     public function index()
     {
         $user = Session::get('auth');
-        $totaltele = Meeting::select(
-            "meetings.*",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id")
+        $totaltele = Teleconsult::select(
+            "teleconsults.*",
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id")
         ->count();
-        $upcoming = Meeting::select(
-            "meetings.*",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id")
-        ->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
+        $upcoming = Teleconsult::select(
+            "teleconsults.*",
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id")
+        ->whereDate("teleconsults.date_meeting", ">=", Carbon::now()->toDateString())
         ->count();
         $requested = PendingMeeting::select(
         "pending_meetings.*",
@@ -37,10 +37,10 @@ class HomeController extends Controller
         ->leftJoin("users as use", "pending_meetings.user_id", "=", "use.id")
         ->where('pending_meetings.status', 'Pending')
         ->count();
-        $success = Meeting::select(
-            "meetings.*",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id")
-        ->whereDate("meetings.date_meeting", "<=", Carbon::now()->toDateString())
+        $success = Teleconsult::select(
+            "teleconsults.*",
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id")
+        ->whereDate("teleconsults.date_meeting", "<=", Carbon::now()->toDateString())
         ->count();
         return view('doctors.home',[
             'upcoming' => $upcoming,
@@ -90,9 +90,9 @@ class HomeController extends Controller
                 $end = '12/31/'.date('Y');
             }
             $enddate = date('Y-m-d',strtotime($end));
-            $count = Meeting::where(function($q) use($id){
-            $q->where("meetings.doctor_id","=", $id)
-            ->orWhere("meetings.user_id", "=", $id);
+            $count = Teleconsult::where(function($q) use($id){
+            $q->where("teleconsults.doctor_id","=", $id)
+            ->orWhere("teleconsults.user_id", "=", $id);
                 })->where('date_meeting','>=',$startdate)
                 ->where('date_meeting','<=',$enddate)
                 ->count();

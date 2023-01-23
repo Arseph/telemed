@@ -406,7 +406,6 @@
     <main class="py-4">
         <div class="loading"></div>
         @include('modal.others.layoutModal')
-        @include('modal.others.notifModal')
         @yield('content')
     </main>
 </div>

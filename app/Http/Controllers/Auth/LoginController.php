@@ -303,21 +303,31 @@ class LoginController extends Controller
         return redirect('/');
     }
     public function testIndex() {
-        $client = new \GuzzleHttp\Client([
-                    'base_uri' => 'https://api.semaphore.co',
-                    'verify' => false
-                ]);
-          
-                $response = $client->request('POST', '/api/v4/messages', [
-                    "headers" => [
-                        "7f3e45b0e5b095e32620b1a4ca42f511" => "",
-                        "Cookie" => "XSRF-TOKEN=eyJpdiI6IjhvN3NjVHNiWkZJdjRhZ2RUbWZDK3c9PSIsInZhbHVlIjoiNndcL0dMRSsyXC9wTFBScm5nSlRITmw5NUlpMzJBZmNmeW1MTmxKMlVnazE4TnJ6eEJjeEptQ29FT0M3cHFaMU1rNzc4ZHEzOWloUlJKb2V0SmIzbUppUT09IiwibWFjIjoiNTBlNmI3NDVmOTU3ZGI2YzZhMTJjNmJjNDY0NzE2YTk2YTY3NGQ5YmYxNmFlMWI0Mjg5Zjk0OTdkNTRlNmI5NSJ9; laravel_session=eyJpdiI6Ilg2MVwveEpKejgreUxyaDBqTlFqXC9Ydz09IiwidmFsdWUiOiJCdXdOaHI3Q0xKSUxTS3JYR2lUcVltYVdYVkVnYzUzVEJUUngxOGNZRGpXZXc4QjB3R09WWXpUU0xXZ2VcL20ya1IwZGU2Z2FFUXVaRjg2XC83b0FnQ213PT0iLCJtYWMiOiI1NDVlZDZlNTUwOTZlMjZkMDQyNjgxMTI0NTU3NmMwNzQzZGVmODY1YmVhOGM2YmNlZTU5MTIxZWQ5NTk5MDA4In0%3D"
-                    ],
-                    'form_params' => [
-                        "apikey" => env('SEMAPHORE_KEY'),
-                        "number" => "09515359406",//Crypt::decrypt($meet->patient->contact),
-                        "message" => 'Hello SUharto Omar. This will inform you that your teleconsultation schedule will be on October 20, 2022, 9:55 am'
-                    ],
-                ]);
+       $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'http://192.168.1.56/hris/api/emp.php',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json'
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $res = explode('|', $response);
+        $data = array();
+        foreach ($res as $val) {
+            array_push($data, json_decode($val));
+        }
+        dd($response);
+
     }
 }
