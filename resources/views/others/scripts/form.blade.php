@@ -1,11 +1,9 @@
 <script>
 var activeForm = '';
 var activebtn = '';
-var signature = "{!! $signature !!}";
-var api_key = "{!! $api_key !!}";
-var meetnum = "{!! $meetnum !!}";
-var passw = "{!! $passw !!}";
 var username = "{!! $username !!}";
+var emailname = "{!! $emailname !!}";
+var title = "{!! $title !!}";
 var meeting_id = $('input[name="meeting_id"]').val();
 var patient_id = $('input[name="patient_id"]').val();
 var demographic_id = $('input[name="demographic_id"]').val();
@@ -35,44 +33,15 @@ $( function() {
     $( "#diagDiv").resizable();
     $( "#planDiv").resizable();
 });
-ZoomMtg.preLoadWasm();
-ZoomMtg.prepareWebSDK();
-ZoomMtg.i18n.load('en-US');
-ZoomMtg.i18n.reload('en-US');
-ZoomMtg.setZoomJSLib('https://source.zoom.us/2.2.0/lib', '/av'); 
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip(); 
-    window.onbeforeunload = function() {
-        return "Are you sure you want to leave? Please end/leave the meeting before you close this tab.";
-    }
     var date = new Date();
     var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     $('.daterange').daterangepicker({
         "singleDatePicker": true
     });
     $(".select2").select2();
-    var leaveUrl = "{{ url('thank-you-page') }}";
-    ZoomMtg.init({
-      leaveUrl: leaveUrl,
-      success: (success) => {
-        ZoomMtg.join({
-            signature: signature,
-            apiKey: api_key,
-            meetingNumber: meetnum,
-            userName: username,
-            passWord: passw,
-            success: (success) => {
-                console.log(success)
-            },
-            error: (error) => {
-                console.log(error)
-            }
-        })
-      },
-      error: (error) => {
-        console.log(error)
-      }
-    });
+    
 });
 $("#myBtn").click(function(){
     $(".btnDemo").fadeToggle();
@@ -566,5 +535,28 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
         }
     }
 
+    const domain = 'meet.jit.si';
+    const options = {
+        roomName: '{{$title}}',
+        width: $(window).width(),
+        height: $(window).height(),
+        parentNode: document.querySelector('#teleView'),
+        lang: 'en',
+        userInfo: {
+            email: emailname,
+            displayName: username
+        }
+    };
+    const api = new JitsiMeetExternalAPI(domain, options);
+    $(document).ready(function() {
+        api.addEventListener('participantRoleChanged', function(event) {
+            if (event.role === "moderator") {
+                api.executeCommand('password', '{{$password}}');
+            }
+        });
+        api.executeCommand('startRecording', {
+            mode: file
+        });
+    });
     
 </script>

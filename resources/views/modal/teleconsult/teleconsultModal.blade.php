@@ -104,15 +104,19 @@
 		     </div>
 		     
          <div class="row">
-           <div class="col-sm-6">
-            <label>Date of teleconsultation:</label>
-            <input type="text" value="" name="date_from" class="form-control daterange" placeholder="Select Date" required/>
-           </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label>Date of teleconsultation:</label>
+              <input type="text" value="" name="date_from" class="form-control daterange" placeholder="Select Date" onchange="validateTIme()" required/>
+            </div>
+          </div>
            <div class="col-sm-3">
             <label>Duration:</label>
             <select class="form-control duration" name="duration" onchange="validateTIme()" required>
                     <option value="15">15 Minutes</option>
                     <option value="30">30 Minutes</option>
+                    <option value="30">45 Minutes</option>
+                    <option value="60">60 Minutes</option>
                 </select>
            </div>
            <div class="col-sm-3">
@@ -130,9 +134,8 @@
            </div>
           </div>
 		      <div class="modal-footer">
-            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc." class="fa-solid fa-circle-question"></i>&nbsp;
-            <a class="refTok" target="_blank"></a>
-		        <button type="submit" class="btnSave btn btn-danger" value="Declined"><i class="fas fa-times"></i>&nbsp;Decline</button>
+		        <a data-target="#decline_modal" data-toggle="modal" 
+       href="#decline_modal" class="btn btn-danger"><i class="fas fa-times"></i>&nbsp;Decline</a>
 		        <button id="acceptBtn" type="submit" class="btnSave btn btn-success" value="Accept"><i class="fas fa-check"></i> Accept</button>
 		     </div>
 	      </div>
@@ -150,26 +153,8 @@
         <h3 class="modal-title" id="myInfoLabel"></h3>
       </div>
       <div class="modal-body">
+        <h4 id="ReqMyFac" class="text-primary"></h4>
         <h4 id="timeConsult" class="text-success"></h4>
-      	<div class="form-group">
-	     	<label>Patient:</label>
-	        <input type="text" id="patientName"class="form-control" readonly>
-	     </div>
-  		<div class="form-group">
-  			<label class="text-success">Meeting Link:</label><br>
-  			<label id="meetlink"></label>
-  			<a href="javascript:void(0)"onclick="copyToClipboard('#meetlink')"><i class="far fa-copy"></i></a>
-
-  		</div>
-  		<div class="form-group">
-  			<label class="text-success">Meeting Number:</label><br>
-  			<label id="meetnumber"></label>
-
-  		</div>
-  		<div class="form-group">
-  			<label class="text-success">Password:</label><br>
-  			<label id="meetPass"></label>
-  		</div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btnMeeting btn btn-primary"><i class="fas fa-play-circle"></i> Start Consultation</button>
@@ -248,77 +233,12 @@
   </div>
 </div>
 
-<div class="modal fade" id="creating_tele_modal" role="dialog" aria-labelledby="users_modal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalMeetingLabel">Create Teleconsultation</h4>
-      </div>
-      <div class="modal-body" id="meetingInfo">
-        <form id="create_tele_form" method="POST">
-          {{ csrf_field() }}
-        <input type="hidden" name="user_id" value="{{ Session::get('auth')->id }}">
-       <div id="createscheduleMeeting">
-        <div class="form-group">
-           <label>Patient:</label>
-          <select class="form-control select2" name="patient_id" required>
-            <option value="">Select Patient ...</option>
-              @foreach($patients as $pat)
-                <option value="{{ $pat->id }}">{{ $pat->lname }}, {{ $pat->fname }} {{ $pat->mname }}</option>
-               @endforeach 
-          </select>
-        </div>
-        <hr>
-          <div class="form-group">
-            <label>Chief Complaint:</label>
-              <input type="text" class="form-control" value="" name="title" required>
-          </div>
-          <div class="row">
-           <div class="col-sm-6">
-            <label>Date of teleconsultation:</label>
-            <input type="text" value="" name="date_from" class="form-control daterange" placeholder="Select Date" required/>
-           </div>
-           <div class="col-sm-3">
-            <label>Duration:</label>
-            <select class="form-control duration" name="duration" onchange="validateTIme()" required>
-                    <option value="15">15 Minutes</option>
-                    <option value="30">30 Minutes</option>
-                </select>
-           </div>
-           <div class="col-sm-3">
-            <label>Time:</label>
-              <div class="input-group clockpicker" data-placement="top" data-align="top">
-                <input type="text" class="form-control" name="time" placeholder="Time" value="" required>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-time"></span>
-                </span>
-            </div>
-           </div>
-           <div class="col-sm-12">
-             <a data-target="#calendar_meetings_modal" data-toggle="modal" id="showCalendar" 
-       href="#calendar_meetings_modal">Show My Calendar</a>
-           </div>
-          </div>
-          <div class="modal-footer">
-            <label class="countdowntoken"></label><i data-toggle="tooltip" title="Access token is use to generate zoom meeting informations like meeting link, meeting id, password etc. If token expired, Please contact your administrator" class="fa-solid fa-circle-question"></i>&nbsp;
-            <a class="refTok"></a>
-            <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
-            <button id="saveBtn" type="submit" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
-         </div>
-        </div>
-    </form>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="calendar_meetings_modal" role="dialog" aria-labelledby="calendar_meetings_modal" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalMeetingLabel">Facility Calendar</h4>
+        <h4 class="modal-title" id="myModalMeetingLabel">My Calendar</h4>
       </div>
       <div class="modal-body" id="calendarInfo">
         <div id='fac-calendar'></div>
@@ -341,6 +261,28 @@
           <button id="cancelBtnDetails" type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>
           <button id="saveBtnForm" type="button" class="btnSavePend btn btn-success"><i class="fas fa-check"></i> Save</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="decline_modal" role="dialog" aria-labelledby="calendar_meetings_modal" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      </div>
+      <div class="modal-body">
+            <form id="decline_form" method="POST">
+            {{ csrf_field() }}
+              <div class="form-group">
+                  <label>Reason for Declining:</label>
+                  <textarea class="form-control" name="decline_message" rows="2" required></textarea>
+              </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success welbtn">Okay</button>
+          </form>
+        </div>
     </div>
   </div>
 </div>

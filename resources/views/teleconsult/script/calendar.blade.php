@@ -19,10 +19,7 @@
       editable: true,
       dayMaxEvents: true,
       events: {
-        url: "{{ url('/my-calendar-meetings') }}",
-        failure: function() {
-          alert('error getting teleconsultations, Please refresh the page.')
-        }
+        url: "{{ url('/my-calendar-meetings') }}"
       },
     });
     var faccalendar = new FullCalendar.Calendar(calendarFac, {
@@ -36,10 +33,7 @@
       editable: true,
       dayMaxEvents: true,
       events: {
-        url: "{{ url('/my-calendar-meetings') }}",
-        failure: function() {
-          alert('error getting teleconsultations, Please refresh the page.')
-        }
+        url: "{{ url('/my-calendar-meetings') }}"
       },
     });
   	$( "#sel1" ).change(function() {

@@ -24,6 +24,7 @@ use App\PlanManagement;
 use App\DemoProfile;
 use App\PhysicalExam;
 use App\Meeting;
+use App\Teleconsult;
 class PatientController extends Controller
 {
      public function __construct()
@@ -208,8 +209,11 @@ class PatientController extends Controller
        $data = $req->all();
        $data['date_onset_illness'] = $date_illness;
        $data['date_referral'] = $date_referral;
-       if($req->id) {
-        ClinicalHistory::find($req->id)->update($data);
+       $tel = ClinicalHistory::where('meeting_id', $req->meeting_id)->first();
+       if($req->id || $tel) {
+        $id = $req->id ? $req->id : $tel->id;
+        $data['id'] = $id;
+        ClinicalHistory::find($id)->update($data);
        } else {
         ClinicalHistory::create($data);
        }
@@ -305,9 +309,12 @@ class PatientController extends Controller
         $screenid = $req->id;
         unset($data['screen_id']);
         unset($data['list_name_occa']);
-        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
-        if($screenid) {
-            CovidScreening::find($screenid)->update($data);
+        Teleconsult::find($req->meeting_id)->update(["is_started" => 1]);
+        $tel = CovidScreening::where('meeting_id', $req->meeting_id)->first();
+        if($screenid || $tel) {
+            $id = $screenid ? $screenid : $tel->id;
+            $data['id'] = $id;
+            CovidScreening::find($id)->update($data);
         } else {
             CovidScreening::create($data);
         }
@@ -339,9 +346,12 @@ class PatientController extends Controller
         unset($data['scrumee']);
         unset($data['oro_naso_swabee']);
         unset($data['spe_othersee']);
-        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
-        if($assessid) {
-            CovidAssessment::find($assessid)->update($data);
+        Teleconsult::find($req->meeting_id)->update(["is_started" => 1]);
+        $tel = CovidAssessment::where('meeting_id', $req->meeting_id)->first();
+        if($assessid || $tel) {
+            $id = $assessid ? $assessid : $tel->id;
+            $data['id'] = $id;
+            CovidAssessment::find($id)->update($data);
         } else {
             CovidAssessment::create($data);
         }
@@ -356,8 +366,10 @@ class PatientController extends Controller
     }
 
     public function diagnosisStore(Request $req) {
-       if($req->id) {
-        DiagnosisAssessment::find($req->id)->update($req->all());
+       $tel = DiagnosisAssessment::where('meeting_id', $req->meeting_id)->first();
+       if($req->id || $tel) {
+        $id = $req->id ? $req->id : $tel->id;
+        DiagnosisAssessment::find($id)->update($req->all());
        } else {
         DiagnosisAssessment::create($req->all());
        }
@@ -371,7 +383,7 @@ class PatientController extends Controller
     }
 
     public function planStore(Request $req) {
-        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
+        Teleconsult::find($req->meeting_id)->update(["is_started" => 1]);
         $signature = $req->signaturephy ? public_path('signatures').'/'.$req->signaturephy : '';
         $unlink = $signature ? File::delete($signature) : '';
         $sign = $req->signature;
@@ -383,32 +395,42 @@ class PatientController extends Controller
         $data['signature'] = $signName;
         unset($data['signaturephy']);
         unset($data['patient_id']);
-        if($req->id) {
-            PlanManagement::find($req->id)->update($data);
-       } else {
+        $tel = PlanManagement::where('meeting_id', $req->meeting_id)->first();
+        if($req->id || $tel) {
+            $id = $req->id ? $req->id : $tel->id;
+            $data['id'] = $id;
+            PlanManagement::find($id)->update($data);
+        } else {
             PlanManagement::create($data);
-       }
+        }
     }
 
     public function demographicStore(Request $req) {
-       Meeting::find($req->meeting_id)->update(["is_started" => 1]);
-       if($req->id) {
-        DemoProfile::find($req->id)->update($req->all());
+       Teleconsult::find($req->meeting_id)->update(["is_started" => 1]);
+       $tel = DemoProfile::where('meeting_id', $req->meeting_id)->first();
+       if($req->id || $tel) {
+        $data = $req->all();
+        $data['id'] = $id;
+        DemoProfile::find($req->id)->update($data);
        } else {
         DemoProfile::create($req->all());
        }
     }
     public function phyExamStore(Request $req) {
-        Meeting::find($req->meeting_id)->update(["is_started" => 1]);
-       if($req->id) {
-        PhysicalExam::find($req->id)->update($req->all());
+        Teleconsult::find($req->meeting_id)->update(["is_started" => 1]);
+       $tel = PhysicalExam::where('meeting_id', $req->meeting_id)->first();
+       if($req->id || $tel) {
+        $id = $req->id ? $req->id : $tel->id;
+        $data = $req->all();
+        $data['id'] = $id;
+        PhysicalExam::find($id)->update($data);
        } else {
         PhysicalExam::create($req->all());
        }
     }
 
     public function clinicalInfo(Request $req) {
-        $meeting = Meeting::find($req->meet_id);
+        $meeting = Teleconsult::find($req->meet_id);
         $conjunctiva = '';
         $neck = '';
         $breast = '';

@@ -188,6 +188,7 @@ Route::get('/teleconsultation/details/{id}','Tele\TeleController@teleconsultDeta
 Route::post('/accept-notif-meeting', 'Tele\TeleController@acceptNotifMeeting');
 Route::post('/create-meeting', 'Tele\TeleController@createMeeting');
 Route::get('/get-prescription-details','Tele\TeleController@getPrescription');
+Route::post('/decline-tele/{id}', 'Tele\TeleController@declineTele');
 
 Route::get('/fetch-notification', 'Notification\NotifController@fetchNotif');
 Route::get('/notif-patient-info/{id}', 'Notification\NotifController@patientInfo');

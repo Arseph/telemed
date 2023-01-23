@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\Patient;
 use App\Meeting;
@@ -25,6 +26,7 @@ use App\MunicipalCity;
 use App\Events\ReqTele;
 use App\Events\AcDecReq;
 use App\Prescription;
+use App\Teleconsult;
 class TeleController extends Controller
 {
     public function __construct()
@@ -37,11 +39,11 @@ class TeleController extends Controller
     public function index(Request $request) {
     	$user = Session::get('auth');
     	$keyword = $request->view_all ? '' : $request->date_range;
-        $data = Meeting::select(
-        	"meetings.*",
-        	"meetings.id as meetID",
-            "meetings.user_id as Creator",
-            "meetings.doctor_id as RequestTo",
+        $data = Teleconsult::select(
+        	"teleconsults.*",
+        	"teleconsults.id as meetID",
+            "teleconsults.user_id as Creator",
+            "teleconsults.doctor_id as RequestTo",
         	"pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
@@ -49,22 +51,22 @@ class TeleController extends Controller
             "pat.sex as sex",
             "pat.civil_status as civil_status",
             "pat.id as PatID",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id");
         if($keyword){
         	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[0]));
             $date_end = date('Y-m-d',strtotime(explode(' - ',$request->date_range)[1]));
             $data = $data
                 ->where(function($q) use($date_start, $date_end) {
-                $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
+                $q->whereBetween('teleconsults.date_meeting', [$date_start, $date_end]);
             });
         }
         $activeid = $user->patient ? $user->patient->id : $user->id; 
         $data = $data->where(function($q) use($user, $activeid){
-            $q->where("meetings.doctor_id","=", $activeid)
-            ->orWhere("meetings.user_id", "=", $activeid)
-            ->orWhere("meetings.patient_id", "=", $activeid);
-            })->whereDate("meetings.date_meeting", ">=", Carbon::now()->toDateString())
-        		->orderBy('meetings.date_meeting', 'asc')
+            $q->where("teleconsults.doctor_id","=", $activeid)
+            ->orWhere("teleconsults.user_id", "=", $activeid)
+            ->orWhere("teleconsults.patient_id", "=", $activeid);
+            })->whereDate("teleconsults.date_meeting", ">=", Carbon::now()->toDateString())
+        		->orderBy('teleconsults.date_meeting', 'asc')
         		->paginate(20);
     	$patients =  Patient::select(
             "patients.*",
@@ -78,29 +80,29 @@ class TeleController extends Controller
         ->get();
 
         $keyword_past = $request->view_all_past ? '' : $request->date_range_past;
-        $data_past = Meeting::select(
-        	"meetings.*",
-        	"meetings.id as meetID",
-            "meetings.user_id as Creator",
-            "meetings.doctor_id as RequestTo",
+        $data_past = Teleconsult::select(
+        	"teleconsults.*",
+        	"teleconsults.id as meetID",
+            "teleconsults.user_id as Creator",
+            "teleconsults.doctor_id as RequestTo",
         	"pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
             "pat.id as PatID",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id");
         if($keyword_past){
         	$date_start = date('Y-m-d',strtotime(explode(' - ',$request->date_range_past)[0]));
             $date_end = date('Y-m-d',strtotime(explode(' - ',$request->date_range_past)[1]));
             $data_past = $data_past
                 ->where(function($q) use($date_start, $date_end) {
-                $q->whereBetween('meetings.date_meeting', [$date_start, $date_end]);
+                $q->whereBetween('teleconsults.date_meeting', [$date_start, $date_end]);
             });
         }
         $data_past = $data_past->where(function($q) use($user){
-            $q->where("meetings.doctor_id","=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id);
-            })->whereDate("meetings.date_meeting", "<", Carbon::now()->toDateString())
-        		->orderBy('meetings.date_meeting', 'desc')
+            $q->where("teleconsults.doctor_id","=", $user->id)
+            ->orWhere("teleconsults.user_id", "=", $user->id);
+            })->whereDate("teleconsults.date_meeting", "<", Carbon::now()->toDateString())
+        		->orderBy('teleconsults.date_meeting', 'desc')
         		->paginate(20);
 
         $keyword_req = $request->view_all_req ? '' : $request->date_range_req;
@@ -121,8 +123,8 @@ class TeleController extends Controller
                 $q->whereDate('pending_meetings.datefrom', '<=', $date_end);
             });
         }
-        $status_req = $request->view_all_req ? '' : $request->status_req;
-        $active_tab = $request->active_tab ? $request->active_tab : 'upcoming';
+        $status_req = $request->view_all_req ? '' : ($request->status_req ? $request->status_req: 'Pending');
+        $active_tab = $request->active_tab ? $request->active_tab : 'request';
         if($status_req) {
             $data_req = $data_req->where(function($q) use($status_req) {
                 $q->where('pending_meetings.status', $status_req);
@@ -130,7 +132,7 @@ class TeleController extends Controller
         }
         $data_req = $data_req->where("pending_meetings.doctor_id","=", $user->id)
                 ->orderBy('pending_meetings.id', 'desc')
-                ->paginate(20);
+                ->paginate(10);
 
         $data_my_req = PendingMeeting::select(
             "pending_meetings.*",
@@ -155,12 +157,7 @@ class TeleController extends Controller
         $labreq = LabRequest::where('req_type', 'LAB')->orderby('description', 'asc')->get();
         $imaging = LabRequest::where('req_type', 'RAD')->orderby('description', 'asc')->get();
         $docorder = DoctorOrder::where('doctorid', $user->id)->get();
-        $zoomtoken = ZoomToken::where('doctor_id',$user->id)
-                                ->where('provider_value', '!=', '')->first() ?
-                        ZoomToken::where('doctor_id',$user->id)->first()->updated_at
-                        : 'none';
         $doc_type = Doc_Type::where('isactive', '1')->orderBy('doc_name', 'asc')->get();
-        $zoomclient = $user->zoom ? $user->zoom->zoom_client_id : '';
         return view('teleconsult.teleconsult',[
             'patients' => $patients,
             'search' => $keyword,
@@ -179,9 +176,8 @@ class TeleController extends Controller
             'labreq' => $labreq,
             'imaging' => $imaging,
             'docorder' => $docorder,
-            'zoomtoken'=> $zoomtoken,
             'doc_type'=> $doc_type,
-            'zoomclient' => $zoomclient
+            'upcome' => count($data)
         ]);
     }
 
@@ -190,27 +186,44 @@ class TeleController extends Controller
             'status' => 'Pending'
         ]);
         if($req->meeting_id) {
-            PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id'));
+            $meet = PendingMeeting::find($req->meeting_id)->update($req->except('meeting_id'));
         } else {
-            $data = PendingMeeting::create($req->except('meeting_id'));
+            $meet = PendingMeeting::create($req->except('meeting_id'));
         }
-        event(new ReqTele($data));
+        $to_name = 'Dr. '.$meet->doctor->fname.' '.$meet->doctor->mname.' '.$meet->doctor->lname;
+        $to_email = Crypt::decrypt($meet->doctor->email);
+        $from = $meet->encoded->fname.' '.$meet->encoded->mname.' '.$meet->encoded->lname;
+        $from_fac = $meet->encoded->facility->facilityname;
+        $patient = Crypt::decrypt($meet->patient->lname).', '.Crypt::decrypt($meet->patient->fname).' '.Crypt::decrypt($meet->patient->mname);
+        $em = array(
+            'to_name'=> $to_name,
+            'patient' => $patient,
+            'from' => $from,
+            'from_fac' => $from_fac,
+            'complaint' => $meet->title
+
+        );
+        Mail::send('teleconsult.email.email_request', $em, function($message) use ($to_name, $to_email) {
+        $message->to($to_email, $to_name)
+        ->subject('Schedule for Teleconsultation');
+        $message->from('aronjbra20@gmail.com','DOH XII TELEMEDICINE');
+        });
+        event(new ReqTele($meet));
         Session::put("action_made","Please wait for the confirmation of doctor.");
     }
 
     public function indexCall($id) {
         $user = Session::get('auth');
         $decid = Crypt::decrypt($id);
-    	$meetings = Meeting::select(
-    		"meetings.*",
+    	$meetings = Teleconsult::select(
+    		"teleconsults.*",
             "pat.id as PATID",
-    		"meetings.id as meetID"
-    	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
-         ->where('meetings.id',$decid)
+    		"teleconsults.id as meetID"
+    	)->leftJoin("patients as pat","pat.id","=","teleconsults.patient_id")
+         ->where('teleconsults.id',$decid)
         ->first();
-        $api_key = "51JAnl6LT5eDa9b2oX9gpA";
-        $api_secret = "oBESX7AoVyMbNbjwT3PeJe05qxW2ZOP23Yj9";
-        $meeting_number = $meetings->meeting_id;
+        $title = $meetings->title;
+        $emailname = Crypt::decrypt($meetings->doctor->email);
         $password = $meetings->password;
         $role = $meetings->doctor_id == $user->id ? 1 : 0;
         $username = $user->fname.' '.$user->mname.' '.$user->lname;
@@ -218,15 +231,8 @@ class TeleController extends Controller
         date_default_timezone_set("UTC");
 
         $time = time() * 1000 - 30000;//time in milliseconds (or close enough)
-        
-        $data = base64_encode($api_key . $meeting_number . $time . $role);
-        
-        $hash = hash_hmac('sha256', $data, $api_secret, true);
-        
-        $_sig = $api_key . "." . $meeting_number . "." . $time . "." . $role . "." . base64_encode($hash);
-        $signature = rtrim(strtr(base64_encode($_sig), '+/', '-_'), '=');
         $nationality = Countries::orderBy('nationality', 'asc')->get();
-        $patient = Meeting::find($decid);
+        $patient = Teleconsult::find($decid);
         $case_no = $patient->demoprof ? $patient->demoprof->case_no : sprintf('%09d', $patient->id);
         $facility = Facility::orderBy('facilityname', 'asc')->get();
         $countries = Countries::orderBy('en_short_name', 'asc')->get();
@@ -324,9 +330,6 @@ class TeleController extends Controller
             'oro_naso_swab' => $oro_naso_swab,
             'spe_others' => $spe_others,
             'outcome_date_discharge' => $outcome_date_discharge,
-            'signature'=>$signature,
-            'api_key'=>$api_key,
-            'meetnum'=>$meeting_number,
             'passw'=>$password,
             'username'=>$username,
             'role'=> $role,
@@ -338,7 +341,10 @@ class TeleController extends Controller
             'genitals' => $genitals,
             'extremities' => $extremities,
             'prescription' => $prescription,
-            'date_referral' => $date_referral
+            'date_referral' => $date_referral,
+            'title' => $title,
+            'emailname' => $emailname,
+            'password' =>$password
         ]);
     }
 
@@ -350,28 +356,19 @@ class TeleController extends Controller
     	$endtime = Carbon::parse($time)
 		            ->addMinutes($req->duration)
 		            ->format('H:i:s');
-		$meetings = Meeting::whereDate('date_meeting','=', $date)->where(function($q) use($doctor_id, $user) {
+		$meetings = Teleconsult::whereDate('date_meeting','=', $date)->where(function($q) use($doctor_id, $user) {
                 $q->where('doctor_id', $doctor_id)
                 ->orWhere('doctor_id', $user->id);
-                })->get();
-        $othermeetings = Meeting::whereDate('date_meeting','=', $date)
-                ->whereHas('doctor', function ($query) use($user) {
-                    return $query->where('facility_id',$user->facility_id);
                 })->get();
 		$count = 1;
         if($date === Carbon::now()->format('Y-m-d') && $time <= Carbon::now()->addMinutes('180')->format('H:i:s') && $time) {
             return 'Not valid';
-        }
-		foreach ($meetings as $meet) {
-			if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
-				return $meet->count();
-			}
-		}
-        foreach ($othermeetings as $meet) {
-            if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
-                
-                return $meet->count();
-            }
+        } else {
+    		foreach ($meetings as $meet) {
+    			if(($time >= $meet->from_time && $time <= $meet->to_time) || ($endtime >= $meet->from_time && $endtime <= $meet->to_time) || ($meet->from_time >= $time && $meet->to_time <= $endtime) || ($meet->from_time >= $time && $meet->to_time <= $endtime)) {
+    				return $meet->count();
+    			}
+    		}
         }
     }
 
@@ -392,25 +389,27 @@ class TeleController extends Controller
     }
 
     public function meetingInfo(Request $req) {
-    	$meeting = Meeting::select(
-    		"meetings.*",
+    	$meeting = Teleconsult::select(
+    		"teleconsults.*",
     		"pat.*",
-    		"meetings.id as meetID",
+    		"teleconsults.id as meetID",
             "d.case_no as caseNO",
             "d.id as demographic_id",
             "ch.id as clinical_id",
             "pe.id as phy_id",
             "cs.id as covidscreen_id",
             "csa.id as covidassess_id",
-            "das.id as diagassess_id"
-    	)->leftJoin("patients as pat","pat.id","=","meetings.patient_id")
-        ->leftJoin("tele_demographic_profile as d","d.meeting_id","=","meetings.id")
-        ->leftJoin("tele_clinical_histories as ch","ch.meeting_id","=","meetings.id")
-        ->leftJoin("tele_physical_exams as pe","pe.meeting_id","=","meetings.id")
-        ->leftJoin("tele_covid19_screening as cs","cs.meeting_id","=","meetings.id")
-        ->leftJoin("tele_covid19_clinical_assessment as csa","csa.meeting_id","=","meetings.id")
-        ->leftJoin("tele_diagnosis_assessment as das","das.meeting_id","=","meetings.id")
-         ->where('meetings.id',$req->meet_id)
+            "das.id as diagassess_id",
+            "fac.facilityname as FacName"
+    	)->leftJoin("patients as pat","pat.id","=","teleconsults.patient_id")
+        ->leftJoin("facilities as fac","fac.id","=","pat.facility_id")
+        ->leftJoin("tele_demographic_profile as d","d.meeting_id","=","teleconsults.id")
+        ->leftJoin("tele_clinical_histories as ch","ch.meeting_id","=","teleconsults.id")
+        ->leftJoin("tele_physical_exams as pe","pe.meeting_id","=","teleconsults.id")
+        ->leftJoin("tele_covid19_screening as cs","cs.meeting_id","=","teleconsults.id")
+        ->leftJoin("tele_covid19_clinical_assessment as csa","csa.meeting_id","=","teleconsults.id")
+        ->leftJoin("tele_diagnosis_assessment as das","das.meeting_id","=","teleconsults.id")
+         ->where('teleconsults.id',$req->meet_id)
         ->first();
         if($meeting->phyexam) {
             $conjunctiva = $meeting->phyexam->conjunctiva;
@@ -440,52 +439,26 @@ class TeleController extends Controller
         $user = Session::get('auth');
         $userfac = $user->facility->facilityname;
         $meet = PendingMeeting::find($id);
-        // dd(Crypt::decrypt($meet->patient->contact));
         $action = $req->action;
         $date = date('Y-m-d', strtotime($req->date_from));
         $time = date('H:i:s', strtotime($req->time));
         $endtime = Carbon::parse($time)
                             ->addMinutes($req->duration)
                             ->format('H:i:s');
-        $start = $date.'T'.$time;
         $duration = $req->duration;
         $patient = Crypt::decrypt($meet->patient->lname).', '.Crypt::decrypt($meet->patient->fname).' '.Crypt::decrypt($meet->patient->mname);
-        $password = 'doh'.str_random(3);
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://api.zoom.us',
-            'verify' => false
-        ]);
         if($action == 'Accept') {
-            $db = ZoomToken::where('doctor_id',$user->id)->first();
-            $arr_token = json_decode($db->provider_value);
-            $accessToken = $arr_token->access_token;
-            $response = $client->request('POST', '/v2/users/me/meetings', [
-                "headers" => [
-                    "Authorization" => "Bearer $accessToken"
-                ],
-                'json' => [
-                    "topic" => $meet->title,
-                    "type" => 2,
-                    "start_time" => $start,
-                    "duration" => $duration,
-                    "password" => $password
-                ],
-            ]);
-      
-            $data = json_decode($response->getBody(), true);
             $create_data = array(
                 'user_id' => $meet->user_id,
                 'doctor_id' => $meet->doctor_id,
                 'patient_id' => $meet->patient_id,
                 'date_meeting' => $date,
-                'from_time' => $time,
+                'from_time' => date('H:i a', $time),
                 'to_time' => $endtime,
-                'meeting_id' => $data['id'],
-                'title' => $data['topic'],
-                'password' => $data['password'],
-                'web_link' => $data['join_url'],
+                'title' => $meet->title,
+                'password' => 'doh'.str_random(5),
             );
-            $create_meeting = Meeting::create($create_data);
+            $create_meeting = Teleconsult::create($create_data);
         }
         $meet_id = $action == 'Accept' ? $create_meeting->id : null;
         $data = array(
@@ -495,28 +468,24 @@ class TeleController extends Controller
         $meet->update($data); 
         if($action == 'Accept') {
             event(new AcDecReq($user, $create_meeting, $action, $userfac));
-            // try {
-      
-            //     $client = new \GuzzleHttp\Client([
-            //         'base_uri' => 'https://api.semaphore.co',
-            //         'verify' => false
-            //     ]);
-          
-            //     $response = $client->request('POST', '/api/v4/messages', [
-            //         "headers" => [
-            //             "7f3e45b0e5b095e32620b1a4ca42f511" => "",
-            //             "Cookie" => "XSRF-TOKEN=eyJpdiI6IjhvN3NjVHNiWkZJdjRhZ2RUbWZDK3c9PSIsInZhbHVlIjoiNndcL0dMRSsyXC9wTFBScm5nSlRITmw5NUlpMzJBZmNmeW1MTmxKMlVnazE4TnJ6eEJjeEptQ29FT0M3cHFaMU1rNzc4ZHEzOWloUlJKb2V0SmIzbUppUT09IiwibWFjIjoiNTBlNmI3NDVmOTU3ZGI2YzZhMTJjNmJjNDY0NzE2YTk2YTY3NGQ5YmYxNmFlMWI0Mjg5Zjk0OTdkNTRlNmI5NSJ9; laravel_session=eyJpdiI6Ilg2MVwveEpKejgreUxyaDBqTlFqXC9Ydz09IiwidmFsdWUiOiJCdXdOaHI3Q0xKSUxTS3JYR2lUcVltYVdYVkVnYzUzVEJUUngxOGNZRGpXZXc4QjB3R09WWXpUU0xXZ2VcL20ya1IwZGU2Z2FFUXVaRjg2XC83b0FnQ213PT0iLCJtYWMiOiI1NDVlZDZlNTUwOTZlMjZkMDQyNjgxMTI0NTU3NmMwNzQzZGVmODY1YmVhOGM2YmNlZTU5MTIxZWQ5NTk5MDA4In0%3D"
-            //         ],
-            //         'form_params' => [
-            //             "apikey" => env('SEMAPHORE_KEY'),
-            //             "number" => Crypt::decrypt($meet->patient->contact),
-            //             "message" => 'Hello '.$patient.'. This will inform you that your teleconsultation schedule will be on '.date('F d,Y', strtotime($req->date_from)).' '.date('H:i a', strtotime($req->time))
-            //         ],
-            //     ]);
-                  
-            // } catch (Exception $e) {
-            //     dd("Error: ". $e->getMessage());
-            // }
+            $to_name = $meet->encoded->fname.' '.$meet->encoded->mname.' '.$meet->encoded->lname;
+            $to_email = Crypt::decrypt($meet->encoded->email);
+            $doctor = 'Dr. '.$meet->doctor->fname.' '.$meet->doctor->mname.' '.$meet->doctor->lname;
+            $from_fac = $meet->doctor->facility->facilityname;
+            $em = array(
+                'to_name'=> $to_name,
+                'patient' => $patient,
+                'doctor' => $doctor,
+                'from_fac' => $from_fac,
+                'date' => $date.' '.$time,
+                'complaint' => $meet->title
+
+            );
+            Mail::send('teleconsult.email.email_accept', $em, function($message) use ($to_name, $to_email) {
+            $message->to($to_email, $to_name)
+            ->subject('Schedule for Teleconsultation');
+            $message->from('aronjbra20@gmail.com','DOH XII TELEMEDICINE');
+            });
             Session::put("action_made","Successfully Accept Teleconsultation.");
         } else {
             event(new AcDecReq($user, $meet, $action, $userfac));
@@ -560,68 +529,32 @@ class TeleController extends Controller
 
     }
 
-    public function zoomToken(Request $req) {
-        $user = Session::get('auth');
-        $user_id =  $user->id;
-        $facility_id = $user->facility_id;
-        $client_id = $user->zoom->zoom_client_id;
-        $client_secret = $user->zoom->zoom_client_secret;
-        $direct_url = env('ZOOM_REDIRECT_URL');
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://zoom.us',
-            'verify' => false
-        ]);
-  
-        $response = $client->request('POST', '/oauth/token', [
-            "headers" => [
-                "Authorization" => "Basic ". base64_encode($client_id.':'.$client_secret)
-            ],
-            'form_params' => [
-                "grant_type" => "authorization_code",
-                "code" => $req->code,
-                "redirect_uri" => $direct_url
-            ],
-        ]);
-
-        $token = json_decode($response->getBody()->getContents(), true);
-        $data = array('facility_id' => $facility_id, 'doctor_id' => $user_id,'provider' => 'zoom', 'provider_value' => json_encode($token) );
-        $zoomtoken = ZoomToken::where('doctor_id',$user_id)->first() ?  ZoomToken::where('doctor_id',$user_id)->first()->update($data) : ZoomToken::create($data);
-        echo "Your access token was Successfully Refresh. You can close this tab now.";
-    }
-
-    public function refreshToken(Request $req) {
-        $user_id = Session::get('auth')->user_id;
-        $zoomtoken = ZoomToken::where('doctor_id',$user_id)->first();
-        return json_encode($zoomtoken);
-        
-    }
-
     public function thankYouPage(Request $req) {
         return view('thankyou');
     }
 
     public function calendarMeetings(Request $req) {
         $user = Session::get('auth');
-        $data = Meeting::select(
-            "meetings.*",
-            "meetings.id as meetID",
-            "meetings.user_id as Creator",
-            "meetings.doctor_id as RequestTo",
+        $data = Teleconsult::select(
+            "teleconsults.*",
+            "teleconsults.id as meetID",
+            "teleconsults.user_id as Creator",
+            "teleconsults.doctor_id as RequestTo",
             "pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
             "pat.id as PatID",
             "users.facility_id as facid"
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id")
-        ->leftJoin("users as users", "meetings.doctor_id", "=", "users.id")
-        ->leftJoin("users as use", "meetings.user_id", "=", "users.id");
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id")
+        ->leftJoin("users as users", "teleconsults.doctor_id", "=", "users.id")
+        ->leftJoin("users as use", "teleconsults.user_id", "=", "users.id");
         $data = $data->where(function($q) use($user){
-            $q->where("meetings.doctor_id","=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id)
+            $q->where("teleconsults.doctor_id","=", $user->id)
+            ->orWhere("teleconsults.user_id", "=", $user->id)
+            ->orWhere("teleconsults.user_id", "=", $user->id)
             ->orWhere("users.facility_id", "=", $user->facility_id)
             ->orWhere("use.facility_id", "=", $user->facility_id);
-            })->orderBy('meetings.date_meeting', 'asc')
+            })->orderBy('teleconsults.date_meeting', 'asc')
             ->get();
         $result = [];
         $join = '';
@@ -663,20 +596,20 @@ class TeleController extends Controller
 
     public function mycalendarMeetings(Request $req) {
         $user = Session::get('auth');
-        $data = Meeting::select(
-            "meetings.*",
-            "meetings.id as meetID",
-            "meetings.user_id as Creator",
-            "meetings.doctor_id as RequestTo",
+        $data = Teleconsult::select(
+            "teleconsults.*",
+            "teleconsults.id as meetID",
+            "teleconsults.user_id as Creator",
+            "teleconsults.doctor_id as RequestTo",
             "pat.lname as patLname",
             "pat.fname as patFname",
             "pat.mname as patMname",
             "pat.id as PatID",
-        )->leftJoin("patients as pat", "meetings.patient_id", "=", "pat.id");
+        )->leftJoin("patients as pat", "teleconsults.patient_id", "=", "pat.id");
         $data = $data->where(function($q) use($user){
-            $q->where("meetings.doctor_id","=", $user->id)
-            ->orWhere("meetings.user_id", "=", $user->id);
-            })->orderBy('meetings.date_meeting', 'asc')
+            $q->where("teleconsults.doctor_id","=", $user->id)
+            ->orWhere("teleconsults.user_id", "=", $user->id);
+            })->orderBy('teleconsults.date_meeting', 'asc')
             ->get();
         $result = [];
         $join = '';
@@ -698,126 +631,6 @@ class TeleController extends Controller
         return json_encode($result);
     }
 
-    public function acceptNotifMeeting(Request $req) {
-        $user = Session::get('auth');
-        $userfac = $user->facility->facilityname;
-        $date = date('Y-m-d', strtotime($req->accept_date_from));
-        $time = date('H:i:s', strtotime($req->accept_time));
-        $endtime = Carbon::parse($time)
-                            ->addMinutes($req->accept_duration)
-                            ->format('H:i:s');
-        $start = $date.'T'.$time;
-        $duration = $req->accept_duration;
-        $patientdata = Patient::find($req->patient_id);
-        $patient = $patientdata->lname.', '.$patientdata->fname.' '.$patientdata->mname;
-        $password = 'doh'.str_random(3);
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://api.zoom.us',
-            'verify' => false
-        ]);
-        $action = 'Accept';
-        if($action == 'Accept') {
-            $db = ZoomToken::where('facility_id',$user->facility_id)->first();
-            $arr_token = json_decode($db->provider_value);
-            $accessToken = $arr_token->access_token;
-            $response = $client->request('POST', '/v2/users/me/meetings', [
-                "headers" => [
-                    "Authorization" => "Bearer $accessToken"
-                ],
-                'json' => [
-                    "topic" => $req->accept_notif_title,
-                    "type" => 2,
-                    "start_time" => $start,
-                    "duration" => $duration,
-                    "password" => $password
-                ],
-            ]);
-      
-            $data = json_decode($response->getBody(), true);
-            $create_data = array(
-                'user_id' => $patientdata->account->id,
-                'doctor_id' => $user->id,
-                'patient_id' => $req->patient_id,
-                'date_meeting' => $date,
-                'from_time' => $time,
-                'to_time' => $endtime,
-                'meeting_id' => $data['id'],
-                'title' => $data['topic'],
-                'password' => $data['password'],
-                'web_link' => $data['join_url'],
-            );
-            $create_meeting = Meeting::create($create_data);
-        }
-        $meet_id = $create_meeting->id;
-        $pend = array(
-                    'user_id' => $patientdata->account->id,
-                    'patient_id' => $req->patient_id,
-                    'doctor_id' => $user->id,
-                    'tele_cate_id' => $user->doc_cat_id,
-                    'title' => $req->accept_notif_title,
-                    'meet_id' => $meet_id,
-                    'status' => 'Accept',
-                );
-        $meet = PendingMeeting::create($pend);
-        $pat = $patientdata->update(['complaint' => null]);
-        event(new AcDecReq($user, $create_meeting, $action, $userfac));
-        Session::put("action_made","Successfully Create Teleconsultation.");
-    }
-
-    public function createMeeting(Request $req) {
-        $user = Session::get('auth');
-        $userfac = $user->facility->facilityname;
-        $date = date('Y-m-d', strtotime($req->date_from));
-        $time = date('H:i:s', strtotime($req->time));
-        $endtime = Carbon::parse($time)
-                            ->addMinutes($req->duration)
-                            ->format('H:i:s');
-        $start = $date.'T'.$time;
-        $duration = $req->accept_duration;
-        $patientdata = Patient::find($req->patient_id);
-        $patient = $patientdata->lname.', '.$patientdata->fname.' '.$patientdata->mname;
-        $password = 'doh'.str_random(3);
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => 'https://api.zoom.us',
-            'verify' => false
-        ]);
-        $action = 'Created';
-        if($action == 'Created') {
-            $db = ZoomToken::where('facility_id',$user->facility_id)->first();
-            $arr_token = json_decode($db->provider_value);
-            $accessToken = $arr_token->access_token;
-            $response = $client->request('POST', '/v2/users/me/meetings', [
-                "headers" => [
-                    "Authorization" => "Bearer $accessToken"
-                ],
-                'json' => [
-                    "topic" => $req->title,
-                    "type" => 2,
-                    "start_time" => $start,
-                    "duration" => $duration,
-                    "password" => $password
-                ],
-            ]);
-      
-            $data = json_decode($response->getBody(), true);
-            $create_data = array(
-                'user_id' => $patientdata->account->id,
-                'doctor_id' => $user->id,
-                'patient_id' => $req->patient_id,
-                'date_meeting' => $date,
-                'from_time' => $time,
-                'to_time' => $endtime,
-                'meeting_id' => $data['id'],
-                'title' => $data['topic'],
-                'password' => $data['password'],
-                'web_link' => $data['join_url'],
-            );
-            $create_meeting = Meeting::create($create_data);
-        }
-        $pat = $patientdata->update(['complaint' => null]);
-        Session::put("action_made","Successfully Create Teleconsultation.");
-    }
-
     public function getPrescription(Request $req) {
         $prescription = Meeting::find($req->id)->planmanage ? Meeting::find($req->id)->planmanage->prescription : [];
         $finalpres = [];
@@ -833,5 +646,15 @@ class TeleController extends Controller
         } else {
             return 'No prescription found.';
         }
+    }
+
+    public function declineTele($id, Request $req) {
+        $meet = PendingMeeting::find($id);
+        $data = array(
+            'status' => 'Declined',
+            'remarks' => $req->decline_message
+        );
+        $meet->update($data);
+        Session::put("delete_action","Successfully Declined Teleconsultation.");
     }
 }

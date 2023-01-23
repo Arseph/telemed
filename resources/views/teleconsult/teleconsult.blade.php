@@ -57,7 +57,7 @@
                 </a>
                 <select class="btn btn-primary btn-md" id="sel1">
                   <option value="1">List</option>
-                  <option value="0">Calendar</option>
+                  <option value="0">My Calendar</option>
                 </select>
             </div>
             <h3>My Teleconsultations</h3>
@@ -65,10 +65,10 @@
         <div class="box-body">
           <div id="teleList">
             <ul class="nav nav-pills">
-              <li class="@if($active_tab == 'upcoming')active @endif"><a data-toggle="tab" href="#upcoming">Upcoming</a></li>
               @if($active_user->level == 'doctor')
               <li class="@if($active_tab == 'request')active @endif"><a data-toggle="tab" href="#request">Request @if($pending > 0)<span class="badge">{{$pending}}</span> @endif</a></li>
               @endif
+              <li class="@if($active_tab == 'upcoming')active @endif"><a data-toggle="tab" href="#upcoming">Upcoming @if($upcome > 0)<span class="badge">{{$upcome}}</span> @endif</a></li>
               <li class="@if($active_tab == 'completed')active @endif"><a data-toggle="tab" href="#completed">Completed</a></li>
             </ul>
             <div class="pull-right">
@@ -199,19 +199,6 @@
                                 </a>
                                 <br>
                                 <br>
-                                @if($active_user->level != 'patient')
-                                <p>Teleconsult link:</p>
-                                <label id="meetlinkZ">{{$row->web_link}}</label>
-                                <a href="javascript:void(0)"onclick="copyToClipboard('#meetlinkZ')"><i class="far fa-copy"></i></a>
-                                <br>
-                                <br>
-                                <p>Teleconsult ID:</p>
-                                <label>{{$row->meeting_id}}</label>
-                                <br>
-                                <br>
-                                <p>Password:</p>
-                                <label>{{$row->password}}</label>
-                                @endif
                               </div>
                               <div id="tabsTelDet{{$row->meetID}}" class="tab-pane fade in">
                                   <div class="pull-right">
@@ -300,6 +287,9 @@
                                     <th>Encoded By:</th>
                                     <th>Chief Complaint / Patient</th>
                                     <th>Status</th>
+                                    @if($status_req == 'Declined')
+                                    <th>Reason for Declining</th>
+                                    @endif
                                 </tr>
                                 @foreach($data_req as $row)
                                     <tr onclick="infoMeeting('<?php echo $row->meetID?>','<?php echo $row->meet_id?>')">
@@ -325,11 +315,16 @@
                                           <span class="badge bg-red">Declined</span>
                                           @endif
                                         </td>
+                                        @if($status_req == 'Declined')
+                                        <td>
+                                          <p>{{$row->remarks}}</p>
+                                        </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </table>
                             <div class="pagination">
-                                {{ $data->links() }}
+                                {{ $data_req->links() }}
                             </div>
                         </div>
                     @else
@@ -389,7 +384,7 @@
                                           <b>Patient: {{ \Crypt::decrypt($row->patLname) }}, {{ \Crypt::decrypt($row->patFname) }} {{ \Crypt::decrypt($row->patMname) }}</b>
                                         </td>
                                         <td>
-                                        <b>Patient: {{ $row->patLname }}, {{ $row->patFname }} {{ $row->patMname }}</b>
+                                        <b>Patient: {{ \Crypt::decrypt($row->patLname) }}, {{ \Crypt::decrypt($row->patFname) }} {{ \Crypt::decrypt($row->patMname) }}</b>
                                           <br>
                                           <a href="#IssueAndConcern" data-issue_from ='{{$row->encoded->facility->id}}' data-meet_id ='{{$row->meetID}}' data-toggle="modal" class="btn btn-danger btn-issue-referred">
                                               <i class="fas fa-exclamation-triangle"></i> Issues & concern
@@ -402,7 +397,7 @@
                                 @endforeach
                             </table>
                             <div class="pagination">
-                                {{ $data->links() }}
+                                {{ $pastmeetings->links() }}
                             </div>
                         </div>
                     @else
