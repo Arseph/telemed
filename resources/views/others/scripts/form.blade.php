@@ -535,9 +535,9 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
         }
     }
 
-    const domain = 'meet.jit.si';
+    const domain = '8x8.vc';
     const options = {
-        roomName: '{{$title}}',
+        roomName: 'DOH XII TELEMED{{$title}}',
         width: $(window).width(),
         height: $(window).height(),
         parentNode: document.querySelector('#teleView'),
@@ -548,14 +548,12 @@ $('input[type=radio][name=is_patient_accompanied]').change(function() {
         }
     };
     const api = new JitsiMeetExternalAPI(domain, options);
+    console.log('{{$password}}');
     $(document).ready(function() {
         api.addEventListener('participantRoleChanged', function(event) {
             if (event.role === "moderator") {
                 api.executeCommand('password', '{{$password}}');
             }
-        });
-        api.executeCommand('startRecording', {
-            mode: file
         });
     });
     

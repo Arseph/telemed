@@ -175,7 +175,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/strophe.js/1.2.16/strophe.min.js"></script>
 <script src="{{ asset('js/strophe.disco.min.js') }}"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src='https://meet.jit.si/external_api.js'></script>
+<script src='https://8x8.vc/vpaas-magic-cookie-77b080d142e84185a522be7ab1e7bf5f/external_api.js' async></script>
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->

@@ -453,7 +453,7 @@ class TeleController extends Controller
                 'doctor_id' => $meet->doctor_id,
                 'patient_id' => $meet->patient_id,
                 'date_meeting' => $date,
-                'from_time' => date('H:i a', $time),
+                'from_time' => $time,
                 'to_time' => $endtime,
                 'title' => $meet->title,
                 'password' => 'doh'.str_random(5),
