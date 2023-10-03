@@ -193,3 +193,27 @@ Route::post('/decline-tele/{id}', 'Tele\TeleController@declineTele');
 Route::get('/fetch-notification', 'Notification\NotifController@fetchNotif');
 Route::get('/notif-patient-info/{id}', 'Notification\NotifController@patientInfo');
 Route::post('/notif-patient-accept/{id}', 'Notification\NotifController@patientAccept');
+
+// Clear application cache:
+Route::get('/clear-cache', function() {
+    Artisan::call('cache:clear');
+    return 'Application cache has been cleared';
+});
+
+//Clear route cache:
+Route::get('/route-cache', function() {
+	Artisan::call('route:cache');
+    return 'Routes cache has been cleared';
+});
+
+//Clear config cache:
+Route::get('/config-cache', function() {
+ 	Artisan::call('config:cache');
+ 	return 'Config cache has been cleared';
+}); 
+
+// Clear view cache:
+Route::get('/view-clear', function() {
+    Artisan::call('view:clear');
+    return 'View cache has been cleared';
+});
