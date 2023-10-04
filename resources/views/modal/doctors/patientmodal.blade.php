@@ -248,46 +248,6 @@
 			    </div>
 		    </div>
 		 </div>
-	    
-	    <hr>
-	    <div class="text-left">
-        	<h4>Create account to access telemedicine</h4>
-        </div>
-		  <div id="collapseAccount">
-			<div class="card card-body">
-			 <div class="form-group">
-		            <label class="required-field">Email Address:</label>
-			        <input type="email" class="form-control email" id="email" name="email" value="" required>
-			        <div class="email-has-error text-bold text-danger hide">
-			            <small>Email already taken!</small>
-			        </div>
-		        </div>
-		        <div class="form-group">
-		            <label class="required-field">Username: <code id="usernamesug" onclick="getUsername()"></code></label>
-			        <input type="text" class="form-control username" id="username" value="" name="username" required>
-			        <div class="username-has-error text-bold text-danger hide">
-			            <small>Username already taken!</small>
-			        </div>
-		        </div>
-		 		<div class="row rowPass">
-				    <div class="col-sm-12">
-				        <div class="form-group">
-				            <label class="required-field">Password:</label>
-				            <div class="input-group">
-						        <input type="password" class="form-control pwd" value="" name="password" required>
-						        <span class="input-group-btn">
-						            <button class="btn btn-default reveal" type="button"><i class="far fa-eye"></i></button>
-						        </span> 
-						    </div>
-				        </div>
-			            <button type="button" class="btn btn-warning btn-sm btn-flat generatePassword">
-		                    <i class="fas fa-key"></i> Generate Password
-		                </button>
-				    </div>
-				    <br>
-				</div>
-			</div>
-		  </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i>&nbsp;Close</button>

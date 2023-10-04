@@ -106,7 +106,7 @@
 			$('#username').css("border","red solid 3px");
 			$('#password2').css("border","red solid 3px");
 		}
-		else if(processOne && processTwo && invalid == 0) {
+		else {
 			$(".loading").show();
 			$('#user_form').ajaxSubmit({
 	            url:  "{{ url('/user-store') }}",
